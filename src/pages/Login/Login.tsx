@@ -1,7 +1,75 @@
 import React from 'react'
+import { LockOutlined, UserOutlined } from '@ant-design/icons'
+import { Button, Card, Checkbox, Flex, Form, Input, Layout } from 'antd'
+// import { Navigate } from 'react-router-dom'
 
 export const Login: React.FC = () => {
+  // const isAuthenticated = false
+
+  const onFinish = (values: any): void => {
+    console.log('Received values of form: ', values)
+  }
+
   return (
-    <div>Login</div>
+    <>
+      <Layout style={{ minHeight: '100vh', width: '100vw' }}>
+
+        <Flex style={{ width: '100%', minHeight: '100vh' }} justify='center' align='center'>
+
+          <Card
+            style={{ width: 400 }}
+            cover={
+              <img
+                alt="example"
+                src="https://gw.alipayobjects.com/zos/rmsportal/JiqGstEfoWAOHiTxclqi.png"
+              />
+            }
+          >
+            <Form
+              name="normal_login"
+              className="login-form"
+              initialValues={{ remember: true }}
+              onFinish={onFinish}
+            >
+              <Form.Item
+                name="username"
+                rules={[{ required: true, message: 'Please input your Username!' }]}
+              >
+                <Input prefix={<UserOutlined className="site-form-item-icon" />} placeholder="Username" />
+              </Form.Item>
+              <Form.Item
+                name="password"
+                rules={[{ required: true, message: 'Please input your Password!' }]}
+              >
+                <Input
+                  prefix={<LockOutlined className="site-form-item-icon" />}
+                  type="password"
+                  placeholder="Password"
+                />
+              </Form.Item>
+              <Form.Item>
+                <Form.Item name="remember" valuePropName="checked" noStyle>
+                  <Checkbox>Remember me</Checkbox>
+                </Form.Item>
+
+                <a className="login-form-forgot" href="">
+                  Forgot password
+                </a>
+              </Form.Item>
+
+              <Form.Item>
+                <Button type="primary" htmlType="submit" className="login-form-button">
+                  Log in
+                </Button>
+                Or <a href="">register now!</a>
+              </Form.Item>
+            </Form>
+
+          </Card>
+
+        </Flex>
+
+      </Layout>
+    </>
   )
 }

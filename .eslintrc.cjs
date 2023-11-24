@@ -29,6 +29,8 @@ module.exports = {
     ],
     "rules": {
       "@typescript-eslint/promise-function-async": "off",
-      "@typescript-eslint/no-floating-promises": "off"
+      "@typescript-eslint/no-floating-promises": "off",
+      "react/react-in-jsx-scope": "off",
+      "react/jsx-uses-react": "off",
     }
 }

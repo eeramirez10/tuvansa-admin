@@ -1,42 +1,60 @@
-import { Button, Card, Flex } from 'antd'
-import { Link, useLocation } from 'react-router-dom'
 import React from 'react'
+import { Button, Card, Flex } from 'antd'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
+import {
+  UnorderedListOutlined
+} from '@ant-design/icons'
+import { useButtonRef } from '../../hooks/useButtonRef'
+import { useAppDispatch, useAppSelector } from 'src/hooks/useStore'
+import { UploadFiles } from 'src/components/UploadFiles'
+import { selectPayment } from 'src/store/payments/slice'
 
 interface NameNavigation {
-  capName: string
-  nameSingular: string
-  name: string
-  action: string
+  singularPath: string
+  capitalize: string
+  mainRoute: string
+  includesNewStringPath: boolean
+  includesEditStringPath: boolean
 }
 
 const useNameNavigation = (): NameNavigation => {
-  let { state, pathname } = useLocation()
+  const { pathname } = useLocation()
 
-  let name = ''
-  let path = ''
+  const arrPathname = pathname.split('/').slice(1)
 
-  if (state !== null) {
-    name = state.name
-    pathname = pathname.slice(1)
-  } else {
-    path = pathname.slice(1)
-    name = path
-  }
+  const includesNewStringPath = arrPathname.includes('new')
 
-  const capName = `${pathname.charAt(0).toUpperCase()}${pathname.slice(1)}`
+  const includesEditStringPath = arrPathname.includes('edit')
 
-  const nameSingular = path.substring(0, name.length - 1)
+  const mainRoute = arrPathname[0]
+
+  const capitalize = `${mainRoute.charAt(0).toUpperCase()}${mainRoute.slice(1)}`
+
+  const singularPath = capitalize.substring(0, mainRoute.length - 1)
 
   return {
-    capName,
-    nameSingular,
-    name,
-    action: state?.action
+    includesNewStringPath,
+    includesEditStringPath,
+    mainRoute,
+    capitalize,
+    singularPath
   }
 }
 
 export const Navigation: React.FC = () => {
-  const { capName, nameSingular, name, action } = useNameNavigation()
+  const { capitalize, singularPath, includesNewStringPath, includesEditStringPath } = useNameNavigation()
+  const isLoading = useAppSelector(state => state.payments.isLoading)
+  const payment = useAppSelector(state => state.payments.selected)
+  const dispatch = useAppDispatch()
+  const navigate = useNavigate()
+
+  const { buttonRef } = useButtonRef()
+
+  const handleListadoClick = (): void => {
+    dispatch(selectPayment(null))
+    navigate(-1)
+  }
+
   return (
     <Card
       size='small'
@@ -46,22 +64,60 @@ export const Navigation: React.FC = () => {
     >
       <Flex justify='space-between' align='center'>
 
-        {name !== null ? <p> {name} </p> : <p> {capName} </p>}
+        <p> {capitalize} </p>
 
         {
-          (action === 'new')
+          (includesNewStringPath || includesEditStringPath)
             ? (
-              <Button >
-                Guardar
-              </Button>
+              <>
+                <Flex gap='small' wrap='wrap'>
+                  <Button
+                    type='primary'
+                    icon={<UnorderedListOutlined />}
+                    onClick={handleListadoClick}
+                  >
+                    Listado
+                  </Button>
+
+                  <Button
+                    onClick={() => {
+                      if (buttonRef !== null) {
+                        buttonRef.current?.click()
+                      }
+                    }}
+                    loading={isLoading}
+                    disabled={isLoading}
+                  >
+                    Guardar
+                  </Button>
+
+                  {
+                    (payment !== null)
+                      ? payment.id !== undefined
+                        ? <UploadFiles />
+                        : ''
+                      : ''
+                  }
+
+                </Flex>
+
+              </>
+
               )
             : (
-              <Button
-                type="primary"
-                shape='round'
+              <Link
+                to={`${singularPath}/new`}
+                state={{ name: 'Nuevo', action: 'new' }}
               >
-                <Link to={`${nameSingular}/new`} state={{ name: 'Nuevo', action: ' new' }} >  Nuevos</Link>
-              </Button>
+                <Button
+                  type="primary"
+                  shape='round'
+                >
+                  Nuevo
+                </Button>
+
+              </Link>
+
               )
         }
 

@@ -4,8 +4,8 @@ import { type ColumnsType } from 'antd/es/table'
 import { DataTable } from '../../components/DataTable/DataTable'
 import { Link } from 'react-router-dom'
 import { usePayments } from '../../hooks/usePayments'
-import { Button } from 'antd'
-import { FilePdfOutlined } from '@ant-design/icons'
+import { OpenButtonModal } from 'src/components/OpenButtonModal'
+import { FilesModal } from './components/FilesModal'
 
 const columns: ColumnsType<Payment> = [
   {
@@ -19,12 +19,18 @@ const columns: ColumnsType<Payment> = [
   {
     title: 'Proveedor',
     dataIndex: 'supplier',
-    width: '20%'
+    width: '20%',
+    render: (text) => text.name
   },
 
   {
     title: 'Total Pagado',
     dataIndex: 'paid'
+  },
+  {
+    title: 'Fecha de pago',
+    dataIndex: 'datePaid',
+    render: (payment) => payment
   },
   {
     title: 'Commentarios',
@@ -33,7 +39,7 @@ const columns: ColumnsType<Payment> = [
   {
     title: 'Archivos',
     align: 'center',
-    render: () => <Button type="primary" icon={<FilePdfOutlined />} />
+    render: (_, { id }) => <OpenButtonModal id={id} />
   }
 ]
 
@@ -42,6 +48,9 @@ export const Payments: React.FC = () => {
 
   return (
     <>
+
+       <FilesModal />
+
       <DataTable
         columns={columns}
         data={payments}

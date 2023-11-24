@@ -1,17 +1,8 @@
-import React, { useEffect } from 'react'
-import { useParams } from 'react-router-dom'
+import React from 'react'
 import { PaymentForm } from './components/PaymentForm/PaymentForm'
 import { usePayments } from '../../hooks/usePayments'
 export const PaymentEdit: React.FC = () => {
-  const { form, handleEdit, payments } = usePayments()
-  const { id } = useParams()
-
-  useEffect(() => {
-    if (id !== undefined || id !== null) {
-      const payment = payments.find(payment => payment.id === id)
-      form.setFieldsValue({ payment })
-    }
-  }, [])
+  const { form, handleEdit } = usePayments()
 
   return (
     <PaymentForm
