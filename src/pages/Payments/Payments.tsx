@@ -48,9 +48,7 @@ export const Payments: React.FC = () => {
 
   return (
     <>
-
-       <FilesModal />
-
+      <FilesModal />
       <DataTable
         columns={columns}
         data={payments}

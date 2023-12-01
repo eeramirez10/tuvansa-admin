@@ -1,6 +1,8 @@
 import React, { useState } from 'react'
 import Sider from 'antd/es/layout/Sider'
 import { Menu } from './Menu'
+import { CheckOutlined, CloseOutlined } from '@ant-design/icons'
+import { Switch } from 'antd'
 
 export const Sidebar: React.FC = () => {
   const [collapsed, setCollapsed] = useState(false)
@@ -12,6 +14,13 @@ export const Sidebar: React.FC = () => {
 
     >
       <Menu />
+
+      <Switch
+        checkedChildren={<CheckOutlined />}
+        unCheckedChildren={<CloseOutlined />}
+        defaultChecked
+        onChange={(cheked) => { console.log(cheked) }}
+      />
     </Sider>
   )
 }

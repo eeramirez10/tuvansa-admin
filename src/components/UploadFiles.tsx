@@ -3,6 +3,7 @@ import { UploadOutlined } from '@ant-design/icons'
 import { Button, message, Upload } from 'antd'
 import type { RcFile, UploadFile, UploadProps } from 'antd/es/upload/interface'
 import { useAppSelector } from 'src/hooks/useStore'
+import { uploadFiles } from 'src/services/payments'
 
 export const UploadFiles: React.FC = () => {
   const payment = useAppSelector(selector => selector.payments.selected)
@@ -10,18 +11,16 @@ export const UploadFiles: React.FC = () => {
   const [uploading, setUploading] = useState(false)
 
   const handleUpload = (): void => {
+    if (payment === null || payment === undefined) return
     const formData = new FormData()
     fileList.forEach((file) => {
       formData.append('payments', file as RcFile)
     })
     setUploading(true)
-    // You can use any AJAX library you like
-    fetch(`http://localhost:4000/api/files/${payment?.id}`, {
-      method: 'POST',
-      body: formData
-    })
-      .then((res) => res.json())
-      .then(() => {
+
+    uploadFiles({ id: payment?.id, files: formData })
+      .then((resp) => {
+        console.log(resp)
         setFileList([])
         message.success('upload successfully.')
       })
@@ -32,6 +31,22 @@ export const UploadFiles: React.FC = () => {
       .finally(() => {
         setUploading(false)
       })
+    // fetch(`https://tuvansacloud.dyndns.org/api/files/${payment?.id}`, {
+    //   method: 'POST',
+    //   body: formData
+    // })
+    //   .then((res) => res.json())
+    //   .then((resp) => {
+    //     console.log(resp)
+
+    //   })
+    //   .catch((e) => {
+    //     console.log(e)
+    //     message.error('upload failed.')
+    //   })
+    //   .finally(() => {
+    //     setUploading(false)
+    //   })
   }
 
   const props: UploadProps = {

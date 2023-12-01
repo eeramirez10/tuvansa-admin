@@ -1,13 +1,19 @@
 import React from 'react'
 import { LockOutlined, UserOutlined } from '@ant-design/icons'
 import { Button, Card, Checkbox, Flex, Form, Input, Layout } from 'antd'
+import { useAuth } from 'src/hooks/useAuth'
+import imageTuvansa from 'src/img/tuvansa.jpeg'
 // import { Navigate } from 'react-router-dom'
 
 export const Login: React.FC = () => {
   // const isAuthenticated = false
 
-  const onFinish = (values: any): void => {
-    console.log('Received values of form: ', values)
+  const { startLogin } = useAuth()
+
+  const onFinish = (values: { username: string, password: string }): void => {
+    const { username, password } = values
+
+    startLogin({ username, password })
   }
 
   return (
@@ -21,7 +27,7 @@ export const Login: React.FC = () => {
             cover={
               <img
                 alt="example"
-                src="https://gw.alipayobjects.com/zos/rmsportal/JiqGstEfoWAOHiTxclqi.png"
+                src={imageTuvansa}
               />
             }
           >

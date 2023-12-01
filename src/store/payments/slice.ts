@@ -1,81 +1,20 @@
 import { createSlice, type PayloadAction } from '@reduxjs/toolkit'
 import { type Payment } from '../../interfaces/Payment'
 
-const DEFAULT_PAYMENTS: Payment[] = [
-  // {
-  //   id: '29508ce8-81a9-11ee-b962-0242ac120002',
-  //   supplier: {
-  //     id: '1',
-  //     name: 'Gunderson'
-  //   },
-  //   docto: '00001',
-  //   paid: 20000,
-  //   comments: 'Test',
-  //   datePaid: dayjs(),
-  //   files: [
-  //     {
-  //       id: 'f2b3dec4-8329-11ee-b962-0242ac120002',
-  //       name: 'XA20491 DNA INTERNATIONAL.pdf',
-  //       ext: '.pdf',
-  //       createdAt: new Date(),
-  //       updatedAt: new Date()
-  //     }
-  //   ]
-  // },
-  // {
-  //   id: '35b14b80-81a9-11ee-b962-0242ac120002',
-  //   supplier: {
-  //     id: '2',
-  //     name: 'Tubos Perros'
-  //   },
-  //   docto: '00002',
-  //   paid: 18763,
-  //   comments: 'Test 2',
-  //   datePaid: dayjs(),
-  //   files: [
-  //     {
-  //       id: 'f2b3dec4-8329-11ee-b962-0242ac120002',
-  //       name: 'XA20491 DNA INTERNATIONAL.pdf',
-  //       ext: '.pdf',
-  //       createdAt: new Date(),
-  //       updatedAt: new Date()
-  //     }
-  //   ]
-  // },
-  // {
-  //   id: '3a03cd66-81a9-11ee-b962-0242ac120002',
-  //   supplier: {
-  //     id: '3',
-  //     name: 'Tubos Perros'
-  //   },
-  //   docto: '00002',
-  //   paid: 18763,
-  //   comments: 'Test 2',
-  //   datePaid: dayjs(),
-  //   files: [
-  //     {
-  //       id: 'f2b3dec4-8329-11ee-b962-0242ac120002',
-  //       name: 'XA20491 DNA INTERNATIONAL.pdf',
-  //       ext: '.pdf',
-  //       createdAt: new Date(),
-  //       updatedAt: new Date()
-  //     }
-  //   ]
-  // }
-]
+const DEFAULT_PAYMENTS: Payment[] = []
 
 interface InitialState {
   isLoading: boolean
   data: Payment[]
   selected: Payment | null
-  error: boolean
+  errorMessage: string | undefined
 }
 
 const DEFAULT_STATE: InitialState = {
   isLoading: false,
   data: DEFAULT_PAYMENTS,
   selected: null,
-  error: false
+  errorMessage: undefined
 }
 
 export const paymentsSlice = createSlice({

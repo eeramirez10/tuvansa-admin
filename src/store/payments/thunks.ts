@@ -1,37 +1,25 @@
 import { type Dispatch } from 'react'
-import { addNewPayment, loadPayments, onStartPayment, selectPayment, editPayment } from './slice'
-import { createPayment, edit, getAllPayments, getPaymentById } from 'src/services/payments'
-import { type PaymentForm } from 'src/interfaces/Payment'
+import { onStartPayment, selectPayment } from './slice'
+import { getPaymentById } from 'src/services/payments'
 
-export const postPayments = (value: any) => {
-  return async (dispatch: Dispatch<any>) => {
-    dispatch(onStartPayment())
-    const payment = await createPayment({ payment: value })
-
-    dispatch(addNewPayment(payment))
-  }
-}
-
-export const editPaymentT = ({ id, payment }: { id: string, payment: PaymentForm }) => {
-  return async (dispatch: Dispatch<any>) => {
-    dispatch(onStartPayment())
-    const paymentDB = await edit({ id, payment })
-    dispatch(editPayment({ ...paymentDB }))
-  }
-}
-
-export const getPayments = () => {
-  return async (dispatch: Dispatch<any>) => {
-    dispatch(onStartPayment())
-    const payments = await getAllPayments()
-    dispatch(loadPayments(payments))
-  }
-}
+// export const getPayments = () => {
+//   return async (dispatch: Dispatch<any>) => {
+//     try {
+//       dispatch(onStartPayment())
+//       const payments = await getAllPayments()
+//       dispatch(loadPayments(payments))
+//     } catch (error) {
+//       console.log(error)
+//     }
+//   }
+// }
 
 export const getPayment = ({ id }: { id: string }) => {
   return async (dispatch: Dispatch<any>) => {
     dispatch(onStartPayment())
-    const payment = await getPaymentById({ id })
-    dispatch(selectPayment(payment))
+    const resp = await getPaymentById({ id })
+    console.log(resp)
+
+    dispatch(selectPayment(resp?.payment !== undefined ? resp.payment : null))
   }
 }

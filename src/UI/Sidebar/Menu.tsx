@@ -7,6 +7,7 @@ import {
 import type { MenuProps } from 'antd'
 import { Menu as Me } from 'antd'
 import { Link } from 'react-router-dom'
+import { useAuth } from 'src/hooks/useAuth'
 
 // const items: MenuItem[] = [
 //   getItem((<Link to='/payments'> Pagos </Link>), '1', <PieChartOutlined />),
@@ -20,39 +21,42 @@ import { Link } from 'react-router-dom'
 //   getItem('Files', '9', <FileOutlined />)
 // ]
 
-const items: MenuProps['items'] = [
-  {
-    label: (<Link to='/payments'> Pagos </Link>),
-    key: '1',
-    icon: (<PieChartOutlined />)
-  },
-  {
-    label: 'Option 2',
-    key: '2',
-    icon: (<DesktopOutlined />)
-  },
-  {
-    label: 'user',
-    key: 'sub1',
-    icon: (<UserOutlined />),
-    children: [
-      {
-        label: 'Configuracion',
-        key: '3'
-      },
-      {
-        label: 'Info',
-        key: '4'
-      },
-      {
-        label: 'Logout',
-        key: '5'
-      }
-    ]
-  }
-]
-
 export const Menu: React.FC = () => {
+  const { startLogout } = useAuth()
+
+  const items: MenuProps['items'] = [
+    {
+      label: (<Link to='/payments'> Pagos </Link>),
+      key: '1',
+      icon: (<PieChartOutlined />)
+    },
+    {
+      label: 'Option 2',
+      key: '2',
+      icon: (<DesktopOutlined />)
+    },
+    {
+      label: 'user',
+      key: 'sub1',
+      icon: (<UserOutlined />),
+      children: [
+        {
+          label: 'Configuracion',
+          key: '3'
+        },
+        {
+          label: 'Info',
+          key: '4'
+        },
+        {
+          label: 'Logout',
+          onClick: () => { startLogout() },
+          key: '5'
+        }
+      ]
+    }
+  ]
+
   return (
     <Me
       defaultSelectedKeys={['1']}

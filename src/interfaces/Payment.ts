@@ -3,7 +3,6 @@ import { type Dayjs } from 'dayjs'
 export interface PaymentBody {
   supplier: Supplier
   docto: string
-  idProscai: string
   paid: number
   comments: string
   datePaid: Dayjs | Date
@@ -28,9 +27,12 @@ export interface File {
 }
 
 export interface Supplier {
-  id: string
   idProscai: string
   name: string
+}
+
+export interface SupplierId extends Supplier {
+  id: string
 }
 
 export interface FileId extends File {

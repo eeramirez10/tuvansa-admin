@@ -7,6 +7,7 @@ import { Provider } from 'react-redux'
 import { store } from './store/index.ts'
 import './index.css'
 import { ModalProvider } from './context/Modal.tsx'
+import { Toaster } from 'sonner'
 
 const { defaultAlgorithm, darkAlgorithm } = theme
 
@@ -19,6 +20,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
     >
       <Provider store={store}>
         <ModalProvider>
+          <Toaster richColors closeButton position="bottom-center" />
           <App />
         </ModalProvider>
       </Provider>

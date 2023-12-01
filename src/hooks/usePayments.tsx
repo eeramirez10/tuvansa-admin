@@ -5,8 +5,11 @@ import { Form, type FormInstance } from 'antd'
 
 import { type RefObject, useRef, useEffect } from 'react'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
-import { editPaymentT, getPayment, getPayments, postPayments } from 'src/store/payments/thunks'
+import { getPayment } from 'src/store/payments/thunks'
 import dayjs from 'dayjs'
+import { addNewPayment, editPayment, loadPayments, onStartPayment } from 'src/store/payments/slice'
+import { createPayment, edit, getAllPayments } from 'src/services/payments'
+import { toast } from 'sonner'
 
 interface Props {
   payments: Payment[]
@@ -33,7 +36,19 @@ export const usePayments = (): Props => {
 
   useEffect(() => {
     if (location.pathname === '/payments') {
-      dispatch(getPayments())
+      dispatch(onStartPayment())
+      getAllPayments()
+        .then((resp) => {
+          if (resp.error !== undefined) {
+            console.log(resp.error)
+            dispatch(loadPayments([]))
+            return
+          }
+          dispatch(loadPayments(resp.payments !== undefined ? resp?.payments : []))
+        })
+        .catch(e => {
+          console.log(e)
+        })
     }
   }, [])
 
@@ -57,18 +72,30 @@ export const usePayments = (): Props => {
   }, [payment])
 
   const handleOnSubmit = async (value: PaymentForm): Promise<void> => {
-    const { datePaid, docto, paid, supplier, idProscai, comments } = value
+    const { datePaid, docto, paid, supplier: name, idProscai, comments } = value
     const newPayment = {
       datePaid: dayjs(datePaid).toDate(),
-      supplier,
-      idProscai,
+      supplier: {
+        name,
+        idProscai
+      },
       docto,
       paid,
       comments
     }
 
     try {
-      await dispatch(postPayments(newPayment))
+      dispatch(onStartPayment())
+      const resp = await createPayment({ payment: newPayment })
+      if (resp.error != null) {
+        console.log(resp.error)
+        return
+      }
+
+      if (resp.payment !== undefined) {
+        dispatch(addNewPayment(resp.payment))
+        toast.success('Creado Correctamente')
+      }
     } catch (error) {
       console.log(error)
     } finally {
@@ -77,7 +104,7 @@ export const usePayments = (): Props => {
     }
   }
 
-  const handleEdit = (value: PaymentForm): void => {
+  const handleEdit = async (value: PaymentForm): Promise<void> => {
     const { datePaid, docto, paid, supplier, idProscai, id, comments } = value
     const newPayment = {
       datePaid: dayjs(datePaid).toDate(),
@@ -89,7 +116,13 @@ export const usePayments = (): Props => {
     }
 
     if (id !== undefined) {
-      dispatch(editPaymentT({ id, payment: newPayment }))
+      try {
+        dispatch(onStartPayment())
+        const paymentDB = await edit({ id, payment: newPayment })
+        dispatch(editPayment({ ...paymentDB }))
+      } catch (error) {
+        console.log(error)
+      }
     }
   }
 

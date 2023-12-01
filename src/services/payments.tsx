@@ -1,33 +1,39 @@
-import { type Payment, type PaymentForm } from 'src/interfaces/Payment'
+import { getApiUrl } from 'src/helpers/getApiUrl'
+import { type PaymentBody, type Payment, type PaymentForm } from 'src/interfaces/Payment'
+import { fetchWithToken } from '../helpers/fetchWithToken'
 
-const API_URL = 'http://localhost:4000/api'
-export const getAllPayments = async (): Promise<Payment[]> => {
-  const resp = await fetch(`${API_URL}/payments`)
-  const body = await resp.json()
-  return body
+const { API_URL } = getApiUrl()
+
+interface ResponsePayments {
+  payments?: Payment[]
+  error?: string
+  ok?: boolean
 }
 
-export const getPaymentById = async ({ id }: { id: string }): Promise<Payment> => {
-  const resp = await fetch(`${API_URL}/payments/${id}`)
-  const body = await resp.json()
-  return body
+interface ResponsePayment {
+  payment?: Payment
+  error?: string
+  ok?: boolean
 }
 
-export const createPayment = async ({ payment }: { payment: Payment }): Promise<Payment> => {
+export const getAllPayments = async (): Promise<ResponsePayments> => {
+  const resp = await fetchWithToken({ endpoint: 'payments', method: 'GET' })
+  return resp
+}
+
+export const getPaymentById = async ({ id }: { id: string }): Promise<ResponsePayment> => {
+  const resp = await fetchWithToken({ endpoint: `payments/${id}`, method: 'GET' })
+  return resp
+}
+
+// eslint-disable-next-line @typescript-eslint/no-invalid-void-type
+export const createPayment = async ({ payment }: { payment: PaymentBody }): Promise<ResponsePayment> => {
   const newPayment = {
-    ...payment,
-    supplierName: payment.supplier
+    ...payment
   }
 
-  const resp = await fetch(`${API_URL}/payments`, {
-    method: 'POST',
-    body: JSON.stringify(newPayment),
-    headers: { 'Content-type': 'application/json; charset=UTF-8' }
-  })
-
-  const body = await resp.json()
-
-  return body
+  const resp = await fetchWithToken({ endpoint: 'payments', method: 'POST', body: newPayment })
+  return resp
 }
 
 export const edit = async ({ id, payment }: { id: string, payment: PaymentForm }): Promise<Payment> => {
@@ -39,6 +45,20 @@ export const edit = async ({ id, payment }: { id: string, payment: PaymentForm }
     method: 'PUT',
     body: JSON.stringify(editedPayment),
     headers: { 'Content-type': 'application/json; charset=UTF-8' }
+  })
+
+  const body = await resp.json()
+
+  return body
+}
+
+export const uploadFiles = async ({ id, files }: { id: string, files: any }): Promise<void> => {
+  const resp = await fetch(`${API_URL}/files/${id}`, {
+    method: 'POST',
+    body: files,
+    headers: {
+      Authorization: `bearer ${localStorage.getItem('token')}`
+    }
   })
 
   const body = await resp.json()
