@@ -1,4 +1,3 @@
-import { type Payment } from 'src/interfaces/Payment'
 import { getApiUrl } from './getApiUrl'
 import { toast } from 'sonner'
 
@@ -14,16 +13,16 @@ interface Props {
   body?: Record<string, unknown>
 }
 
-interface ReturnFetch {
-  payments?: Payment[]
-  payment: Payment
-  error?: string
-  ok?: boolean
-}
+// interface ReturnFetch {
+//   payments?: Payment[]
+//   payment: Payment
+//   error?: string
+//   ok?: boolean
+// }
 
 const { API_URL } = getApiUrl()
 
-export const fetchWithToken = async ({ endpoint, method, body }: Props): Promise<ReturnFetch> => {
+export const fetchWithToken = async ({ endpoint, method, body }: Props): Promise<any> => {
   const options = {
     method: METHOD_VALUES.GET,
     headers: {

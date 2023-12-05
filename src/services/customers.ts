@@ -1,3 +1,7 @@
+import { getApiUrl } from 'src/helpers/getApiUrl'
+
+const { API_URL } = getApiUrl()
+
 interface CustomerProscai {
   uid: string
   name: string
@@ -7,7 +11,7 @@ interface CustomerProscai {
 }
 
 export const getCustomersProscai = async ({ search }: { search: string }): Promise<CustomerProscai[]> => {
-  const resp = await fetch(`http://localhost:4000/api/proscai/customers?search=${search}`)
+  const resp = await fetch(`${API_URL}/proscai/customers?search=${search}`)
   const items = await resp.json()
   return items
 }
