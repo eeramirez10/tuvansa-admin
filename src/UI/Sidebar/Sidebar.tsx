@@ -1,26 +1,23 @@
 import React, { useState } from 'react'
 import Sider from 'antd/es/layout/Sider'
 import { Menu } from './Menu'
-import { CheckOutlined, CloseOutlined } from '@ant-design/icons'
-import { Switch } from 'antd'
+import { SwitchTheme } from 'src/components/SwitchTheme'
 
 export const Sidebar: React.FC = () => {
   const [collapsed, setCollapsed] = useState(false)
+
   return (
     <Sider
       collapsible
       collapsed={collapsed}
       onCollapse={(value) => { setCollapsed(value) }}
+      style={{ position: 'relative' }}
 
     >
       <Menu />
 
-      <Switch
-        checkedChildren={<CheckOutlined />}
-        unCheckedChildren={<CloseOutlined />}
-        defaultChecked
-        onChange={(cheked) => { console.log(cheked) }}
-      />
+      <SwitchTheme />
+
     </Sider>
   )
 }

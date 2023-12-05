@@ -33,7 +33,8 @@ export const useAuth = (): Props => {
       dispatch(onLogin(resp.user))
       toast.success('Sesion correcta!')
     } catch (error) {
-      console.log(error)
+      dispatch(onLogout())
+      toast.error('hubo un error interno, hable con el administrador')
     }
   }
 
