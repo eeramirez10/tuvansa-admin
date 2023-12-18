@@ -3,7 +3,7 @@ import { useAppDispatch, useAppSelector } from './useStore'
 import { type LoginProps, login, renewToken } from 'src/services/auth'
 import type { StatusValue, User } from 'src/interfaces/Auth'
 import { toast } from 'sonner'
-import { useLocation, useNavigate } from 'react-router-dom'
+import { redirect, useLocation, useNavigate } from 'react-router-dom'
 import { useEffect } from 'react'
 
 interface Props {
@@ -19,8 +19,7 @@ export const useAuth = (): Props => {
   const { status, user, errorMessage } = useAppSelector(state => state.auth)
   const dispatch = useAppDispatch()
   const location = useLocation()
-  
-  const navigate = useNavigate()
+
   
 
 
@@ -59,7 +58,7 @@ export const useAuth = (): Props => {
         const url = localStorage.getItem('urlRedirect')
 
         if(url){
-          navigate(url);
+          redirect(url);
           localStorage.removeItem('urlRedirect')
         }
       
