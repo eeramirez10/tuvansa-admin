@@ -1,6 +1,6 @@
 import React from 'react'
 import {
-  DesktopOutlined,
+  // DesktopOutlined,
   PieChartOutlined,
   UserOutlined
 } from '@ant-design/icons'
@@ -31,10 +31,15 @@ export const Menu: React.FC = () => {
       icon: (<PieChartOutlined />)
     },
     {
-      label: 'Option 2',
+      label: (<Link to='/inventories'> Inventarios </Link>),
       key: '2',
-      icon: (<DesktopOutlined />)
+      icon: (<PieChartOutlined />)
     },
+    // {
+    //   label: 'Option 2',
+    //   key: '2',
+    //   icon: (<DesktopOutlined />)
+    // },
     {
       label: 'user',
       key: 'sub1',
@@ -45,7 +50,7 @@ export const Menu: React.FC = () => {
           key: '3'
         },
         {
-          label: 'Info',
+          label: (<Link to="/user/1/info"> Info </Link>),
           key: '4'
         },
         {

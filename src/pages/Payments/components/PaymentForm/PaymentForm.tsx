@@ -1,9 +1,10 @@
 /* eslint-disable @typescript-eslint/no-misused-promises */
-import React, { useState } from 'react'
-import { Button, Card, Form, type FormInstance, Input, InputNumber, DatePicker, AutoComplete, Row, Col } from 'antd'
+import React, { useEffect, useState } from 'react'
+import { Button, Card, Form, type FormInstance, Input, DatePicker, AutoComplete, Row, Col, Space, InputNumber } from 'antd'
 import { useButtonRef } from 'src/hooks/useButtonRef'
 import { CloseSquareFilled } from '@ant-design/icons'
-import { getCustomersProscai } from 'src/services/customers'
+import { getSuppliersProscai } from 'src/services/supplier'
+import { getDocsBySupplier } from 'src/services/docto'
 
 interface Props {
   form: FormInstance<any>
@@ -15,7 +16,20 @@ export const PaymentForm: React.FC<Props> = ({ form, onFinish }) => {
   const [options, setOptions] = useState<Array<{ label: string, value: string, id: string }>>([])
   const [isLoading, setIsloading] = useState(false)
   const [open, setOpen] = useState(false)
+  const [supplierId, setSupplierId] = useState('')
   let filterTimeout: number
+
+  useEffect(() => {
+    if (supplierId !== '') {
+      getDocsBySupplier({ supplierId })
+        .then(resp => {
+          console.log(resp.doctos)
+
+          form.setFieldsValue({ doctos: resp.doctos })
+        })
+        .catch(e => { console.log(e) })
+    }
+  }, [supplierId])
 
   const onSearch = async (text: string): Promise<void> => {
     clearTimeout(filterTimeout)
@@ -28,10 +42,8 @@ export const PaymentForm: React.FC<Props> = ({ form, onFinish }) => {
       setIsloading(true)
       setOpen(false)
       try {
-        const items = await getCustomersProscai({ search: text })
-
-        const optionsDB = items.map(item => ({ label: item.name, value: item.name, id: item.uid }))
-
+        const { suppliers } = await getSuppliersProscai({ search: text })
+        const optionsDB = suppliers.map(item => ({ label: item.name, value: item.name, id: item.uid }))
         setOptions(optionsDB)
       } catch (error) {
         console.log(error)
@@ -46,8 +58,9 @@ export const PaymentForm: React.FC<Props> = ({ form, onFinish }) => {
     <Card style={{ width: '100%' }}>
       <Form
         form={form}
-        // labelCol={{ span: 3 }}
-        wrapperCol={{ span: 8 }}
+
+        layout='vertical'
+
         onFinish={onFinish}
         style={{ width: '100%' }}
 
@@ -85,6 +98,7 @@ export const PaymentForm: React.FC<Props> = ({ form, onFinish }) => {
                 onSelect={(_value, values) => {
                   setOpen(false)
                   form.setFieldsValue({ idProscai: values.id })
+                  setSupplierId(values.id)
                 }}
                 popupMatchSelectWidth={500}
                 disabled={isLoading}
@@ -108,7 +122,9 @@ export const PaymentForm: React.FC<Props> = ({ form, onFinish }) => {
 
         </Row>
 
-        <Form.Item
+        <DoctosListForm />
+
+        {/* <Form.Item
           name={'docto'}
           label='Docto'
           rules={[{ required: true }]}
@@ -123,7 +139,7 @@ export const PaymentForm: React.FC<Props> = ({ form, onFinish }) => {
         >
           <InputNumber />
 
-        </Form.Item>
+        </Form.Item> */}
 
         <Form.Item hidden wrapperCol={{ span: 8, offset: 3 }}>
           <Button hidden ref={buttonRef} type="primary" htmlType="submit">
@@ -133,5 +149,72 @@ export const PaymentForm: React.FC<Props> = ({ form, onFinish }) => {
       </Form>
 
     </Card >
+  )
+}
+
+const DoctosListForm: React.FC = () => {
+  return (
+    <Form.List name="doctos">
+      {(fields) => (
+        <>
+          {fields.map(({ key, name, ...restField }) => (
+            <Space key={key} size='small'>
+
+              <Form.Item
+                {...restField}
+
+                name={[name, 'docto']}
+                label='Docto'
+              >
+                <Input style={{ width: 100 }} />
+              </Form.Item>
+
+              <Form.Item
+                {...restField}
+
+                name={[name, 'referencia']}
+                label='Referencia'
+              >
+                <Input style={{ width: 100 }} />
+              </Form.Item>
+
+              <Form.Item
+                {...restField}
+
+                name={[name, 'referenciaEllos']}
+                label='Referencia Ellos'
+              >
+                <Input style={{ width: 100 }} />
+              </Form.Item>
+
+              <Form.Item
+                {...restField}
+                name={[name, 'montoFactura']}
+                label='Monto'
+              >
+                <Input style={{ width: 100 }} />
+              </Form.Item>
+
+              <Form.Item
+                {...restField}
+                name={[name, 'saldo']}
+                label='Saldo'
+              >
+                <InputNumber style={{ width: 100 }} />
+              </Form.Item>
+
+              <Form.Item
+                {...restField}
+                name={[name, 'pagado']}
+                label="Pagado"
+                rules={[{ required: true, message: 'Missing last pagado' }]}
+              >
+                <InputNumber style={{ width: 100 }} />
+              </Form.Item>
+            </Space>
+          ))}
+        </>
+      )}
+    </Form.List>
   )
 }

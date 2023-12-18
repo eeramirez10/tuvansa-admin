@@ -7,6 +7,7 @@ const AUTH_STATUS = {
 export type StatusValue = typeof AUTH_STATUS[keyof typeof AUTH_STATUS]
 
 export interface User {
+  id?: string
   username: string
   name: string
   last: string

@@ -1,12 +1,20 @@
 import { type Dayjs } from 'dayjs'
+import type { Supplier } from './Supplier'
 
 export interface PaymentBody {
   supplier: Supplier
-  docto: string
+  doctos: Docto
+}
+
+export interface Docto {
+  name: string
+  references: string
+  dateProscai: Date
+  amount: number
+  balance: number
   paid: number
-  comments: string
-  datePaid: Dayjs | Date
-  files?: FileId[]
+  file?: File
+  supplier: Supplier
 }
 
 export interface PaymentForm {
@@ -17,22 +25,6 @@ export interface PaymentForm {
   docto: string
   paid: number
   comments: string
-}
-
-export interface File {
-  name: string
-  ext: string
-  createdAt: Date
-  updatedAt: Date
-}
-
-export interface Supplier {
-  idProscai: string
-  name: string
-}
-
-export interface SupplierId extends Supplier {
-  id: string
 }
 
 export interface FileId extends File {

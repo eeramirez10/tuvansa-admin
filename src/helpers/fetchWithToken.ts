@@ -1,10 +1,11 @@
 import { getApiUrl } from './getApiUrl'
 import { toast } from 'sonner'
 
-const METHOD_VALUES = {
+export const METHOD_VALUES = {
   POST: 'POST',
   GET: 'GET',
-  PUT: 'PUT'
+  PUT: 'PUT',
+  PATCH: 'PATCH'
 } as const
 
 interface Props {

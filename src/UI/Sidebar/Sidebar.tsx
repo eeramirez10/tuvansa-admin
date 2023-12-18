@@ -12,6 +12,7 @@ export const Sidebar: React.FC = () => {
       collapsed={collapsed}
       onCollapse={(value) => { setCollapsed(value) }}
       style={{ position: 'relative' }}
+      className='hide-sidebar'
 
     >
       <Menu />

@@ -10,6 +10,9 @@ import { ProtectedRoutes } from './ProtectedRoutes'
 import './App.css'
 import { useAuth } from './hooks/useAuth'
 import { Spin } from 'antd'
+import { UserInfo } from './pages/User/UserInfo'
+import { Inventories } from './pages/Inventories/Inventories'
+import { InventoryDetail } from './pages/Inventories/InventoryDetail'
 
 export const AppRouter: React.FC = () => {
   const { status, checkAuthToken } = useAuth()
@@ -27,10 +30,13 @@ export const AppRouter: React.FC = () => {
 
           (
             <Route element={<ProtectedRoutes />}>
+              <Route path='/inventories' element={<Inventories />} />
+              <Route path='/inventory/detail/:id' element={<InventoryDetail />} />
               <Route path='/payments' element={<Payments />} />
               <Route path='/payment/:id/edit' element={<PaymentEdit />} />
               <Route path='/payment/new' element={<NewPayment />} />
               <Route path='/new' element={<h1> New </h1>} />
+              <Route path="/user/:id/info" element={<UserInfo />} />
               <Route path="/*" element={<Navigate to="/payments" />} />
             </Route>
           )

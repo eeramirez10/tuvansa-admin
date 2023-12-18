@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { Button, Card, Flex } from 'antd'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import {
@@ -19,6 +19,8 @@ interface NameNavigation {
 
 const useNameNavigation = (): NameNavigation => {
   const { pathname } = useLocation()
+
+  console.log(pathname)
 
   const arrPathname = pathname.split('/').slice(1)
 
@@ -47,8 +49,17 @@ export const Navigation: React.FC = () => {
   const payment = useAppSelector(state => state.payments.selected)
   const dispatch = useAppDispatch()
   const navigate = useNavigate()
+  const location = useLocation()
+
+  console.log(location)
+
+  const pathname = location.pathname.split('/')[1]
 
   const { buttonRef } = useButtonRef()
+
+  useEffect(() => {
+
+  }, [])
 
   const handleListadoClick = (): void => {
     dispatch(selectPayment(null))
@@ -67,7 +78,7 @@ export const Navigation: React.FC = () => {
         <p> {capitalize} </p>
 
         {
-          (includesNewStringPath || includesEditStringPath)
+          (includesNewStringPath || includesEditStringPath || pathname === 'inventory')
             ? (
               <>
                 <Flex gap='small' wrap='wrap'>
@@ -79,17 +90,21 @@ export const Navigation: React.FC = () => {
                     Listado
                   </Button>
 
-                  <Button
-                    onClick={() => {
-                      if (buttonRef !== null) {
-                        buttonRef.current?.click()
-                      }
-                    }}
-                    loading={isLoading}
-                    disabled={isLoading}
-                  >
-                    Guardar
-                  </Button>
+                  {
+                    pathname !== 'inventory' &&
+
+                    <Button
+                      onClick={() => {
+                        if (buttonRef !== null) {
+                          buttonRef.current?.click()
+                        }
+                      }}
+                      loading={isLoading}
+                      disabled={isLoading}
+                    >
+                      Guardar
+                    </Button>
+                  }
 
                   {
                     (payment !== null)
@@ -105,18 +120,27 @@ export const Navigation: React.FC = () => {
 
               )
             : (
-              <Link
-                to={`${singularPath}/new`}
-                state={{ name: 'Nuevo', action: 'new' }}
-              >
-                <Button
-                  type="primary"
-                  shape='round'
-                >
-                  Nuevo
-                </Button>
 
-              </Link>
+              <>
+
+                {
+                  pathname !== 'inventories' &&
+
+                  <Link
+                    to={`${singularPath}/new`}
+                    state={{ name: 'Nuevo', action: 'new' }}
+                  >
+                    <Button
+                      type="primary"
+                      shape='round'
+                    >
+                      Nuevo
+                    </Button>
+
+                  </Link>
+                }
+
+              </>
 
               )
         }
