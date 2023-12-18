@@ -3,6 +3,8 @@ import { useAppDispatch, useAppSelector } from './useStore'
 import { type LoginProps, login, renewToken } from 'src/services/auth'
 import type { StatusValue, User } from 'src/interfaces/Auth'
 import { toast } from 'sonner'
+import { useLocation, useNavigate } from 'react-router-dom'
+import { useEffect } from 'react'
 
 interface Props {
   status: StatusValue
@@ -16,6 +18,24 @@ interface Props {
 export const useAuth = (): Props => {
   const { status, user, errorMessage } = useAppSelector(state => state.auth)
   const dispatch = useAppDispatch()
+  const location = useLocation()
+  
+  const navigate = useNavigate()
+  console.log(location)
+
+
+  useEffect(() => {
+
+    if (!location.key) {
+
+        localStorage.setItem('urlRedirect', location.pathname)
+
+    }
+
+
+
+
+}, [location])
 
   const startLogin = async ({ username, password }: LoginProps): Promise<void> => {
     dispatch(onChecking())
@@ -32,6 +52,16 @@ export const useAuth = (): Props => {
       localStorage.setItem('token-init-date', new Date().getTime().toLocaleString())
       dispatch(onLogin(resp.user))
       toast.success('Sesion correcta!')
+      
+      if (localStorage.getItem('urlRedirect')) {
+        const url = localStorage.getItem('urlRedirect')
+
+        if(url){
+          navigate(url);
+          localStorage.removeItem('urlRedirect')
+        }
+      
+    }
     } catch (error) {
       dispatch(onLogout())
       toast.error('hubo un error interno, hable con el administrador')
