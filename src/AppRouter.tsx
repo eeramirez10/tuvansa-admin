@@ -15,7 +15,7 @@ import { Inventories } from './pages/Inventories/Inventories'
 import { InventoryDetail } from './pages/Inventories/InventoryDetail'
 
 export const AppRouter: React.FC = () => {
-  const { status, checkAuthToken } = useAuth()
+  const { status, checkAuthToken, urlRedirect } = useAuth()
 
   useEffect(() => {
     checkAuthToken()
@@ -37,7 +37,10 @@ export const AppRouter: React.FC = () => {
               <Route path='/payment/new' element={<NewPayment />} />
               <Route path='/new' element={<h1> New </h1>} />
               <Route path="/user/:id/info" element={<UserInfo />} />
-              <Route path="/*" element={<Navigate to="/payments" />} />
+              {
+                urlRedirect !== null ? <Route path="/*" element={<Navigate to={urlRedirect} />} /> : <Route path="/*" element={<Navigate to="/payments" />} />
+              }
+              
             </Route>
           )
         }

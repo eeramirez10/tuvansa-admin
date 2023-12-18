@@ -3,13 +3,14 @@ import { useAppDispatch, useAppSelector } from './useStore'
 import { type LoginProps, login, renewToken } from 'src/services/auth'
 import type { StatusValue, User } from 'src/interfaces/Auth'
 import { toast } from 'sonner'
-import { redirect, useLocation, useNavigate } from 'react-router-dom'
+import { redirect, useLocation } from 'react-router-dom'
 import { useEffect } from 'react'
 
 interface Props {
   status: StatusValue
   user: User | Record<string, unknown>
   errorMessage: string | undefined
+  urlRedirect: string | null
   startLogin: ({ username, password }: LoginProps) => Promise<void>
   checkAuthToken: () => Promise<void>
   startLogout: () => void
@@ -19,6 +20,7 @@ export const useAuth = (): Props => {
   const { status, user, errorMessage } = useAppSelector(state => state.auth)
   const dispatch = useAppDispatch()
   const location = useLocation()
+  const urlRedirect = localStorage.getItem('urlRedirect')
 
   
 
@@ -26,8 +28,6 @@ export const useAuth = (): Props => {
   useEffect(() => {
 
     if (location.key === 'default') {
-
-      console.log(location)
 
         localStorage.setItem('urlRedirect', location.pathname)
 
@@ -54,15 +54,16 @@ export const useAuth = (): Props => {
       dispatch(onLogin(resp.user))
       toast.success('Sesion correcta!')
 
-      if (localStorage.getItem('urlRedirect')) {
-        const url = localStorage.getItem('urlRedirect')
+    //   if (localStorage.getItem('urlRedirect')) {
+    //     const url = localStorage.getItem('urlRedirect')
 
-        if(url){
-          redirect(url);
-          localStorage.removeItem('urlRedirect')
-        }
+    //     if(url){
+    //       console.log(url)
+    //       redirect(url);
+    //       localStorage.removeItem('urlRedirect')
+    //     }
       
-    }
+    // }
     } catch (error) {
       dispatch(onLogout())
       toast.error('hubo un error interno, hable con el administrador')
@@ -102,6 +103,7 @@ export const useAuth = (): Props => {
     status,
     user,
     errorMessage,
+    urlRedirect,
     startLogin,
     checkAuthToken,
     startLogout
