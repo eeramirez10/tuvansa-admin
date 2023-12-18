@@ -78,7 +78,7 @@ export const Navigation: React.FC = () => {
         <p> {capitalize} </p>
 
         {
-          (includesNewStringPath || includesEditStringPath || pathname === 'inventory')
+          (includesNewStringPath || includesEditStringPath || pathname === 'inventario')
             ? (
               <>
                 <Flex gap='small' wrap='wrap'>
@@ -91,7 +91,7 @@ export const Navigation: React.FC = () => {
                   </Button>
 
                   {
-                    pathname !== 'inventory' &&
+                    pathname !== 'inventario' &&
 
                     <Button
                       onClick={() => {

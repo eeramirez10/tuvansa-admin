@@ -38,15 +38,21 @@ export const InventoryInfo: React.FC = () => {
       <Title level={5}>{inventory?.cod} </Title>
       <Title level={5}>{inventory?.ean} </Title>
 
-      <Title level={5}>Existencia en proscai: {inventory?.quantity} </Title>
+      {
+        user.rol === 'admin' && <Title level={5}>Existencia en proscai: {inventory?.quantity} </Title>
+      }
+
+      
 
       <ul>
         {
-          inventory?.counts?.map(count => (
-            <li key={count.id}>
-              Conteo: {count.count}
-              usuario: {count.user.name}
-              fecha:{moment(count.createdAt).format('MM-DD-YYYY')}
+          inventory?.counts?.map((count, i) => (
+            <li key={count.id} style={{minWidth:'50%', display:'flex', justifyContent:'flex-start', gap: 20}}>
+              <span>{ i + 1 }</span>
+              <span>Conteo: {count.count}</span>
+              <span>  usuario: {count.user.name}</span>
+              <span> fecha: {moment(count.createdAt).format('MM-DD-YYYY')} </span>
+             
             </li>
           ))
         }
