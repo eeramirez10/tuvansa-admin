@@ -17,7 +17,7 @@ export const ListOfInventories: React.FC = () => {
       dataIndex: 'iseq',
       width: '20%',
       render: (_, { iseq }) => {
-        return (<Link to={`/inventory/detail/${iseq}`} >{iseq} </Link>)
+        return (<Link to={`/inventario/detail/${iseq}`} >{iseq} </Link>)
       }
     },
     {

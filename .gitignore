@@ -23,11 +23,3 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
-src/hooks/useModal.tsx
-src/hooks/usePayments.tsx
-src/pages/Payments/components/FilesModal.tsx
-src/pages/Payments/Payments.tsx
-src/store/auth/slice.ts
-src/store/index.ts
-src/store/inventories/slice.ts
-src/store/payments/slice.ts

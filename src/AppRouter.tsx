@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react'
 
 import { Routes, Route, Navigate } from 'react-router-dom'
-import { Payments } from './pages/Payments/Payments'
+// import { Payments } from './pages/Payments/Payments'
 
 import { NewPayment } from './pages/Payments/NewPayment'
 import { PaymentEdit } from './pages/Payments/PaymentEdit'
@@ -31,8 +31,8 @@ export const AppRouter: React.FC = () => {
           (
             <Route element={<ProtectedRoutes />}>
               <Route path='/inventories' element={<Inventories />} />
-              <Route path='/inventory/detail/:id' element={<InventoryDetail />} />
-              <Route path='/payments' element={<Payments />} />
+              <Route path='/inventario/detail/:id' element={<InventoryDetail />} />
+              {/* <Route path='/payments' element={<Payments />} /> */}
               <Route path='/payment/:id/edit' element={<PaymentEdit />} />
               <Route path='/payment/new' element={<NewPayment />} />
               <Route path='/new' element={<h1> New </h1>} />
