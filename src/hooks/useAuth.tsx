@@ -21,12 +21,14 @@ export const useAuth = (): Props => {
   const location = useLocation()
   
   const navigate = useNavigate()
-  console.log(location)
+  
 
 
   useEffect(() => {
 
-    if (!location.key) {
+    if (location.key === 'default') {
+
+      console.log(location)
 
         localStorage.setItem('urlRedirect', location.pathname)
 
@@ -52,7 +54,7 @@ export const useAuth = (): Props => {
       localStorage.setItem('token-init-date', new Date().getTime().toLocaleString())
       dispatch(onLogin(resp.user))
       toast.success('Sesion correcta!')
-      
+
       if (localStorage.getItem('urlRedirect')) {
         const url = localStorage.getItem('urlRedirect')
 
