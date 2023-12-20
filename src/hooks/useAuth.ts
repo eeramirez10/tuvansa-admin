@@ -3,7 +3,7 @@ import { useAppDispatch, useAppSelector } from './useStore'
 import { type LoginProps, login, renewToken } from 'src/services/auth'
 import type { StatusValue, User } from 'src/interfaces/Auth'
 import { toast } from 'sonner'
-import { redirect, useLocation } from 'react-router-dom'
+import { useLocation } from 'react-router-dom'
 import { useEffect } from 'react'
 
 interface Props {
@@ -76,6 +76,9 @@ export const useAuth = (): Props => {
   }
 
   const checkAuthToken = async (): Promise<void> => {
+
+
+    
     const token = localStorage.getItem('token')
     if (token === undefined || token === null) {
       dispatch(onLogout())
@@ -90,6 +93,7 @@ export const useAuth = (): Props => {
       if (error !== undefined) {
         dispatch(onLogout())
         localStorage.removeItem('token')
+        return
       }
 
       dispatch(onLogin(user))

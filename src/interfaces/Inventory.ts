@@ -40,4 +40,15 @@ export interface Count {
 
 export interface CountId extends Count {
   id: string
+  inventory: CountInventory
+
+}
+
+export interface CountInventory {
+  iseq: string
+  cod: string
+  ean: string
+  quantity: number
+  description: string
+
 }

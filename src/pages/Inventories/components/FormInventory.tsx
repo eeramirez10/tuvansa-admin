@@ -26,9 +26,9 @@ export const FormInventory: React.FC<Props> = ({ isPaused }) => {
       <Form.Item
         label="Conteo"
         name="count"
-        rules={[{ required: true, message: 'Please input your username!' }]}
+        rules={[{ required: true, message: 'Ingresa un valor numerico!' }]}
       >
-        <InputNumber />
+        <InputNumber min={0} />
       </Form.Item>
       <Form.Item >
         <Button type="primary" htmlType="submit" disabled = { isPaused }>

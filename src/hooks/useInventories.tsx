@@ -12,7 +12,7 @@ interface InventoryReturn {
   inventories: Inventory[]
   isLoading: boolean
   form: FormInstance<any>
-  onLoadInventories: () => Promise<void>
+  onLoadInventories: ({ from }: { from?: string}) => Promise<void>
   handleOnSubmit: (value: { count: number }) => Promise<void>
   handleliberarInventario: () => Promise<void>
   handleOnSearch: (value: { search: string }) => Promise<void>
@@ -37,20 +37,21 @@ export const useInventories = (): InventoryReturn => {
     dispatch(selectInventory(inventory.inventory ?? inventoryProscai.inventory))
   }
 
-  const onLoadInventories = async (): Promise<void> => {
+  const onLoadInventories = async ({ from = ''}: { from?: string}): Promise<void> => {
     dispatch(onStartInventories())
-    getInventories('')
+
+    getInventories({from})
       .then((resp) => {
         const { inventories } = resp
         const { items } = inventories
-        dispatch(loadInventories(items.map(item => ({ ...item, id: item.iseq }))))
+        dispatch(loadInventories(items.map(item => ({ ...item, id: item.id !== undefined ? item.id : item.iseq }))))
       })
   }
 
   const handleOnSearch = async (value: { search: string }): Promise<void> => {
     try {
       dispatch(onStartInventories())
-      const resp = await getInventories(value.search)
+      const resp = await getInventories({search: value.search, from:'proscai'})
 
       dispatch(loadInventories(resp.inventories.items))
     } catch (error) {

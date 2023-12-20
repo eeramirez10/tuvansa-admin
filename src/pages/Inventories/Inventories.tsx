@@ -7,7 +7,7 @@ export const Inventories: React.FC = () => {
   const { onLoadInventories } = useInventories()
 
   useEffect(() => {
-    onLoadInventories()
+    onLoadInventories({from: 'proscai'})
   }, [])
 
   return (

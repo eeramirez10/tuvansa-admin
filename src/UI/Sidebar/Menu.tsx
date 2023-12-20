@@ -31,9 +31,19 @@ export const Menu: React.FC = () => {
       icon: (<PieChartOutlined />)
     },
     {
-      label: (<Link to='/inventories'> Inventarios </Link>),
+      label: 'Almacen',
       key: '2',
-      icon: (<PieChartOutlined />)
+      icon: (<PieChartOutlined />),
+      children:[
+        {
+          label: (<Link to='/inventories'> Inventarios </Link>),
+          key: '21'
+        },
+        {
+          label: (<Link to='/counts'> Conteos </Link>),
+          key: '22'
+        }
+      ]
     },
     // {
     //   label: 'Option 2',

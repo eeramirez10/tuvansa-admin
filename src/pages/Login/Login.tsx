@@ -23,7 +23,7 @@ export const Login: React.FC = () => {
         <Flex style={{ width: '100%', minHeight: '100vh' }} justify='center' align='center'>
 
           <Card
-            style={{ width: 400 }}
+            style={{ width: 300 }}
             cover={
               <img
                 alt="example"
@@ -39,13 +39,13 @@ export const Login: React.FC = () => {
             >
               <Form.Item
                 name="username"
-                rules={[{ required: true, message: 'Please input your Username!' }]}
+                rules={[{ required: true, message: 'Por favor ingresa tu usuario!' }]}
               >
                 <Input prefix={<UserOutlined className="site-form-item-icon" />} placeholder="Username" />
               </Form.Item>
               <Form.Item
                 name="password"
-                rules={[{ required: true, message: 'Please input your Password!' }]}
+                rules={[{ required: true, message: 'Por favor ingresa tu password!' }]}
               >
                 <Input
                   prefix={<LockOutlined className="site-form-item-icon" />}
@@ -53,21 +53,21 @@ export const Login: React.FC = () => {
                   placeholder="Password"
                 />
               </Form.Item>
-              <Form.Item>
+              {/* <Form.Item>
                 <Form.Item name="remember" valuePropName="checked" noStyle>
                   <Checkbox>Remember me</Checkbox>
-                </Form.Item>
+                </Form.Item> 
 
                 <a className="login-form-forgot" href="">
                   Forgot password
                 </a>
-              </Form.Item>
+              </Form.Item> */}
 
               <Form.Item>
                 <Button type="primary" htmlType="submit" className="login-form-button">
                   Log in
                 </Button>
-                Or <a href="">register now!</a>
+                {/* Or <a href="">register now!</a> */}
               </Form.Item>
             </Form>
 

@@ -15,10 +15,13 @@ interface InventoryResponse {
   error?: string
 }
 
-export const getInventories = async (search: string): Promise<InventoriesResponse> => {
-  const busqueda = search !== undefined ? `?search=${search.toUpperCase()}` : ''
+export const getInventories = async ({ search = '', from = '' }: { search?: string, from?: string }): Promise<InventoriesResponse> => {
+  const busqueda = search !== undefined || !search  ? `?search=${search.toUpperCase()}` : ''
 
-  const inventories = await fetchWithoutToken({ endpoint: `proscai/inventories${busqueda}` })
+ console.log(from)
+  const inventories = from === 'proscai' ? await fetchWithToken({ endpoint: `proscai/inventories${busqueda}` }) : await fetchWithToken({ endpoint: `inventories${busqueda}` })
+
+  console.log(inventories)
 
   return inventories
 }

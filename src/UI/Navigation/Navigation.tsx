@@ -20,8 +20,6 @@ interface NameNavigation {
 const useNameNavigation = (): NameNavigation => {
   const { pathname } = useLocation()
 
-  console.log(pathname)
-
   const arrPathname = pathname.split('/').slice(1)
 
   const includesNewStringPath = arrPathname.includes('new')
@@ -51,7 +49,6 @@ export const Navigation: React.FC = () => {
   const navigate = useNavigate()
   const location = useLocation()
 
-  console.log(location)
 
   const pathname = location.pathname.split('/')[1]
 
