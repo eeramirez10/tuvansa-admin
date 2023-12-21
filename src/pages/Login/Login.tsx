@@ -1,6 +1,6 @@
 import React from 'react'
 import { LockOutlined, UserOutlined } from '@ant-design/icons'
-import { Button, Card, Checkbox, Flex, Form, Input, Layout } from 'antd'
+import { Button, Card,Flex, Form, Input, Layout } from 'antd'
 import { useAuth } from 'src/hooks/useAuth'
 import imageTuvansa from 'src/img/tuvansa.jpeg'
 // import { Navigate } from 'react-router-dom'

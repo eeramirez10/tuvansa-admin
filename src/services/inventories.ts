@@ -51,6 +51,7 @@ export const postInventory = async ({ inventory }: { inventory: Inventory }): Pr
   const newInventory = {
     ...inventory
   }
+
   const inventoryDB = await fetchWithToken({ endpoint: 'inventories', method: 'POST', body: newInventory })
 
   return inventoryDB

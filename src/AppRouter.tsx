@@ -13,7 +13,7 @@ import { Spin } from 'antd'
 import { UserInfo } from './pages/User/UserInfo'
 import { Inventories } from './pages/Inventories/Inventories'
 import { InventoryDetail } from './pages/Inventories/InventoryDetail'
-import { Counts } from './pages/Counts/Counts'
+import { Counts } from './pages/Counts/counts'
 
 export const AppRouter: React.FC = () => {
   const { status, checkAuthToken, urlRedirect } = useAuth()
@@ -34,6 +34,7 @@ export const AppRouter: React.FC = () => {
               <Route path='/inventories' element={<Inventories />} />
               <Route path='/inventario/detail/:id' element={<InventoryDetail />} />
               <Route path='/counts' element={<Counts />} />
+
               {/* <Route path='/payments' element={<Payments />} /> */}
               <Route path='/payment/:id/edit' element={<PaymentEdit />} />
               <Route path='/payment/new' element={<NewPayment />} />

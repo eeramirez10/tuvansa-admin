@@ -12,6 +12,8 @@ export const InventoryInfo: React.FC = () => {
 
   const paused = inventory?.paused
 
+  console.log(inventory)
+
   return (
     <>
 
@@ -50,8 +52,8 @@ export const InventoryInfo: React.FC = () => {
             <li key={count.id} style={{minWidth:'50%', display:'flex', justifyContent:'flex-start', gap: 20}}>
               <span>{ i + 1 }</span>
               <span>Conteo: {count.count}</span>
-              <span>  usuario: {count.user.name}</span>
-              <span> fecha: {moment(count.createdAt).format('MM-DD-YYYY')} </span>
+              <span>  usuario: {count?.user?.name}</span>
+              <span> fecha: {moment(count?.createdAt).format('MM-DD-YYYY')} </span>
              
             </li>
           ))
