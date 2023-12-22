@@ -21,8 +21,6 @@ export const getInventories = async ({ search = '', from = '' }: { search?: stri
   console.log(from)
   const inventories = from === 'proscai' ? await fetchWithToken({ endpoint: `proscai/inventories${busqueda}` }) : await fetchWithToken({ endpoint: `inventories${busqueda}` })
 
-  console.log(inventories)
-
   return inventories
 }
 
