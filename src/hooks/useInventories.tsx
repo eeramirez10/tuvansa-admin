@@ -1,12 +1,11 @@
 import { useAppDispatch, useAppSelector } from './useStore'
 import { loadInventories, onStartInventories, selectInventory } from 'src/store/inventories/slice'
 import { type Inventory } from 'src/interfaces/Inventory'
-import { getByIseq, getInventories, getInventoryProscai, liberarInventory, postInventory } from 'src/services/inventories'
+import { deleteInventoryCount, getByIseq, getInventories, getInventoryProscai, liberarInventory, postInventory } from 'src/services/inventories'
 import { useParams } from 'react-router-dom'
 import { useEffect } from 'react'
 import { Form, type FormInstance } from 'antd'
 import { toast } from 'sonner'
-import { deleteCount } from 'src/services/counts'
 
 interface InventoryReturn {
   inventory: Inventory | null
@@ -41,17 +40,21 @@ export const useInventories = (): InventoryReturn => {
 
   const deleteCountbyId = async ({ id }: { id: string }): Promise<void> => {
     try {
-      await deleteCount({ id })
-
       if (inventory === null) return
+
+      dispatch(onStartInventories())
+
+      await deleteInventoryCount({ inventoryId: inventory?.id, countId: id })
 
       const newCount = inventory?.counts?.filter(count => count.id !== id)
 
       const newInventory: Inventory = { ...inventory, counts: newCount }
 
       dispatch(selectInventory(newInventory))
+
+      toast.success('Eliminado con exito')
     } catch (error) {
-      toast.error('hubo un error')
+      toast.error('hubo un error al eliminar')
     }
   }
 

@@ -56,3 +56,9 @@ export const postInventory = async ({ inventory }: { inventory: Inventory }): Pr
 
   return inventoryDB
 }
+
+export const deleteInventoryCount = async ({ inventoryId, countId }: { inventoryId: string, countId: string }): Promise<InventoryResponse> => {
+  const inventoryDB = await fetchWithToken({ endpoint: `inventories/${inventoryId}/count/${countId}`, method: 'DELETE' })
+
+  return inventoryDB
+}
