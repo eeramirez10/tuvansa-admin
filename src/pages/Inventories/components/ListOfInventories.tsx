@@ -33,7 +33,7 @@ export const ListOfInventories: React.FC = () => {
       title: 'Descripcion',
       dataIndex: 'description',
       width: '20%',
-      responsive:['lg']
+      responsive: ['lg']
 
     },
     {

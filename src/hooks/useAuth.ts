@@ -22,21 +22,11 @@ export const useAuth = (): Props => {
   const location = useLocation()
   const urlRedirect = localStorage.getItem('urlRedirect')
 
-  
-
-
   useEffect(() => {
-
     if (location.key === 'default') {
-
-        localStorage.setItem('urlRedirect', location.pathname)
-
+      localStorage.setItem('urlRedirect', location.pathname)
     }
-
-
-
-
-}, [location])
+  }, [location])
 
   const startLogin = async ({ username, password }: LoginProps): Promise<void> => {
     dispatch(onChecking())
@@ -54,15 +44,15 @@ export const useAuth = (): Props => {
       dispatch(onLogin(resp.user))
       toast.success('Sesion correcta!')
 
-    //   if (localStorage.getItem('urlRedirect')) {
-    //     const url = localStorage.getItem('urlRedirect')
+      //   if (localStorage.getItem('urlRedirect')) {
+      //     const url = localStorage.getItem('urlRedirect')
 
-    //     if(url){
-    //       console.log(url)
-    //       redirect(url);
-    //       localStorage.removeItem('urlRedirect')
-    //     }
-      
+      //     if(url){
+      //       console.log(url)
+      //       redirect(url);
+      //       localStorage.removeItem('urlRedirect')
+      //     }
+
     // }
     } catch (error) {
       dispatch(onLogout())
@@ -76,9 +66,6 @@ export const useAuth = (): Props => {
   }
 
   const checkAuthToken = async (): Promise<void> => {
-
-
-    
     const token = localStorage.getItem('token')
     if (token === undefined || token === null) {
       dispatch(onLogout())

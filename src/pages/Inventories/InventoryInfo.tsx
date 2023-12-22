@@ -1,18 +1,17 @@
 import React from 'react'
 import { Alert, Button, Typography } from 'antd'
-import { useInventories } from 'src/hooks/useInventories'
-import { FormInventory } from './components/FormInventory'
-import { useAuth } from 'src/hooks/useAuth'
-import moment from 'moment'
+import { type User } from 'src/interfaces/Auth'
+import { type Inventory } from 'src/interfaces/Inventory'
 const { Title } = Typography
 
-export const InventoryInfo: React.FC = () => {
-  const { inventory, handleliberarInventario } = useInventories()
-  const { user } = useAuth()
+interface Props {
+  user: User | Record<string, unknown>
+  inventory: Inventory | null
+  handleliberarInventario: () => Promise<void>
+}
 
+export const InventoryInfo: React.FC<Props> = ({ user, inventory, handleliberarInventario }) => {
   const paused = inventory?.paused
-
-  console.log(inventory)
 
   return (
     <>
@@ -44,24 +43,6 @@ export const InventoryInfo: React.FC = () => {
         user.rol === 'admin' && <Title level={5}>Existencia en proscai: {inventory?.quantity} </Title>
       }
 
-      
-
-      <ul>
-        {
-          inventory?.counts?.map((count, i) => (
-            <li key={count.id} style={{minWidth:'50%', display:'flex', justifyContent:'flex-start', gap: 20}}>
-              <span>{ i + 1 }</span>
-              <span>Conteo: {count.count}</span>
-              <span>  usuario: {count?.user?.name}</span>
-              <span> fecha: {moment(count?.createdAt).format('MM-DD-YYYY')} </span>
-             
-            </li>
-          ))
-        }
-
-      </ul>
-
-      <FormInventory isPaused={paused} />
     </>
 
   )

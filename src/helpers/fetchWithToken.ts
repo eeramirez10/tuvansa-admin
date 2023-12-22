@@ -5,7 +5,8 @@ export const METHOD_VALUES = {
   POST: 'POST',
   GET: 'GET',
   PUT: 'PUT',
-  PATCH: 'PATCH'
+  PATCH: 'PATCH',
+  DELETE: 'DELETE'
 } as const
 
 interface Props {
