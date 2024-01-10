@@ -13,6 +13,7 @@ interface Props {
   endpoint: string
   method?: typeof METHOD_VALUES[keyof typeof METHOD_VALUES]
   body?: Record<string, unknown>
+  abortController?: AbortController
 }
 
 // interface ReturnFetch {
@@ -24,16 +25,19 @@ interface Props {
 
 const { API_URL } = getApiUrl()
 
-export const fetchWithToken = async ({ endpoint, method, body }: Props): Promise<any> => {
+export const fetchWithToken = async (props: Props): Promise<any> => {
+  const { endpoint, method, body, abortController } = props
+
   const options = {
+    signal: abortController?.signal,
     method: METHOD_VALUES.GET,
     headers: {
       Authorization: `bearer ${localStorage.getItem('token')}`
     }
-
   }
 
   const postOptions = {
+    signal: abortController?.signal,
     method,
     body: JSON.stringify(body),
     headers: {

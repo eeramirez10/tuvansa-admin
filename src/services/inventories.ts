@@ -15,15 +15,29 @@ interface InventoryResponse {
   error?: string
 }
 
-export const getInventories = async ({ search = '', from = '', almacen = '01', size = '2' }: { search?: string, from?: string, almacen?: string, size?: string }): Promise<InventoriesResponse> => {
-  // search = search ?? search.trim().toUpperCase()
+interface InventoriesProps {
+  search?: string
+  from?: string
+  almacen?: string
+  size?: string
+  abortController?: AbortController
+}
+
+export const getInventories = async (props: InventoriesProps): Promise<InventoriesResponse> => {
+  const {
+    search = '',
+    from = '',
+    almacen = '01',
+    size = '10',
+    abortController
+  } = props
 
   const params = new URLSearchParams({
     almacen,
     search: search !== null || !search ? search.trim().toUpperCase() : '',
     size
   })
-  const inventories = from === 'proscai' ? await fetchWithToken({ endpoint: `proscai/inventories?${params.toString()}` }) : await fetchWithToken({ endpoint: `inventories?${params.toString()}` })
+  const inventories = from === 'proscai' ? await fetchWithToken({ endpoint: `proscai/inventories?${params.toString()}`, abortController }) : await fetchWithToken({ endpoint: `inventories?${params.toString()}` })
 
   return inventories
 }

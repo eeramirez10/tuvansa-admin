@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-confusing-void-expression */
 import React, { useEffect } from 'react'
 
 import { useInventories } from 'src/hooks/useInventories'
@@ -7,7 +8,9 @@ export const Inventories: React.FC = () => {
   const { onLoadInventories } = useInventories()
 
   useEffect(() => {
-    onLoadInventories({ from: 'proscai' })
+    const abortController = new AbortController()
+    onLoadInventories({ from: 'proscai', abortController })
+    return () => abortController.abort()
   }, [])
 
   return (
