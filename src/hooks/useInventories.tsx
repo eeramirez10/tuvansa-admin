@@ -2,10 +2,10 @@ import { useAppDispatch, useAppSelector } from './useStore'
 import { loadInventories, onStartInventories, selectInventory } from 'src/store/inventories/slice'
 import { type Inventory } from 'src/interfaces/Inventory'
 import { deleteInventoryCount, getByIseq, getInventories, getInventoryProscai, liberarInventory, postInventory } from 'src/services/inventories'
-import { useParams } from 'react-router-dom'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { Form, type FormInstance } from 'antd'
 import { toast } from 'sonner'
+import { getShelter } from 'src/services/shelter'
 
 interface InventoryReturn {
   inventory: Inventory | null
@@ -13,6 +13,7 @@ interface InventoryReturn {
   isLoading: boolean
   form: FormInstance<any>
   options: { from: string, almacen: string }
+  getInventory: ({ id }: { id: string }) => Promise<void>
   onLoadInventories: ({ from, almacen, abortController }: { from?: string, almacen?: string, abortController?: AbortController }) => Promise<void>
   handleOnSubmit: (value: { count: number }) => Promise<void>
   handleliberarInventario: () => Promise<void>
@@ -20,10 +21,10 @@ interface InventoryReturn {
   handleOnSearch: ({ value, from, almacen }: { value: { search: string }, from: string, almacen: string }) => Promise<void>
   deleteCountbyId: ({ id }: { id: string }) => Promise<void>
   handleOptions: ({ from, almacen }: { from: string, almacen: string }) => void
+  getShelterByAlmseq: ({ id }: { id: string }) => Promise<void>
 }
 
 export const useInventories = (): InventoryReturn => {
-  const { id } = useParams()
   const inventories = useAppSelector(state => state.inventories.data)
   const inventory = useAppSelector(state => state.inventories.selected)
   const isLoading = useAppSelector(state => state.inventories.isLoading)
@@ -34,15 +35,15 @@ export const useInventories = (): InventoryReturn => {
   })
   const [form] = Form.useForm()
 
-  useEffect(() => {
-    if (id !== undefined) {
-      fetchInventories({ id })
-    }
-  }, [id])
-
-  const fetchInventories = async ({ id }: { id: string }): Promise<void> => {
+  const getInventory = async ({ id }: { id: string }): Promise<void> => {
     const [inventory, inventoryProscai] = await Promise.all([getByIseq({ iseq: id }), getInventoryProscai({ id })])
     dispatch(selectInventory(inventory.inventory ?? inventoryProscai.inventory))
+  }
+
+  const getShelterByAlmseq = async ({ id }: { id: string }): Promise<void> => {
+    const resp = getShelter({ id })
+
+    console.log(resp)
   }
 
   const deleteCountbyId = async ({ id }: { id: string }): Promise<void> => {
@@ -132,6 +133,8 @@ export const useInventories = (): InventoryReturn => {
     handleliberarInventario,
     handleOnSearch,
     deleteCountbyId,
-    handleOptions
+    handleOptions,
+    getInventory,
+    getShelterByAlmseq
   }
 }

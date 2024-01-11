@@ -32,7 +32,7 @@ const columns: ColumnsType<Inventory> = [
   {
     title: 'Suc',
     dataIndex: 'name',
-    render: (_, value) => value.branchOffice.name
+    render: (_, value) => value?.branchOffice?.name ?? 'Mexico'
   }
 
 ]

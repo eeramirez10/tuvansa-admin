@@ -9,7 +9,7 @@ const BRANCH_OFFICE_VALUES = {
   CANCUN: '06'
 } as const
 
-export type BranchOfficeValues = typeof BRANCH_OFFICE_VALUES[ keyof typeof BRANCH_OFFICE_VALUES]
+export type BranchOfficeValues = typeof BRANCH_OFFICE_VALUES[keyof typeof BRANCH_OFFICE_VALUES]
 
 export interface InventoryProscai {
   iseq: string
@@ -18,11 +18,21 @@ export interface InventoryProscai {
   description: string
   quantity: number
   branchOffice: BranchOffice
-  ubications: Ubication
+  shelters: Shelter[]
 }
 
-export interface Ubication extends InventoryProscai {
+export interface Shelter {
+  warehouse: BranchOffice
+  almseq: string
+  cod: string
+  ean: string
+  description: string
+  quantity: number
 
+}
+
+export interface ShelterId extends Shelter {
+  id: string
 }
 
 export interface InventoryProscaiId extends InventoryProscai {
@@ -37,7 +47,8 @@ export interface Inventory {
   description: string
   quantity: string
   paused?: boolean
-  counts?: CountId[]
+  counts: CountId[]
+  shelters?: Shelter[]
   createdAt?: Date
   updatedAt?: Date
   user?: User
