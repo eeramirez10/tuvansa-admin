@@ -105,7 +105,7 @@ export const ListOfCounts: React.FC = () => {
       <DataTable
         columns={columns}
         data={inventories}
-        expandedRowRender={(record) => (
+        expandedRowRender={(record: any) => (
           <DataTable
             columns={expandedColumns}
             data={record.counts ?? []}

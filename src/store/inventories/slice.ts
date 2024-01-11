@@ -9,7 +9,7 @@ interface InitialState {
 }
 
 const DEFAULT_STATE: InitialState = {
-  isLoading: true,
+  isLoading: false,
   data: [],
   selected: null,
   errorMessage: undefined

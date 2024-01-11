@@ -1,23 +1,27 @@
 import { Table } from 'antd'
 import { type ColumnsType } from 'antd/es/table'
-import { type DefaultRecordType, type ExpandedRowRender } from 'rc-table/lib/interface'
+import { type GetRowKey } from 'antd/es/table/interface'
+
 import React from 'react'
 
 interface Props {
   columns: ColumnsType<any>
   data: any[]
   loading: boolean
-  expandedRowRender?: ExpandedRowRender<DefaultRecordType> | undefined
+  expandedRowRender?: any | undefined
+  rowExpandable?: any | undefined
+  rowKey: string | number | symbol | GetRowKey<any> | undefined
 }
 
-export const DataTable: React.FC<Props> = ({ columns, data, loading, expandedRowRender }) => {
+export const DataTable: React.FC<Props> = ({ columns, data, loading, expandedRowRender, rowExpandable, rowKey }) => {
   return (
     <Table
+      scroll={{ scrollToFirstRowOnChange: true, x: 600 }}
       columns={columns}
-      rowKey={(record) => record.iseq}
+      rowKey={rowKey}
       dataSource={data}
-      loading = {loading}
-      expandable={{ expandedRowRender }}
+      loading={loading}
+      expandable={{ expandedRowRender, rowExpandable }}
     />
   )
 }

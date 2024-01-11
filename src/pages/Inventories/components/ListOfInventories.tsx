@@ -16,7 +16,6 @@ export const ListOfInventories: React.FC = () => {
     form,
     options,
     handleOnSearch,
-    onLoadInventories,
     handleOptions
   } = useInventories()
 
@@ -24,31 +23,33 @@ export const ListOfInventories: React.FC = () => {
     {
       title: 'Iseq',
       dataIndex: 'iseq',
-      width: '20%',
+      width: 100,
       render: (_, { iseq }) => {
         return (<Link to={`/inventario/detail/${iseq}`} >{iseq} </Link>)
-      }
+      },
+      fixed: 'left'
     },
     {
       title: 'Cod',
-      dataIndex: 'cod'
+      dataIndex: 'cod',
+      width: 100
     },
     {
       title: 'Ean',
       dataIndex: 'ean',
-      width: '20%'
+      width: 100
     },
     {
       title: 'Descripcion',
       dataIndex: 'description',
-      width: '20%',
-      responsive: ['lg']
+      width: 100,
+
+      ellipsis: true
     },
     {
       title: 'Cantidad',
       dataIndex: 'quantity',
-      width: '20%',
-      responsive: ['lg']
+      width: 100
 
     }
   ]
@@ -78,19 +79,22 @@ export const ListOfInventories: React.FC = () => {
 
         <Space direction="horizontal" size="middle" style={{ display: 'flex', justifyContent: 'space-between' }} wrap>
           <InputSearch onSubmit={handleOnSearch} form={form} options={options} />
-          <SelectBranchOffice onLoadInventories={onLoadInventories} handleOptions={handleOptions} options={options} />
+          <SelectBranchOffice handleOptions={handleOptions} options={options} />
         </Space>
 
         <DataTable
           columns={columns}
           data={inventories}
           loading={isLoading}
+          rowKey={(record) => record.iseq}
           expandedRowRender={(record: InventoryProscai) => {
             return <DataTable
+              rowKey={(record) => record.almseq}
               columns={expandedColumns}
-              data={record.shelters ?? []}
+              data={record.shelters ?? null}
               loading={false} />
           }}
+          rowExpandable={(record: InventoryProscai) => record.shelters.length > 0}
         />
 
       </Space>

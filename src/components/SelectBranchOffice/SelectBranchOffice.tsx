@@ -2,7 +2,7 @@ import React from 'react'
 import { Select } from 'antd'
 
 interface Props {
-  onLoadInventories: ({ from, almacen }: { from?: string, almacen?: string }) => Promise<void>
+  onLoadInventories?: ({ from, almacen }: { from?: string, almacen?: string }) => Promise<void>
   handleOptions: ({ from, almacen }: { from: string, almacen: string }) => void
   options: {
     from: string
@@ -10,9 +10,9 @@ interface Props {
   }
 }
 
-export const SelectBranchOffice: React.FC<Props> = ({ onLoadInventories, handleOptions, options }) => {
+export const SelectBranchOffice: React.FC<Props> = ({ handleOptions, options }) => {
   const onChange = (value: string): void => {
-    onLoadInventories({ from: 'proscai', almacen: value })
+    // onLoadInventories({ from: 'proscai', almacen: value })
 
     handleOptions({
       from: 'proscai',
@@ -26,6 +26,7 @@ export const SelectBranchOffice: React.FC<Props> = ({ onLoadInventories, handleO
   return (
     <Select
       showSearch
+      style={{ width: '178px' }}
       placeholder="Almacen"
       optionFilterProp="children"
       onChange={onChange}
@@ -43,6 +44,17 @@ export const SelectBranchOffice: React.FC<Props> = ({ onLoadInventories, handleO
         {
           value: '03',
           label: 'Veracruz'
+        },
+        {
+          value: '04',
+          label: 'Mexicali'
+        },
+        {
+          value: '05',
+          label: 'Queretaro'
+        }, {
+          value: '06',
+          label: 'Cancun'
         }
       ]}
     />

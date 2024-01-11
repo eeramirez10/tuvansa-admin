@@ -14,7 +14,7 @@ interface InventoryReturn {
   form: FormInstance<any>
   options: { from: string, almacen: string }
   getInventory: ({ id }: { id: string }) => Promise<void>
-  onLoadInventories: ({ from, almacen, abortController }: { from?: string, almacen?: string, abortController?: AbortController }) => Promise<void>
+  onLoadInventories: ({ from, almacen, abortController, size }: { from?: string, almacen?: string, abortController?: AbortController, size?: string }) => Promise<void>
   handleOnSubmit: (value: { count: number }) => Promise<void>
   handleliberarInventario: () => Promise<void>
   // handleOnSearch: (value: { search: string }, from?: string, almacen?: string) => Promise<void>
@@ -66,10 +66,10 @@ export const useInventories = (): InventoryReturn => {
     }
   }
 
-  const onLoadInventories = async ({ from = '', almacen = '01', abortController }: { from?: string, almacen?: string, abortController?: AbortController }): Promise<void> => {
+  const onLoadInventories = async ({ from = '', almacen = '01', abortController, size = '1' }: { from?: string, almacen?: string, abortController?: AbortController, size?: string }): Promise<void> => {
     dispatch(onStartInventories())
 
-    getInventories({ from, almacen, abortController })
+    getInventories({ from, almacen, abortController, size })
       .then((resp) => {
         const { inventories } = resp
         const { items } = inventories
