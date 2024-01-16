@@ -60,35 +60,44 @@ const expandedColumns: ColumnsType<CountId> = [
 ]
 
 export const ListOfCounts: React.FC = () => {
-  const { inventories, onLoadInventories } = useInventories()
+  const { inventories, onLoadInventories, getInventoryProscaiByIseq } = useInventories()
   const { handleDownloadExcel } = useExcel()
 
   useEffect(() => {
     onLoadInventories({})
   }, [])
 
-  const body = inventories.map(inventory => {
-    const counts = inventory.counts ?? []
+  const body =
+    Promise.all(inventories.map(async (inventory) => {
+      const counts = inventory.counts ?? []
 
-    const countLength = counts?.length
+      const countLength = counts?.length
 
-    const newInventory: any = {}
+      const newInventory: any = {}
 
-    for (let i = 0; i < countLength; i++) {
-      newInventory[`conteo${i + 1}`] = counts[i].count
-      newInventory[`cantidad${i + 1}`] = counts[i].inventory?.quantity ?? inventory.quantity
-    }
+      const inventoryProscai = await getInventoryProscaiByIseq({ id: inventory.iseq })
 
-    return {
-      iseq: inventory.iseq,
-      cod: inventory.cod,
-      ean: inventory.ean,
-      descripcion: inventory.description,
-      ...newInventory
-    }
-  })
+      for (let i = 0; i < countLength; i++) {
+        newInventory[`conteo${i + 1}`] = counts[i].count
+        newInventory[`cantidad${i + 1}`] = counts[i].inventory?.quantity ?? inventory.quantity
+      }
 
-  const header = ['Iseq', 'ICOD', 'EAN', 'Descripcion', 'conteo1', 'cantidad1', 'conteo2', 'cantidad2']
+      const newCount = {
+        iseq: inventory.iseq,
+        cod: inventory.cod,
+        ean: inventory.ean,
+        descripcion: inventory.description,
+        costo: inventoryProscai.costo,
+        ...newInventory
+      }
+
+      console.log(newCount)
+
+      return newCount
+    })
+    )
+
+  const header = ['Iseq', 'ICOD', 'EAN', 'Descripcion', 'costo', 'conteo1', 'cantidad1', 'conteo2', 'cantidad2']
 
   return (
     <Space
@@ -110,7 +119,7 @@ export const ListOfCounts: React.FC = () => {
           <DataTable
             columns={expandedColumns}
             data={record.counts ?? []}
-            rowKey={(record) => record.iseq}
+            rowKey={(record: any) => record.iseq}
             loading={false}
           />
         )}

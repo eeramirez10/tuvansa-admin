@@ -1,11 +1,12 @@
 import { useAppDispatch, useAppSelector } from './useStore'
 import { loadInventories, onStartInventories, selectInventory } from 'src/store/inventories/slice'
-import { type Inventory } from 'src/interfaces/Inventory'
+import { InventoryProscai, type Inventory, type InventoryId } from 'src/interfaces/Inventory'
 import { deleteInventoryCount, getByIseq, getInventories, getInventoryProscai, liberarInventory, postInventory } from 'src/services/inventories'
 import { useState } from 'react'
 import { Form, type FormInstance } from 'antd'
 import { toast } from 'sonner'
 import { getShelter } from 'src/services/shelter'
+import { getInventory } from '../services/inventories'
 
 interface InventoryReturn {
   inventory: Inventory | null
@@ -22,6 +23,7 @@ interface InventoryReturn {
   deleteCountbyId: ({ id }: { id: string }) => Promise<void>
   handleOptions: ({ from, almacen }: { from: string, almacen: string }) => void
   getShelterByAlmseq: ({ id }: { id: string }) => Promise<void>
+  getInventoryProscaiByIseq: ({ id }: { id: string }) => Promise<InventoryId>
 }
 
 export const useInventories = (): InventoryReturn => {
@@ -38,6 +40,12 @@ export const useInventories = (): InventoryReturn => {
   const getInventory = async ({ id }: { id: string }): Promise<void> => {
     const [inventory, inventoryProscai] = await Promise.all([getByIseq({ iseq: id }), getInventoryProscai({ id })])
     dispatch(selectInventory(inventory.inventory ?? inventoryProscai.inventory))
+  }
+
+  const getInventoryProscaiByIseq = async ({ id }: { id: string }): Promise<InventoryId> => {
+    const inventory = await getInventoryProscai({ id })
+
+    return inventory.inventory
   }
 
   const getShelterByAlmseq = async ({ id }: { id: string }): Promise<void> => {
@@ -135,6 +143,7 @@ export const useInventories = (): InventoryReturn => {
     deleteCountbyId,
     handleOptions,
     getInventory,
-    getShelterByAlmseq
+    getShelterByAlmseq,
+    getInventoryProscaiByIseq
   }
 }
