@@ -1,12 +1,11 @@
 import { useAppDispatch, useAppSelector } from './useStore'
 import { loadInventories, onStartInventories, selectInventory } from 'src/store/inventories/slice'
-import { InventoryProscai, type Inventory, type InventoryId } from 'src/interfaces/Inventory'
+import { type Inventory, type InventoryId } from 'src/interfaces/Inventory'
 import { deleteInventoryCount, getByIseq, getInventories, getInventoryProscai, liberarInventory, postInventory } from 'src/services/inventories'
 import { useState } from 'react'
 import { Form, type FormInstance } from 'antd'
 import { toast } from 'sonner'
 import { getShelter } from 'src/services/shelter'
-import { getInventory } from '../services/inventories'
 
 interface InventoryReturn {
   inventory: Inventory | null

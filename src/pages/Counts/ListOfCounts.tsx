@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import type { ColumnsType } from 'antd/es/table'
 import { useInventories } from 'src/hooks/useInventories'
 import { type Inventory } from 'src/interfaces/Inventory'
@@ -63,39 +63,44 @@ export const ListOfCounts: React.FC = () => {
   const { inventories, onLoadInventories, getInventoryProscaiByIseq } = useInventories()
   const { handleDownloadExcel } = useExcel()
 
+  const [isLoading, setIsloading] = useState(false)
+
   useEffect(() => {
     onLoadInventories({})
   }, [])
 
-  const body =
-    Promise.all(inventories.map(async (inventory) => {
-      const counts = inventory.counts ?? []
+  const body = (): Promise<any[]> => {
+    setIsloading(true)
+    return Promise.all(
+      inventories.map(async (inventory) => {
+        const counts = inventory.counts ?? []
 
-      const countLength = counts?.length
+        const countLength = counts?.length
 
-      const newInventory: any = {}
+        const newInventory: any = {}
 
-      const inventoryProscai = await getInventoryProscaiByIseq({ id: inventory.iseq })
+        const inventoryProscai = await getInventoryProscaiByIseq({ id: inventory.iseq })
 
-      for (let i = 0; i < countLength; i++) {
-        newInventory[`conteo${i + 1}`] = counts[i].count
-        newInventory[`cantidad${i + 1}`] = counts[i].inventory?.quantity ?? inventory.quantity
-      }
+        for (let i = 0; i < countLength; i++) {
+          newInventory[`conteo${i + 1}`] = counts[i].count
+          newInventory[`cantidad${i + 1}`] = counts[i].inventory?.quantity ?? inventory.quantity
+        }
 
-      const newCount = {
-        iseq: inventory.iseq,
-        cod: inventory.cod,
-        ean: inventory.ean,
-        descripcion: inventory.description,
-        costo: inventoryProscai.costo,
-        ...newInventory
-      }
+        const newCount = {
+          iseq: inventory.iseq,
+          cod: inventory.cod,
+          ean: inventory.ean,
+          descripcion: inventory.description,
+          costo: inventoryProscai.costo,
+          ...newInventory
+        }
 
-      console.log(newCount)
+        console.log(newCount)
 
-      return newCount
-    })
-    )
+        return newCount
+      })
+    ).finally(() => { setIsloading(false) })
+  }
 
   const header = ['Iseq', 'ICOD', 'EAN', 'Descripcion', 'costo', 'conteo1', 'cantidad1', 'conteo2', 'cantidad2']
 
@@ -123,7 +128,7 @@ export const ListOfCounts: React.FC = () => {
             loading={false}
           />
         )}
-        loading={false}
+        loading={isLoading}
       />
 
     </Space>
