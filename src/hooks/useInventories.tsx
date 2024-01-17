@@ -37,8 +37,8 @@ export const useInventories = (): InventoryReturn => {
   const [form] = Form.useForm()
 
   const getInventory = async ({ id }: { id: string }): Promise<void> => {
-    const [inventory, inventoryProscai] = await Promise.all([getByIseq({ iseq: id }), getInventoryProscai({ id })])
-    dispatch(selectInventory(inventory.inventory ?? inventoryProscai.inventory))
+    const inventory = await getByIseq({ iseq: id })
+    dispatch(selectInventory(inventory.inventory))
   }
 
   const getInventoryProscaiByIseq = async ({ id }: { id: string }): Promise<InventoryId> => {
@@ -97,13 +97,12 @@ export const useInventories = (): InventoryReturn => {
   }
 
   const handleOnSubmit = async (value: { count: number }): Promise<void> => {
-    const newInventory: any = {
-      ...inventory,
-      count: value.count
-    }
+    const { count } = value
 
     try {
-      const resp = await postInventory({ inventory: newInventory })
+      if (inventory?.iseq === undefined) return
+
+      const resp = await postInventory({ count, iseq: inventory?.iseq })
 
       if (resp.error !== undefined) {
         toast.error(resp.error)

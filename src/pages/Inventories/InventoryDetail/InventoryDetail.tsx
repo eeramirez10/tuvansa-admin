@@ -22,8 +22,6 @@ export const InventoryDetail: React.FC = () => {
     }
   }, [])
 
-  console.log(inventory)
-
   return (
     <Container>
       <>

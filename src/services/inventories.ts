@@ -1,6 +1,6 @@
 import { fetchWithoutToken } from 'src/helpers/fetchWhithoutToken'
 import { METHOD_VALUES, fetchWithToken } from 'src/helpers/fetchWithToken'
-import { type Inventory, type InventoryId } from 'src/interfaces/Inventory'
+import { type InventoryId } from 'src/interfaces/Inventory'
 
 interface InventoriesResponse {
   inventories: {
@@ -63,18 +63,13 @@ export const liberarInventory = async ({ id }: { id: any }): Promise<InventoryRe
   return inventory
 }
 
-export const postInventory = async ({ inventory }: { inventory: Inventory }): Promise<InventoryResponse> => {
-  const newInventory = {
-    ...inventory
-  }
-
-  const inventoryDB = await fetchWithToken({ endpoint: 'inventories', method: 'POST', body: newInventory })
-
+export const postInventory = async ({ count, iseq }: { count: number, iseq: string }): Promise<InventoryResponse> => {
+  const inventoryDB = await fetchWithToken({ endpoint: 'inventories', method: METHOD_VALUES.POST, body: { count, iseq } })
   return inventoryDB
 }
 
 export const deleteInventoryCount = async ({ inventoryId, countId }: { inventoryId: string, countId: string }): Promise<InventoryResponse> => {
-  const inventoryDB = await fetchWithToken({ endpoint: `inventories/${inventoryId}/count/${countId}`, method: 'DELETE' })
+  const inventoryDB = await fetchWithToken({ endpoint: `inventories/${inventoryId}/count/${countId}`, method: METHOD_VALUES.DELETE })
 
   return inventoryDB
 }
