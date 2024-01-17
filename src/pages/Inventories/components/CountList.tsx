@@ -7,7 +7,7 @@ import { useInventories } from 'src/hooks/useInventories'
 import { useAuth } from 'src/hooks/useAuth'
 
 interface Props {
-  inventory: Inventory
+  inventory: Inventory | null
   isLoading?: boolean
 }
 

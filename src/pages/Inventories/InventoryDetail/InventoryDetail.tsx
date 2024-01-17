@@ -36,17 +36,12 @@ export const InventoryDetail: React.FC = () => {
           inventory={inventory}
         />
 
-        {
-          inventory !== null &&
+        <CountList
+          inventory={inventory}
+          isLoading={isLoading}
+        />
 
-          <CountList
-            inventory={inventory}
-            isLoading={isLoading}
-          />
-
-        }
-
-        <FormInventory isPaused={paused} />
+        <FormInventory isPaused={paused ?? false} isLoading={isLoading} />
 
       </>
 

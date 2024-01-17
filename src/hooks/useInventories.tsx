@@ -97,6 +97,7 @@ export const useInventories = (): InventoryReturn => {
   }
 
   const handleOnSubmit = async (value: { count: number }): Promise<void> => {
+    dispatch(onStartInventories())
     const { count } = value
 
     try {
