@@ -7,7 +7,7 @@ import React from 'react'
 interface Props {
   columns: ColumnsType<any>
   data: any[]
-  loading: boolean
+  loading?: boolean
   expandedRowRender?: any | undefined
   rowExpandable?: any | undefined
   rowKey: string | number | symbol | GetRowKey<any> | undefined

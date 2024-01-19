@@ -17,7 +17,7 @@ export const PaymentForm: React.FC<Props> = ({ form, onFinish }) => {
   const [isLoading, setIsloading] = useState(false)
   const [open, setOpen] = useState(false)
   const [supplierId, setSupplierId] = useState('')
-  let filterTimeout: number
+  let filterTimeout: any
 
   useEffect(() => {
     if (supplierId !== '') {
