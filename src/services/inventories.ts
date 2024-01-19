@@ -73,3 +73,7 @@ export const deleteInventoryCount = async ({ inventoryId, countId }: { inventory
 
   return inventoryDB
 }
+
+export const release = async ({ paused }: { paused: boolean }): Promise<void> => {
+  await fetchWithToken({ endpoint: 'inventories/releaseall', body: { paused }, method: METHOD_VALUES.PUT })
+}

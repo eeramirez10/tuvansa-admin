@@ -1,7 +1,7 @@
 import { useAppDispatch, useAppSelector } from './useStore'
-import { loadInventories, onStartInventories, selectInventory } from 'src/store/inventories/slice'
+import { loadInventories, onFinishInventories, onStartInventories, selectInventory } from 'src/store/inventories/slice'
 import { type Inventory, type InventoryId } from 'src/interfaces/Inventory'
-import { deleteInventoryCount, getByIseq, getInventories, getInventoryProscai, liberarInventory, postInventory } from 'src/services/inventories'
+import { deleteInventoryCount, getByIseq, getInventories, getInventoryProscai, liberarInventory, postInventory, release } from 'src/services/inventories'
 import { useState } from 'react'
 import { Form, type FormInstance } from 'antd'
 import { toast } from 'sonner'
@@ -23,6 +23,7 @@ interface InventoryReturn {
   handleOptions: ({ from, almacen }: { from: string, almacen: string }) => void
   getShelterByAlmseq: ({ id }: { id: string }) => Promise<void>
   getInventoryProscaiByIseq: ({ id }: { id: string }) => Promise<InventoryId>
+  releaseInventories: ({ paused }: { paused?: boolean }) => Promise<void>
 }
 
 export const useInventories = (): InventoryReturn => {
@@ -37,6 +38,7 @@ export const useInventories = (): InventoryReturn => {
   const [form] = Form.useForm()
 
   const getInventory = async ({ id }: { id: string }): Promise<void> => {
+    dispatch(onStartInventories())
     const inventory = await getByIseq({ iseq: id })
     dispatch(selectInventory(inventory.inventory))
   }
@@ -128,6 +130,17 @@ export const useInventories = (): InventoryReturn => {
   const handleOptions = ({ from, almacen }: { from: string, almacen: string }): void => {
     setOptions({ from, almacen })
   }
+  const releaseInventories = async ({ paused = false }: { paused?: boolean }): Promise<void> => {
+    dispatch(onStartInventories())
+
+    try {
+      await release({ paused })
+    } catch (error) {
+      console.log(error)
+    } finally {
+      dispatch(onFinishInventories())
+    }
+  }
 
   return {
     inventory,
@@ -143,6 +156,7 @@ export const useInventories = (): InventoryReturn => {
     handleOptions,
     getInventory,
     getShelterByAlmseq,
-    getInventoryProscaiByIseq
+    getInventoryProscaiByIseq,
+    releaseInventories
   }
 }

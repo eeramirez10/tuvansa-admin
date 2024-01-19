@@ -7,6 +7,7 @@ import { type CountId } from '../../interfaces/Inventory'
 import { formatDate } from 'src/helpers/formatDate'
 import { Button, Space } from 'antd'
 import { useExcel } from 'src/hooks/useExcel'
+import { ReleaseInventories } from 'src/components/ReleaseInventories'
 
 const columns: ColumnsType<Inventory> = [
   {
@@ -60,7 +61,7 @@ const expandedColumns: ColumnsType<CountId> = [
 ]
 
 export const ListOfCounts: React.FC = () => {
-  const { inventories, onLoadInventories, getInventoryProscaiByIseq } = useInventories()
+  const { inventories, onLoadInventories, getInventoryProscaiByIseq, releaseInventories, isLoading: loading } = useInventories()
   const { handleDownloadExcel } = useExcel()
 
   const [isLoading, setIsloading] = useState(false)
@@ -116,6 +117,8 @@ export const ListOfCounts: React.FC = () => {
         Descargar Excel
       </Button>
 
+      <ReleaseInventories handleOnRelease={releaseInventories} />
+
       <DataTable
         columns={columns}
         data={inventories}
@@ -128,7 +131,7 @@ export const ListOfCounts: React.FC = () => {
             loading={false}
           />
         )}
-        loading={isLoading}
+        loading={loading || isLoading}
       />
 
     </Space>
