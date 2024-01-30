@@ -3,7 +3,6 @@ import { Outlet } from 'react-router-dom'
 import { Breadcrumb, Layout, Typography } from 'antd'
 import { Sidebar } from './UI/Sidebar/Sidebar'
 import { Content, Header } from 'antd/es/layout/layout'
-import { Navigation } from './UI/Navigation/Navigation'
 import { ButtonProvider } from './context/Button'
 import { getEnvVariables } from './helpers/getEnvVariables'
 import { SwitchTheme } from './components/SwitchTheme'
@@ -27,7 +26,7 @@ export const ProtectedRoutes: React.FC = () => {
             <Breadcrumb.Item>Bill</Breadcrumb.Item>
           </Breadcrumb>
           <ButtonProvider>
-            <Navigation />
+            {/* <Navigation /> */}
             <Outlet />
           </ButtonProvider>
         </Content>

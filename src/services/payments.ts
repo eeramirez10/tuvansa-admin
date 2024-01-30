@@ -38,8 +38,8 @@ export const createPayment = async ({ payment }: { payment: PaymentBody }): Prom
 
 export const edit = async ({ id, payment }: { id: string, payment: PaymentForm }): Promise<Payment> => {
   const editedPayment = {
-    ...payment,
-    supplierName: payment.supplier
+    ...payment
+
   }
   const resp = await fetch(`${API_URL}/payments/${id}`, {
     method: 'PUT',
