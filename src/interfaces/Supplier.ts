@@ -1,5 +1,5 @@
 export interface Supplier {
-  idProscai: string
+  uid: string
   name: string
 }
 

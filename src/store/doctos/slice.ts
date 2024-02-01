@@ -1,12 +1,12 @@
 import { createSlice, type PayloadAction } from '@reduxjs/toolkit'
-import { type Payment } from '../../interfaces/Payment'
+import { type Docto } from 'src/interfaces/Docto'
 
-const DEFAULT_DOCTOS: Payment[] = []
+const DEFAULT_DOCTOS: Docto[] = []
 
 interface InitialState {
   isLoading: boolean
-  data: Payment[]
-  selected: Payment | null
+  data: Docto[]
+  selected: Docto | null
   errorMessage: string | undefined
 }
 
@@ -24,11 +24,11 @@ export const doctosSlice = createSlice({
     onStartDoctos: (state) => {
       state.isLoading = true
     },
-    loadDoctos: (state, action: PayloadAction<Payment[]>) => {
+    loadDoctos: (state, action: PayloadAction<Docto[]>) => {
       state.data = action.payload
       state.isLoading = false
     },
-    selectDocto: (state, action: PayloadAction<Payment | null>) => {
+    selectDocto: (state, action: PayloadAction<Docto | null>) => {
       state.selected = action.payload
       state.isLoading = false
     }

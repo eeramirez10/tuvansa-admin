@@ -94,7 +94,7 @@ export const Navigation: React.FC<Props> = ({
                 Guardar
               </Button>
 
-              {hasFile && <UploadFiles />}
+              {!hasFile && <UploadFiles />}
 
             </Flex>
 

@@ -2,25 +2,24 @@
 import type { Supplier } from './Supplier'
 import { type BranchOffice } from './Inventory'
 import { type File } from './File'
+import { type Creditor } from './Creditor'
+import { type Dayjs } from 'dayjs'
 
-export interface PaymentBody extends PaymentForm {
-
-}
-
-export interface Docto {
-  name: string
-  references: string
-  dateProscai: Date
-  amount: number
-  balance: number
-  paid: number
-  file?: File
-  supplier: Supplier
-}
-
-export interface PaymentForm {
-  idProscai: string
+export interface PaymentFormValues {
   category: string
+  amount: number
+  coin: coinValues
+  branchOffice: string
+  datePaid: Dayjs | Date
+  supplier: string
+  idSupplier: string
+  creditor: string
+  idCreditor: string
+}
+
+enum coinValues {
+  MXN = 'MXN',
+  USD = 'USD'
 }
 
 export interface FileId extends File {
@@ -28,7 +27,23 @@ export interface FileId extends File {
 }
 
 export interface Payment {
-  idProscai: string
+  id: string
+  supplier: Supplier
+  creditor: Creditor
+  amount: number
+  comments: string
+  branchOffice: string
+  datePaid: Date
+  coin: {
+    name: string
+    code: coinValues
+  }
+  category: string
+  files: FileId[]
+  proscai: Doctos | null
+}
+
+export interface Doctos {
   id: string
   factura: string
   ordenCompra: string
@@ -36,18 +51,15 @@ export interface Payment {
   importePesos: string
   importeFactura: string
   saldo: string
-  moneda: number
   tipoCambio: string
-  cancelada: number
   fecha: string
   supplier: Supplier
   branchOffice: BranchOffice
-  category: string
   coin: {
     name: string
     code: string
   }
-  files: FileId []
+
 }
 
 export type PaymentId = Pick<Payment, 'id'>

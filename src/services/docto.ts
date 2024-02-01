@@ -1,6 +1,6 @@
 import { fetchWithToken } from 'src/helpers/fetchWithToken'
 import { getApiUrl } from 'src/helpers/getApiUrl'
-import { type Payment } from 'src/interfaces/Payment'
+import { type Docto } from 'src/interfaces/Docto'
 
 const { API_URL } = getApiUrl()
 
@@ -22,13 +22,13 @@ interface Doctos {
 }
 
 interface ResponsePayments {
-  doctos?: Payment[]
+  doctos?: Docto[]
   error?: string
   ok?: boolean
 }
 
 interface ResponsePayment {
-  docto?: Payment
+  docto?: Docto
   error?: string
   ok?: boolean
 }

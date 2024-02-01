@@ -15,6 +15,8 @@ export const ListOfFiles: React.FC<Props> = ({ files }) => {
     window.open(`${URL}/public/${id}.pdf`, '_blank')
   }
 
+  console.log(files)
+
   return (
     <List
       itemLayout='horizontal'

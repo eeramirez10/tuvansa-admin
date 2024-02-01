@@ -4,16 +4,17 @@ import { type ColumnsType } from 'antd/es/table'
 import { DataTable } from '../../components/DataTable/DataTable'
 import { Link } from 'react-router-dom'
 import { usePayments } from '../../hooks/usePayments'
-import { FilesModal } from './components/FilesModal'
+import { FilesModal } from '../../components/FilesModal/FilesModal'
 import { Navigation } from 'src/UI/Navigation/Navigation'
+import { OpenButtonModal } from 'src/components/OpenButtonModal'
 
 const columns: ColumnsType<Payment> = [
   {
-    title: 'Docto',
-    dataIndex: 'docto',
+    title: 'ID',
+    dataIndex: 'id',
     width: '20%',
-    render: (_, { id, idProscai }) => {
-      return (<Link to={`/payment/${id}/detail`} >{idProscai} </Link>)
+    render: (_, { id }) => {
+      return (<Link to={`/payment/${id}/detail`} >{id} </Link>)
     }
   },
 
@@ -25,25 +26,22 @@ const columns: ColumnsType<Payment> = [
   },
   {
     title: 'Fecha de pago',
-    dataIndex: 'fecha'
+    dataIndex: 'datePaid'
+  },
+  {
+    title: 'Proveedor | Acreedor',
+    dataIndex: 'importePesos',
+    render: (_, value) => value.supplier?.name ?? value.creditor?.name
   },
   {
     title: 'Importe',
-    dataIndex: 'importeFactura'
+    dataIndex: 'amount'
   },
   {
-    title: 'Importe MXN',
-    dataIndex: 'importePesos'
-  },
-  {
-    title: 'Saldo',
-    dataIndex: 'saldo'
+    title: 'Archivos',
+    align: 'center',
+    render: (_, { id, files }) => files.length > 0 ? <OpenButtonModal id={id} /> : null
   }
-  // {
-  //   title: 'Archivos',
-  //   align: 'center',
-  //   render: (_, { id }) => <OpenButtonModal id={id} />
-  // }
 ]
 
 export const Payments: React.FC = () => {
@@ -54,10 +52,11 @@ export const Payments: React.FC = () => {
       <Navigation name='Pagos' />
       <FilesModal />
       <DataTable
-        rowKey={(value) => value.idProscai}
+        rowKey={(value) => value.id}
         columns={columns}
         data={payments}
         expandedRowRender={(record: Payment) => PaymentExpandRow({ payment: record })}
+        rowExpandable={(record: Payment) => record.proscai !== null }
       />
     </>
 
@@ -69,29 +68,30 @@ interface Props {
 }
 
 const PaymentExpandRow: React.FC<Props> = ({ payment: record }) => {
+  const { proscai } = record
+
+  if (proscai === null) return <div></div>
+
+  const { supplier, supplierFactura, factura, ordenCompra } = proscai
+
   return (
     <div style={{ display: 'flex', alignContent: 'center', justifyContent: 'space-around', gap: 20 }}>
       <div>
         <label>Proveedor</label>
-        <p>{record.supplier.name}</p>
+        <p>{supplier.name}</p>
       </div>
       <div>
         <label>Factura Proveedor</label>
-        <p>{record.supplierFactura}</p>
+        <p>{supplierFactura}</p>
       </div>
       <div>
         <label>Factura </label>
-        <p>{record.factura}</p>
+        <p>{factura}</p>
       </div>
       <div>
         <label>Orden de Compra</label>
-        <p>{record.ordenCompra}</p>
+        <p>{ordenCompra}</p>
       </div>
-      <div>
-        <label>Factura Proveedor</label>
-        <p>{record.supplierFactura}</p>
-      </div>
-
     </div>
 
   )

@@ -10,6 +10,8 @@ export const FilesModal: React.FC = () => {
 
   const files = payment?.files !== undefined ? payment.files : []
 
+  console.log(payment)
+
   return (
 
     <DataModal

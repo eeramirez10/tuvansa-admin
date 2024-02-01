@@ -4,12 +4,12 @@ import { Link } from 'react-router-dom'
 import { Navigation } from 'src/UI/Navigation/Navigation'
 import { DataTable } from 'src/components/DataTable/DataTable'
 import { useDoctos } from 'src/hooks/useDoctos'
-import { type Payment } from 'src/interfaces/Payment'
+import { type Docto } from 'src/interfaces/Docto'
 
 export const Doctos: React.FC = () => {
   const { getAll, doctos } = useDoctos()
 
-  const columns: ColumnsType<Payment> = [
+  const columns: ColumnsType<Docto> = [
     {
       title: 'Docto',
       dataIndex: 'docto',
@@ -59,17 +59,17 @@ export const Doctos: React.FC = () => {
         rowKey={(value) => value.idProscai}
         columns={columns}
         data={doctos}
-        expandedRowRender={(record: Payment) => PaymentExpandRow({ payment: record })}
+        expandedRowRender={(record: Docto) => PaymentExpandRow({ docto: record })}
       />
     </>
   )
 }
 
 interface Props {
-  payment: Payment
+  docto: Docto
 }
 
-const PaymentExpandRow: React.FC<Props> = ({ payment: record }) => {
+const PaymentExpandRow: React.FC<Props> = ({ docto: record }) => {
   return (
     <div style={{ display: 'flex', alignContent: 'center', justifyContent: 'space-around', gap: 20 }}>
       <div>

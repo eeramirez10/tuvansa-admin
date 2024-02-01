@@ -3,22 +3,24 @@ import React, { useEffect, useRef } from 'react'
 import { useParams } from 'react-router-dom'
 import { Container } from 'src/components/Container/Container'
 import { usePayments } from 'src/hooks/usePayments'
-import { PaymentDescription } from 'src/components/PaymentDescription/PaymentDescription'
-import { Button, Form, Select, Space } from 'antd'
+import { Form } from 'antd'
 import { Navigation } from 'src/UI/Navigation/Navigation'
+import { PaymentForm } from './components/PaymentForm/PaymentForm'
+import { type PaymentFormValues } from 'src/interfaces/Payment'
+import dayjs from 'dayjs'
 
-const tailLayout = {
-  wrapperCol: { offset: 8, span: 16 }
-}
+// const tailLayout = {
+//   wrapperCol: { offset: 8, span: 16 }
+// }
 
-const CATEGORY_VALUES: Array<{ value: string, label: JSX.Element }> = [
-  { value: 'mantenimiento', label: <span>Mantenimiento</span> }
-]
+// const CATEGORY_VALUES: Array<{ value: string, label: JSX.Element }> = [
+//   { value: 'mantenimiento', label: <span>Mantenimiento</span> }
+// ]
 
 export const PaymentDetail: React.FC = () => {
   const { id } = useParams()
   const { payment, getById, handleOnSubmit } = usePayments()
-  const [form] = Form.useForm()
+  const [form] = Form.useForm<PaymentFormValues>()
 
   const saveButtonRef = useRef(null)
 
@@ -28,31 +30,28 @@ export const PaymentDetail: React.FC = () => {
     }
   }, [id])
 
+  console.log(payment)
+
   useEffect(() => {
-    form.setFieldValue('category', payment?.category)
+    if (payment !== null) {
+      // const { } = payment
+      form.setFieldsValue({
+        supplier: payment.supplier?.name,
+        idSupplier: payment.supplier?.uid,
+        creditor: payment.creditor?.name,
+        idCreditor: payment.creditor?.uid,
+        category: payment.category,
+        amount: payment.amount,
+        coin: payment.coin.code,
+        branchOffice: payment.branchOffice,
+        datePaid: dayjs(payment.datePaid)
+      })
+    }
   }, [payment])
 
-  const onGenderChange = (value: string) => {
-    switch (value) {
-      case 'male':
-        form.setFieldsValue({ note: 'Hi, man!' })
-        break
-      case 'female':
-        form.setFieldsValue({ note: 'Hi, lady!' })
-        break
-      case 'other':
-        form.setFieldsValue({ note: 'Hi there!' })
-        break
-      default:
-    }
-  }
-
-  const onFinish = (value: { category: string }) => {
+  const onFinish = (values: PaymentFormValues) => {
     if (payment === undefined || payment === null) return
-
-    const { category } = value
-
-    handleOnSubmit({ category, idProscai: payment.idProscai })
+    handleOnSubmit(values)
   }
 
   return (
@@ -65,39 +64,11 @@ export const PaymentDetail: React.FC = () => {
       />
       <Container>
 
-        <Space direction='vertical' size={30} style={{ width: '100%' }}>
-
-          {payment !== null ? <PaymentDescription payment={payment} /> : ''}
-
-          <Form
-
-            form={form}
-            name="control-hooks"
-            onFinish={onFinish}
-            style={{ maxWidth: 600 }}
-          >
-
-            <Form.Item name="category" label="Categoria" rules={[{ required: true }]}>
-              <Select
-                placeholder="Seleciona una cetegoria"
-                onChange={onGenderChange}
-                allowClear
-                options={CATEGORY_VALUES}
-              />
-
-            </Form.Item>
-
-            <Form.Item {...tailLayout}>
-              <Space>
-                <Button style={{ display: 'none' }} ref={saveButtonRef} type="primary" htmlType="submit">
-                  Submit
-                </Button>
-              </Space>
-            </Form.Item>
-
-          </Form>
-
-        </Space>
+        <PaymentForm
+          form={form}
+          onFinish={onFinish}
+          radioValue={ payment?.supplier !== null ? 1 : 2}
+        />
 
       </Container>
 

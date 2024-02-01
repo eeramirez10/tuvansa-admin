@@ -1,5 +1,5 @@
 import { getApiUrl } from 'src/helpers/getApiUrl'
-import { type PaymentBody, type Payment, type PaymentForm } from 'src/interfaces/Payment'
+import { type Payment, type PaymentFormValues } from 'src/interfaces/Payment'
 import { fetchWithToken } from '../helpers/fetchWithToken'
 
 const { API_URL } = getApiUrl()
@@ -14,6 +14,27 @@ interface ResponsePayment {
   payment?: Payment
   error?: string
   ok?: boolean
+}
+
+export interface PaymentBody {
+  idProscai: string | null
+  amount: number
+  category: string
+  creditor: {
+    name: string
+    uid: string
+  } | null
+  coin: {
+    name: string
+    code: string
+  }
+  datePaid: Date
+  supplier: {
+    name: string
+    uid: string
+  } | null
+  branchOffice: string
+
 }
 
 export const getAllPayments = async (): Promise<ResponsePayments> => {
@@ -36,7 +57,7 @@ export const createPayment = async ({ payment }: { payment: PaymentBody }): Prom
   return resp
 }
 
-export const edit = async ({ id, payment }: { id: string, payment: PaymentForm }): Promise<Payment> => {
+export const edit = async ({ id, payment }: { id: string, payment: PaymentFormValues }): Promise<Payment> => {
   const editedPayment = {
     ...payment
 

@@ -2,25 +2,23 @@
 import React, { useEffect, useRef } from 'react'
 import { useParams } from 'react-router-dom'
 import { Container } from 'src/components/Container/Container'
-import { PaymentDescription } from 'src/components/PaymentDescription/PaymentDescription'
-import { Button, Form, Select, Space } from 'antd'
+// import { PaymentDescription } from 'src/components/PaymentDescription/PaymentDescription'
+// import { Button, Form, Select, Space } from 'antd'
 import { Navigation } from 'src/UI/Navigation/Navigation'
 import { useDoctos } from 'src/hooks/useDoctos'
-import { usePayments } from 'src/hooks/usePayments'
+import { PaymentForm } from '../Payments/components/PaymentForm/PaymentForm'
 
-const tailLayout = {
-  wrapperCol: { offset: 8, span: 16 }
-}
+// const tailLayout = {
+//   wrapperCol: { offset: 8, span: 16 }
+// }
 
-const CATEGORY_VALUES: Array<{ value: string, label: JSX.Element }> = [
-  { value: 'mantenimiento', label: <span>Mantenimiento</span> }
-]
+// const CATEGORY_VALUES: Array<{ value: string, label: JSX.Element }> = [
+//   { value: 'mantenimiento', label: <span>Mantenimiento</span> }
+// ]
 
 export const DoctoDetail: React.FC = () => {
   const { id } = useParams()
-  const { docto, getById } = useDoctos()
-  const { handleOnSubmit } = usePayments()
-  const [form] = Form.useForm()
+  const { docto, form, getById, handleOnSubmit } = useDoctos()
 
   const saveButtonRef = useRef(null)
 
@@ -30,27 +28,9 @@ export const DoctoDetail: React.FC = () => {
     }
   }, [id])
 
-  const onGenderChange = (value: string) => {
-    switch (value) {
-      case 'male':
-        form.setFieldsValue({ note: 'Hi, man!' })
-        break
-      case 'female':
-        form.setFieldsValue({ note: 'Hi, lady!' })
-        break
-      case 'other':
-        form.setFieldsValue({ note: 'Hi there!' })
-        break
-      default:
-    }
-  }
-
-  const onFinish = (value: { category: string }) => {
-    if (docto === undefined || docto === null) return
-
-    const { category } = value
-
-    handleOnSubmit({ category, idProscai: docto.idProscai })
+  const onFinish = (values: any) => {
+    console.log(values)
+    handleOnSubmit({ values })
   }
 
   return (
@@ -58,12 +38,23 @@ export const DoctoDetail: React.FC = () => {
       <Navigation
         name='Detalle de Pago'
         isNew={false}
-        hasFile={docto !== null ? docto.files.length > 0 : false}
+        hasFile={false}
         saveRef={saveButtonRef}
       />
       <Container>
 
-        <Space direction='vertical' size={30} style={{ width: '100%' }}>
+        {
+          (docto !== undefined && docto !== null) &&
+
+          <PaymentForm
+            form={form}
+            onFinish={onFinish}
+            formValues={docto}
+            disabled={true}
+          />
+        }
+
+        {/* <Space direction='vertical' size={30} style={{ width: '100%' }}>
 
           {docto !== null ? <PaymentDescription payment={docto} /> : ''}
 
@@ -95,7 +86,7 @@ export const DoctoDetail: React.FC = () => {
 
           </Form>
 
-        </Space>
+        </Space> */}
 
       </Container>
 

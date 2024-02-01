@@ -1,13 +1,13 @@
 /* eslint-disable @typescript-eslint/no-misused-promises */
 import { useAppDispatch, useAppSelector } from './useStore'
-import { type PaymentForm, type Payment } from '../interfaces/Payment'
+import { type Payment, type PaymentFormValues } from '../interfaces/Payment'
 import { Form, type FormInstance } from 'antd'
 
 import { type RefObject, useRef, useEffect } from 'react'
 import { useLocation } from 'react-router-dom'
 import dayjs from 'dayjs'
-import { addNewPayment, editPayment, loadPayments, onStartPayment, selectPayment } from 'src/store/payments/slice'
-import { createPayment, edit, getAllPayments, getPaymentById } from 'src/services/payments'
+import { addNewPayment, loadPayments, onStartPayment, selectPayment } from 'src/store/payments/slice'
+import { type PaymentBody, createPayment, getAllPayments, getPaymentById } from 'src/services/payments'
 import { toast } from 'sonner'
 
 interface Props {
@@ -15,10 +15,21 @@ interface Props {
   payment: Payment | null
   form: FormInstance<any>
   isLoading: boolean
-  handleOnSubmit: (values: PaymentForm) => void
-  handleEdit: (value: PaymentForm) => void
+  handleOnSubmit: (values: PaymentFormValues) => void
+  handleEdit: (value: PaymentFormValues) => void
   getById: ({ id }: { id: string }) => Promise<void>
   buttonSaveRef: RefObject<HTMLButtonElement>
+}
+
+export const COIN_VALUES = {
+  MXN: {
+    code: 'MXN',
+    name: 'pesos'
+  },
+  USD: {
+    code: 'USD',
+    name: 'dolares'
+  }
 }
 
 export const usePayments = (): Props => {
@@ -63,25 +74,41 @@ export const usePayments = (): Props => {
     }
   }, [payment])
 
-  const handleOnSubmit = async (values: PaymentForm): Promise<void> => {
-    // const newPayment = {
-    //   datePaid: dayjs(datePaid).toDate(),
-    //   supplier: {
-    //     name,
-    //     idProscai
-    //   },
-    //   docto,
-    //   paid,
-    //   comments
-    // }
+  const handleOnSubmit = async (values: PaymentFormValues): Promise<void> => {
+    console.log(payment)
+
+    const { supplier, creditor, amount, category, coin, datePaid, idCreditor, idSupplier, branchOffice } = values
+
+    const newPayment: PaymentBody = {
+      datePaid: dayjs(datePaid).toDate(),
+      supplier: supplier !== undefined
+        ? {
+            name: supplier.trim(),
+            uid: idSupplier
+          }
+        : null,
+      creditor: creditor !== undefined
+        ? {
+            name: creditor.trim(),
+            uid: idCreditor
+          }
+        : null,
+      amount,
+      category,
+      coin: COIN_VALUES[coin],
+      idProscai: null,
+      branchOffice
+    }
 
     try {
       dispatch(onStartPayment())
-      const resp = await createPayment({ payment: values })
+      const resp = await createPayment({ payment: newPayment })
       if (resp.error != null) {
         console.log(resp.error)
         return
       }
+
+      console.log(resp)
 
       if (resp.payment !== undefined) {
         dispatch(addNewPayment(resp.payment))
@@ -95,7 +122,7 @@ export const usePayments = (): Props => {
     }
   }
 
-  const handleEdit = async (value: PaymentForm): Promise<void> => {
+  const handleEdit = async (value: PaymentFormValues): Promise<void> => {
     // const { datePaid, docto, paid, supplier, idProscai, id, comments } = value
     // const newPayment = {
     //   datePaid: dayjs(datePaid).toDate(),
