@@ -15,8 +15,9 @@ import { useNavigate } from 'react-router-dom'
 interface Props {
   doctos: Docto[]
   docto: Docto | null
+  isLoading: boolean
   getById: ({ id }: { id: string }) => Promise<void>
-  getAll: () => Promise<void>
+  getAll: ({ search }: { search?: string }) => Promise<void>
   handleOnSubmit: ({ values }: { values: any }) => Promise<void>
   form: FormInstance<any>
 }
@@ -24,19 +25,20 @@ interface Props {
 export const useDoctos = (): Props => {
   const doctos = useAppSelector(state => state.doctos.data)
   const docto = useAppSelector(state => state.doctos.selected)
+  const isLoading = useAppSelector(state => state.doctos.isLoading)
   const [form] = Form.useForm()
   const dispatch = useDispatch()
   const navigate = useNavigate()
 
-  const getAll = async (): Promise<void> => {
-    const resp = await getAllDoctos()
+  const getAll = async ({ search }: { search?: string }): Promise<void> => {
+    dispatch(onStartDoctos())
+    const resp = await getAllDoctos({ search })
 
     if (resp.error !== undefined) {
       console.log(resp.error)
       dispatch(loadDoctos([]))
       return
     }
-    console.log(resp)
     dispatch(loadDoctos(resp.doctos !== undefined ? resp?.doctos : []))
   }
 
@@ -87,6 +89,7 @@ export const useDoctos = (): Props => {
     form,
     doctos,
     docto,
+    isLoading,
     getById,
     getAll,
     handleOnSubmit

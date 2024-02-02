@@ -1,5 +1,5 @@
 import { getApiUrl } from 'src/helpers/getApiUrl'
-import { type Payment, type PaymentFormValues } from 'src/interfaces/Payment'
+import { type Payment } from 'src/interfaces/Payment'
 import { fetchWithToken } from '../helpers/fetchWithToken'
 
 const { API_URL } = getApiUrl()
@@ -57,20 +57,14 @@ export const createPayment = async ({ payment }: { payment: PaymentBody }): Prom
   return resp
 }
 
-export const edit = async ({ id, payment }: { id: string, payment: PaymentFormValues }): Promise<Payment> => {
+export const editPaymentService = async ({ id, payment }: { id: string, payment: PaymentBody }): Promise<ResponsePayment> => {
   const editedPayment = {
-    ...payment
+    ...payment,
+    id
 
   }
-  const resp = await fetch(`${API_URL}/payments/${id}`, {
-    method: 'PUT',
-    body: JSON.stringify(editedPayment),
-    headers: { 'Content-type': 'application/json; charset=UTF-8' }
-  })
-
-  const body = await resp.json()
-
-  return body
+  const resp = await fetchWithToken({ endpoint: `payments/${id}`, method: 'PUT', body: editedPayment })
+  return resp
 }
 
 export const uploadFiles = async ({ id, files }: { id: string, files: any }): Promise<void> => {

@@ -1,13 +1,15 @@
+import { Space } from 'antd'
 import { type ColumnsType } from 'antd/es/table'
 import React, { useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { Navigation } from 'src/UI/Navigation/Navigation'
 import { DataTable } from 'src/components/DataTable/DataTable'
+import { InputSearch } from 'src/components/InputSearch'
 import { useDoctos } from 'src/hooks/useDoctos'
 import { type Docto } from 'src/interfaces/Docto'
 
 export const Doctos: React.FC = () => {
-  const { getAll, doctos } = useDoctos()
+  const { getAll, doctos, form, isLoading } = useDoctos()
 
   const columns: ColumnsType<Docto> = [
     {
@@ -27,19 +29,29 @@ export const Doctos: React.FC = () => {
     },
     {
       title: 'Fecha de pago',
-      dataIndex: 'fecha'
+      dataIndex: 'fecha',
+      render: (_, value) => value.fecha.slice(0, 10)
     },
     {
       title: 'Importe',
-      dataIndex: 'importeFactura'
+      dataIndex: 'importeFactura',
+      render: (_, value) => new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN' }).format(
+        Number(value.importeFactura)
+      )
     },
     {
       title: 'Importe MXN',
-      dataIndex: 'importePesos'
+      dataIndex: 'importePesos',
+      render: (_, value) => new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN' }).format(
+        Number(value.importePesos)
+      )
     },
     {
       title: 'Saldo',
-      dataIndex: 'saldo'
+      dataIndex: 'saldo',
+      render: (_, value) => new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN' }).format(
+        Number(value.saldo)
+      )
     }
     // {
     //   title: 'Archivos',
@@ -49,18 +61,28 @@ export const Doctos: React.FC = () => {
   ]
 
   useEffect(() => {
-    getAll()
+    getAll({})
   }, [])
+
+  const handleSearch = ({ search }: { search: string }): void => {
+    getAll({ search })
+  }
 
   return (
     <>
       <Navigation name='Doctos' saveRef={null} />
-      <DataTable
-        rowKey={(value) => value.idProscai}
-        columns={columns}
-        data={doctos}
-        expandedRowRender={(record: Docto) => PaymentExpandRow({ docto: record })}
-      />
+
+      <Space direction='vertical' style={{ width: '100%' }} >
+        <InputSearch form={form} handleSearch={handleSearch} />
+        <DataTable
+          loading={isLoading}
+          rowKey={(value) => value.idProscai}
+          columns={columns}
+          data={doctos}
+          expandedRowRender={(record: Docto) => PaymentExpandRow({ docto: record })}
+        />
+      </Space>
+
     </>
   )
 }

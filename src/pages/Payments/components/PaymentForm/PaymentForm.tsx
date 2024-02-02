@@ -15,12 +15,13 @@ interface Props {
   formValues?: Docto
   disabled?: boolean
   radioValue?: number
+  isLoading?: boolean
 }
 const CATEGORY_VALUES: Array<{ value: string, label: JSX.Element }> = [
   { value: 'mantenimiento', label: <span>Mantenimiento</span> }
 ]
 
-export const PaymentForm: React.FC<Props> = ({ form, onFinish, formValues, disabled = false, radioValue = 1 }) => {
+export const PaymentForm: React.FC<Props> = ({ form, onFinish, formValues, disabled = false, radioValue = 1, isLoading = false }) => {
   const { buttonRef } = useButtonRef()
 
   const [value, setValue] = useState(radioValue)
@@ -44,7 +45,7 @@ export const PaymentForm: React.FC<Props> = ({ form, onFinish, formValues, disab
   }
 
   return (
-    <Card style={{ width: '100%' }}>
+    <Card style={{ width: '100%' }} loading={isLoading}>
       <Radio.Group onChange={onChange} value={value} style={{ marginBottom: 20 }} disabled={disabled}>
         <Radio value={1}>Proveedor</Radio>
         <Radio value={2}>Acreedor | Deudor </Radio>

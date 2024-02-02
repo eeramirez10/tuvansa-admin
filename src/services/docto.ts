@@ -33,8 +33,14 @@ interface ResponsePayment {
   ok?: boolean
 }
 
-export const getAllDoctos = async (): Promise<ResponsePayments> => {
-  const resp = await fetchWithToken({ endpoint: 'proscai/doctos', method: 'GET' })
+export const getAllDoctos = async ({ search = '' }: { search?: string }): Promise<ResponsePayments> => {
+  const params = new URLSearchParams({
+
+    search: search !== '' ? search.trim().toUpperCase() : ''
+
+  })
+
+  const resp = await fetchWithToken({ endpoint: `proscai/doctos?${params.toString()}`, method: 'GET' })
   return resp
 }
 

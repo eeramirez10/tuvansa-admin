@@ -14,7 +14,7 @@ const columns: ColumnsType<Payment> = [
     dataIndex: 'id',
     width: '20%',
     render: (_, { id }) => {
-      return (<Link to={`/payment/${id}/detail`} >{id} </Link>)
+      return (<Link to={`/payment/${id}/detail`} >{id.slice(5, 15)} </Link>)
     }
   },
 
@@ -35,7 +35,10 @@ const columns: ColumnsType<Payment> = [
   },
   {
     title: 'Importe',
-    dataIndex: 'amount'
+    dataIndex: 'amount',
+    render: (_, value) => new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN' }).format(
+      value.amount
+    )
   },
   {
     title: 'Archivos',
@@ -56,7 +59,7 @@ export const Payments: React.FC = () => {
         columns={columns}
         data={payments}
         expandedRowRender={(record: Payment) => PaymentExpandRow({ payment: record })}
-        rowExpandable={(record: Payment) => record.proscai !== null }
+        rowExpandable={(record: Payment) => record.proscai !== null}
       />
     </>
 

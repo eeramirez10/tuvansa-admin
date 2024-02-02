@@ -3,7 +3,7 @@ import Sider from 'antd/es/layout/Sider'
 import { Menu } from './Menu'
 
 export const Sidebar: React.FC = () => {
-  const [collapsed, setCollapsed] = useState(false)
+  const [collapsed, setCollapsed] = useState(true)
 
   return (
     <Sider

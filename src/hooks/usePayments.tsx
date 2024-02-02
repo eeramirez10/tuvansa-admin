@@ -4,10 +4,10 @@ import { type Payment, type PaymentFormValues } from '../interfaces/Payment'
 import { Form, type FormInstance } from 'antd'
 
 import { type RefObject, useRef, useEffect } from 'react'
-import { useLocation } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import dayjs from 'dayjs'
 import { addNewPayment, loadPayments, onStartPayment, selectPayment } from 'src/store/payments/slice'
-import { type PaymentBody, createPayment, getAllPayments, getPaymentById } from 'src/services/payments'
+import { type PaymentBody, createPayment, getAllPayments, getPaymentById, editPaymentService } from 'src/services/payments'
 import { toast } from 'sonner'
 
 interface Props {
@@ -15,10 +15,10 @@ interface Props {
   payment: Payment | null
   form: FormInstance<any>
   isLoading: boolean
-  handleOnSubmit: (values: PaymentFormValues) => void
-  handleEdit: (value: PaymentFormValues) => void
-  getById: ({ id }: { id: string }) => Promise<void>
   buttonSaveRef: RefObject<HTMLButtonElement>
+  handleOnSubmit: (values: PaymentFormValues) => void
+  getById: ({ id }: { id: string }) => Promise<void>
+  setFormValues: (paymet: Payment) => void
 }
 
 export const COIN_VALUES = {
@@ -40,6 +40,7 @@ export const usePayments = (): Props => {
   const dispatch = useAppDispatch()
   const buttonSaveRef = useRef<HTMLButtonElement>(null)
   const location = useLocation()
+  const navigate = useNavigate()
 
   const [form] = Form.useForm()
 
@@ -61,22 +62,7 @@ export const usePayments = (): Props => {
     }
   }, [])
 
-  useEffect(() => {
-    if (payment !== null) {
-      // form.setFieldsValue({
-      //   ...payment,
-      //   supplier: payment?.supplier.name,
-      //   idProscai: payment.supplier.idProscai,
-      //   datePaid: dayjs(payment.datePaid)
-      // })
-    } else {
-      form.resetFields()
-    }
-  }, [payment])
-
   const handleOnSubmit = async (values: PaymentFormValues): Promise<void> => {
-    console.log(payment)
-
     const { supplier, creditor, amount, category, coin, datePaid, idCreditor, idSupplier, branchOffice } = values
 
     const newPayment: PaymentBody = {
@@ -102,52 +88,55 @@ export const usePayments = (): Props => {
 
     try {
       dispatch(onStartPayment())
-      const resp = await createPayment({ payment: newPayment })
-      if (resp.error != null) {
-        console.log(resp.error)
-        return
-      }
 
-      console.log(resp)
+      const isPayment = payment?.id !== null && payment?.id !== undefined
+
+      const resp = isPayment
+        ? await editPaymentService({ payment: newPayment, id: payment.id })
+        : await createPayment({ payment: newPayment })
+
+      if (resp.error != null) return
 
       if (resp.payment !== undefined) {
         dispatch(addNewPayment(resp.payment))
         toast.success('Creado Correctamente')
       }
     } catch (error) {
-      console.log(error)
+
     } finally {
       form.resetFields()
-      // navigate('/payments')
+      navigate('/payments')
     }
   }
 
-  const handleEdit = async (value: PaymentFormValues): Promise<void> => {
-    // const { datePaid, docto, paid, supplier, idProscai, id, comments } = value
-    // const newPayment = {
-    //   datePaid: dayjs(datePaid).toDate(),
-    //   supplier,
-    //   idProscai,
-    //   docto,
-    //   paid,
-    //   comments
-    // }
-
-    // if (id !== undefined) {
-    //   try {
-    //     dispatch(onStartPayment())
-    //     const paymentDB = await edit({ id, payment: newPayment })
-    //     dispatch(editPayment({ ...paymentDB }))
-    //   } catch (error) {
-    //     console.log(error)
-    //   }
-    // }
+  const getById = async ({ id }: { id: string }): Promise<void> => {
+    dispatch(onStartPayment())
+    const { payment } = await getPaymentById({ id })
+    dispatch(selectPayment(payment ?? null))
   }
 
-  const getById = async ({ id }: { id: string }): Promise<void> => {
-    const { payment } = await getPaymentById({ id })
+  const setFormValues = (payment: Payment): void => {
+    const {
+      supplier,
+      creditor,
+      category,
+      amount,
+      coin,
+      branchOffice,
+      datePaid
+    } = payment
 
-    dispatch(selectPayment(payment ?? null))
+    form.setFieldsValue({
+      supplier: supplier?.name,
+      idSupplier: supplier?.uid,
+      creditor: creditor?.name,
+      idCreditor: creditor?.uid,
+      category,
+      amount,
+      coin: coin.code,
+      branchOffice,
+      datePaid: dayjs(datePaid)
+    })
   }
 
   return {
@@ -157,7 +146,7 @@ export const usePayments = (): Props => {
     buttonSaveRef,
     isLoading,
     handleOnSubmit,
-    handleEdit,
-    getById
+    getById,
+    setFormValues
   }
 }
