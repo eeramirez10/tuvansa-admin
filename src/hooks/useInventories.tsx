@@ -24,6 +24,7 @@ interface InventoryReturn {
   getShelterByAlmseq: ({ id }: { id: string }) => Promise<void>
   getInventoryProscaiByIseq: ({ id }: { id: string }) => Promise<InventoryId>
   releaseInventories: ({ paused }: { paused?: boolean }) => Promise<void>
+  getAll: ({ search, from }: { search?: string, from?: string, almacen?: string }) => Promise<void>
 }
 
 export const useInventories = (): InventoryReturn => {
@@ -98,6 +99,18 @@ export const useInventories = (): InventoryReturn => {
     }
   }
 
+  const getAll = async ({ search, from }: { search?: string, from?: string, almacen?: string }): Promise<void> => {
+    try {
+      dispatch(onStartInventories())
+      const resp = await getInventories({ search, from })
+
+      dispatch(loadInventories(resp.inventories.items))
+    } catch (error) {
+      console.log(error)
+      toast.error('hubo un error')
+    }
+  }
+
   const handleOnSubmit = async (value: { count: number }): Promise<void> => {
     dispatch(onStartInventories())
     const { count } = value
@@ -148,6 +161,7 @@ export const useInventories = (): InventoryReturn => {
     isLoading,
     form,
     options,
+    getAll,
     onLoadInventories,
     handleOnSubmit,
     handleliberarInventario,

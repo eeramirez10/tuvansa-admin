@@ -1,5 +1,5 @@
 import { getApiUrl } from 'src/helpers/getApiUrl'
-import { type PaymentBody, type Payment, type PaymentForm } from 'src/interfaces/Payment'
+import { type Payment } from 'src/interfaces/Payment'
 import { fetchWithToken } from '../helpers/fetchWithToken'
 
 const { API_URL } = getApiUrl()
@@ -14,6 +14,27 @@ interface ResponsePayment {
   payment?: Payment
   error?: string
   ok?: boolean
+}
+
+export interface PaymentBody {
+  idProscai: string | null
+  amount: number
+  category: string
+  creditor: {
+    name: string
+    uid: string
+  } | null
+  coin: {
+    name: string
+    code: string
+  }
+  datePaid: Date
+  supplier: {
+    name: string
+    uid: string
+  } | null
+  branchOffice: string
+
 }
 
 export const getAllPayments = async (): Promise<ResponsePayments> => {
@@ -36,20 +57,14 @@ export const createPayment = async ({ payment }: { payment: PaymentBody }): Prom
   return resp
 }
 
-export const edit = async ({ id, payment }: { id: string, payment: PaymentForm }): Promise<Payment> => {
+export const editPaymentService = async ({ id, payment }: { id: string, payment: PaymentBody }): Promise<ResponsePayment> => {
   const editedPayment = {
     ...payment,
-    supplierName: payment.supplier
+    id
+
   }
-  const resp = await fetch(`${API_URL}/payments/${id}`, {
-    method: 'PUT',
-    body: JSON.stringify(editedPayment),
-    headers: { 'Content-type': 'application/json; charset=UTF-8' }
-  })
-
-  const body = await resp.json()
-
-  return body
+  const resp = await fetchWithToken({ endpoint: `payments/${id}`, method: 'PUT', body: editedPayment })
+  return resp
 }
 
 export const uploadFiles = async ({ id, files }: { id: string, files: any }): Promise<void> => {

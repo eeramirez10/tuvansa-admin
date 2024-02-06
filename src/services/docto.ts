@@ -1,4 +1,6 @@
+import { fetchWithToken } from 'src/helpers/fetchWithToken'
 import { getApiUrl } from 'src/helpers/getApiUrl'
+import { type Docto } from 'src/interfaces/Docto'
 
 const { API_URL } = getApiUrl()
 
@@ -17,6 +19,34 @@ interface Doctos {
   montoFactura: number
   saldo: number
   pagado: number
+}
+
+interface ResponsePayments {
+  doctos?: Docto[]
+  error?: string
+  ok?: boolean
+}
+
+interface ResponsePayment {
+  docto?: Docto
+  error?: string
+  ok?: boolean
+}
+
+export const getAllDoctos = async ({ search = '' }: { search?: string }): Promise<ResponsePayments> => {
+  const params = new URLSearchParams({
+
+    search: search !== '' ? search.trim().toUpperCase() : ''
+
+  })
+
+  const resp = await fetchWithToken({ endpoint: `proscai/doctos?${params.toString()}`, method: 'GET' })
+  return resp
+}
+
+export const getDoctoById = async ({ id }: { id: string }): Promise<ResponsePayment> => {
+  const resp = await fetchWithToken({ endpoint: `proscai/doctos/${id}/detail`, method: 'GET' })
+  return resp
 }
 
 export const getDocsBySupplier = async ({ supplierId }: { supplierId: string }): Promise<DocsProscai> => {

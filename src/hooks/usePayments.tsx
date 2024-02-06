@@ -1,27 +1,38 @@
 /* eslint-disable @typescript-eslint/no-misused-promises */
 import { useAppDispatch, useAppSelector } from './useStore'
-import { type PaymentForm, type Payment } from '../interfaces/Payment'
+import { type Payment, type PaymentFormValues } from '../interfaces/Payment'
 import { Form, type FormInstance } from 'antd'
 
 import { type RefObject, useRef, useEffect } from 'react'
-import { useLocation, useParams } from 'react-router-dom'
-import { getPayment } from 'src/store/payments/thunks'
+import { useLocation, useNavigate } from 'react-router-dom'
 import dayjs from 'dayjs'
-import { editPayment, loadPayments, onStartPayment } from 'src/store/payments/slice'
-import { edit, getAllPayments } from 'src/services/payments'
+import { addNewPayment, loadPayments, onStartPayment, selectPayment } from 'src/store/payments/slice'
+import { type PaymentBody, createPayment, getAllPayments, getPaymentById, editPaymentService } from 'src/services/payments'
+import { toast } from 'sonner'
 
 interface Props {
   payments: Payment[]
   payment: Payment | null
   form: FormInstance<any>
   isLoading: boolean
-  handleOnSubmit: (value: PaymentForm) => void
-  handleEdit: (value: PaymentForm) => void
   buttonSaveRef: RefObject<HTMLButtonElement>
+  handleOnSubmit: (values: PaymentFormValues) => void
+  getById: ({ id }: { id: string }) => Promise<void>
+  setFormValues: (paymet: Payment) => void
+}
+
+export const COIN_VALUES = {
+  MXN: {
+    code: 'MXN',
+    name: 'pesos'
+  },
+  USD: {
+    code: 'USD',
+    name: 'dolares'
+  }
 }
 
 export const usePayments = (): Props => {
-  const { id } = useParams()
   const payments = useAppSelector(state => state.payments.data)
   const payment = useAppSelector(state => state.payments.selected)
   const isLoading = useAppSelector(state => state.payments.isLoading)
@@ -29,6 +40,7 @@ export const usePayments = (): Props => {
   const dispatch = useAppDispatch()
   const buttonSaveRef = useRef<HTMLButtonElement>(null)
   const location = useLocation()
+  const navigate = useNavigate()
 
   const [form] = Form.useForm()
 
@@ -50,79 +62,81 @@ export const usePayments = (): Props => {
     }
   }, [])
 
-  useEffect(() => {
-    if (id !== undefined) {
-      dispatch(getPayment({ id }))
-    }
-  }, [])
+  const handleOnSubmit = async (values: PaymentFormValues): Promise<void> => {
+    const { supplier, creditor, amount, category, coin, datePaid, idCreditor, idSupplier, branchOffice } = values
 
-  useEffect(() => {
-    if (payment !== null) {
-      // form.setFieldsValue({
-      //   ...payment,
-      //   supplier: payment?.supplier.name,
-      //   idProscai: payment.supplier.idProscai,
-      //   datePaid: dayjs(payment.datePaid)
-      // })
-    } else {
+    const newPayment: PaymentBody = {
+      datePaid: dayjs(datePaid).toDate(),
+      supplier: supplier !== undefined
+        ? {
+            name: supplier.trim(),
+            uid: idSupplier
+          }
+        : null,
+      creditor: creditor !== undefined
+        ? {
+            name: creditor.trim(),
+            uid: idCreditor
+          }
+        : null,
+      amount,
+      category,
+      coin: COIN_VALUES[coin],
+      idProscai: null,
+      branchOffice
+    }
+
+    try {
+      dispatch(onStartPayment())
+
+      const isPayment = payment?.id !== null && payment?.id !== undefined
+
+      const resp = isPayment
+        ? await editPaymentService({ payment: newPayment, id: payment.id })
+        : await createPayment({ payment: newPayment })
+
+      if (resp.error != null) return
+
+      if (resp.payment !== undefined) {
+        dispatch(addNewPayment(resp.payment))
+        toast.success('Creado Correctamente')
+      }
+    } catch (error) {
+
+    } finally {
       form.resetFields()
+      navigate('/payments')
     }
-  }, [payment])
-
-  const handleOnSubmit = async (value: PaymentForm): Promise<void> => {
-    console.log(value)
-    // const { datePaid, docto, paid, supplier: name, idProscai, comments } = value
-    // const newPayment = {
-    //   datePaid: dayjs(datePaid).toDate(),
-    //   supplier: {
-    //     name,
-    //     idProscai
-    //   },
-    //   docto,
-    //   paid,
-    //   comments
-    // }
-
-    // try {
-    //   dispatch(onStartPayment())
-    //   const resp = await createPayment({ payment: newPayment })
-    //   if (resp.error != null) {
-    //     console.log(resp.error)
-    //     return
-    //   }
-
-    //   if (resp.payment !== undefined) {
-    //     dispatch(addNewPayment(resp.payment))
-    //     toast.success('Creado Correctamente')
-    //   }
-    // } catch (error) {
-    //   console.log(error)
-    // } finally {
-    //   form.resetFields()
-    //   navigate('/payments')
-    // }
   }
 
-  const handleEdit = async (value: PaymentForm): Promise<void> => {
-    const { datePaid, docto, paid, supplier, idProscai, id, comments } = value
-    const newPayment = {
-      datePaid: dayjs(datePaid).toDate(),
-      supplier,
-      idProscai,
-      docto,
-      paid,
-      comments
-    }
+  const getById = async ({ id }: { id: string }): Promise<void> => {
+    dispatch(onStartPayment())
+    const { payment } = await getPaymentById({ id })
+    dispatch(selectPayment(payment ?? null))
+  }
 
-    if (id !== undefined) {
-      try {
-        dispatch(onStartPayment())
-        const paymentDB = await edit({ id, payment: newPayment })
-        dispatch(editPayment({ ...paymentDB }))
-      } catch (error) {
-        console.log(error)
-      }
-    }
+  const setFormValues = (payment: Payment): void => {
+    const {
+      supplier,
+      creditor,
+      category,
+      amount,
+      coin,
+      branchOffice,
+      datePaid
+    } = payment
+
+    form.setFieldsValue({
+      supplier: supplier?.name,
+      idSupplier: supplier?.uid,
+      creditor: creditor?.name,
+      idCreditor: creditor?.uid,
+      category,
+      amount,
+      coin: coin.code,
+      branchOffice,
+      datePaid: dayjs(datePaid)
+    })
   }
 
   return {
@@ -132,6 +146,7 @@ export const usePayments = (): Props => {
     buttonSaveRef,
     isLoading,
     handleOnSubmit,
-    handleEdit
+    getById,
+    setFormValues
   }
 }

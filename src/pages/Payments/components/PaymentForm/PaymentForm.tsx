@@ -1,61 +1,55 @@
 /* eslint-disable @typescript-eslint/no-misused-promises */
 import React, { useEffect, useState } from 'react'
-import { Button, Card, Form, type FormInstance, Input, DatePicker, AutoComplete, Row, Col, Space, InputNumber } from 'antd'
+import { Button, Card, Form, type FormInstance, DatePicker, Row, Select, Flex, type RadioChangeEvent, InputNumber } from 'antd'
 import { useButtonRef } from 'src/hooks/useButtonRef'
-import { CloseSquareFilled } from '@ant-design/icons'
-import { getSuppliersProscai } from 'src/services/supplier'
-import { getDocsBySupplier } from 'src/services/docto'
+// import { getSuppliersProscai } from 'src/services/supplier'
+
+import { Radio } from 'antd'
+import { SupplierAutoComplete } from 'src/components/SupplierAutoComplete/SupplierAutoComplete'
+import { CreditorAutoComplete } from 'src/components/CreditorAutoComplete/CreditorAutoComplete'
+import { type Docto } from 'src/interfaces/Docto'
 
 interface Props {
   form: FormInstance<any>
   onFinish: (value: any) => Promise<void> | void
+  formValues?: Docto
+  disabled?: boolean
+  radioValue?: number
+  isLoading?: boolean
 }
+const CATEGORY_VALUES: Array<{ value: string, label: JSX.Element }> = [
+  { value: 'mantenimiento', label: <span>Mantenimiento</span> }
+]
 
-export const PaymentForm: React.FC<Props> = ({ form, onFinish }) => {
+export const PaymentForm: React.FC<Props> = ({ form, onFinish, formValues, disabled = false, radioValue = 1, isLoading = false }) => {
   const { buttonRef } = useButtonRef()
-  const [options, setOptions] = useState<Array<{ label: string, value: string, id: string }>>([])
-  const [isLoading, setIsloading] = useState(false)
-  const [open, setOpen] = useState(false)
-  const [supplierId, setSupplierId] = useState('')
-  let filterTimeout: any
+
+  const [value, setValue] = useState(radioValue)
 
   useEffect(() => {
-    if (supplierId !== '') {
-      getDocsBySupplier({ supplierId })
-        .then(resp => {
-          console.log(resp.doctos)
+    setValue(radioValue)
+  }, [radioValue])
 
-          form.setFieldsValue({ doctos: resp.doctos })
-        })
-        .catch(e => { console.log(e) })
+  useEffect(() => {
+    if (formValues !== undefined) {
+      form.setFieldsValue({
+        supplier: formValues.supplier.name,
+        idSupplier: formValues.supplier.uid
+      })
     }
-  }, [supplierId])
+  }, [formValues])
 
-  const onSearch = async (text: string): Promise<void> => {
-    clearTimeout(filterTimeout)
-
-    if (text === '' || text === null) return
-
-    filterTimeout = setTimeout(async () => {
-      console.log('====>', text)
-
-      setIsloading(true)
-      setOpen(false)
-      try {
-        const { suppliers } = await getSuppliersProscai({ search: text })
-        const optionsDB = suppliers.map(item => ({ label: item.name, value: item.name, id: item.uid }))
-        setOptions(optionsDB)
-      } catch (error) {
-        console.log(error)
-      } finally {
-        setIsloading(false)
-        setOpen(true)
-      }
-    }, 1000)
+  const onChange = (e: RadioChangeEvent): void => {
+    console.log('radio checked', e.target.value)
+    setValue(e.target.value)
   }
 
   return (
-    <Card style={{ width: '100%' }}>
+    <Card style={{ width: '100%' }} loading={isLoading}>
+      <Radio.Group onChange={onChange} value={value} style={{ marginBottom: 20 }} disabled={disabled}>
+        <Radio value={1}>Proveedor</Radio>
+        <Radio value={2}>Acreedor | Deudor </Radio>
+      </Radio.Group>
       <Form
         form={form}
 
@@ -65,64 +59,91 @@ export const PaymentForm: React.FC<Props> = ({ form, onFinish }) => {
         style={{ width: '100%' }}
 
       >
-        <Form.Item
-          name={'datePaid'}
-          label='Fecha de pago'
-          rules={[{ required: true }]}
-        >
-          <DatePicker />
 
-        </Form.Item>
-        <Form.Item
-          name={'id'}
-          label='Proveedor'
-          hidden
-        >
-          <Input />
+        <Flex vertical>
 
-        </Form.Item>
+          <Row gutter={[24, 16]}>
+            {
+              value === 1 &&
 
-        <Row gutter={[24, 16]}>
-          <Col >
-            <Form.Item
-              name={'supplier'}
-              label='Proveedor'
-              rules={[{ required: true }]}
-            >
-              <AutoComplete
-                options={options}
-                style={{ width: 200 }}
-                onSearch={onSearch}
-                placeholder="Customized clear icon"
-                allowClear={{ clearIcon: <CloseSquareFilled /> }}
-                onSelect={(_value, values) => {
-                  setOpen(false)
-                  form.setFieldsValue({ idProscai: values.id })
-                  setSupplierId(values.id)
-                }}
-                popupMatchSelectWidth={500}
-                disabled={isLoading}
-                open={open}
-
+              <SupplierAutoComplete
+                required={value === 1}
+                form={form}
+                disabled={disabled}
               />
 
-            </Form.Item>
+            }
+          </Row>
 
-          </Col>
+          {
+            value === 2 &&
+            <Row gutter={[24, 16]}>
+              <CreditorAutoComplete
+                required={value === 2}
+                form={form}
 
-          <Col>
-            <Form.Item
-              name={'idProscai'}
-              label='id'
-              rules={[{ required: true }]}
-            >
-              <Input disabled />
-            </Form.Item>
-          </Col>
+              />
+            </Row>
+          }
 
-        </Row>
+          <Form.Item name="category" label="Categoria" rules={[{ required: true }]} style={{ width: 200 }}>
+            <Select
+              placeholder="Seleciona una cetegoria"
+              allowClear
+              options={CATEGORY_VALUES}
+            />
 
-        <DoctosListForm />
+          </Form.Item>
+
+          <Form.Item
+            name={'amount'}
+            label='Importe'
+            rules={[{ required: true }]}
+          >
+            <InputNumber />
+
+          </Form.Item>
+
+          <Form.Item name="coin" label="Moneda" rules={[{ required: true }]} style={{ width: 200 }}>
+            <Select
+              placeholder="Seleciona una una Moneda"
+              allowClear
+              options={[
+                { value: 'MXN', label: 'MXN' },
+                { value: 'USD', label: 'USD' }
+
+              ]}
+            />
+
+          </Form.Item>
+
+          <Form.Item name="branchOffice" label="Oficina" rules={[{ required: true }]} style={{ width: 200 }}>
+            <Select
+              placeholder="Seleciona una Sucursal"
+              allowClear
+              options={[
+                { value: 'Mexico', label: 'Mexico' },
+                { value: 'Monterrey', label: 'Monterrey' },
+                { value: 'Veracruz', label: 'Veracruz' },
+                { value: 'Mexicali', label: 'Mexicali' },
+                { value: 'Queretaro', label: 'Queretaro' },
+                { value: 'Cancun', label: 'Cancun' }
+
+              ]}
+            />
+
+          </Form.Item>
+
+          <Form.Item
+            name={'datePaid'}
+            label='Fecha de pago'
+            rules={[{ required: true }]}
+          >
+            <DatePicker />
+
+          </Form.Item>
+
+        </Flex>
 
         {/* <Form.Item
           name={'docto'}
@@ -141,80 +162,13 @@ export const PaymentForm: React.FC<Props> = ({ form, onFinish }) => {
 
         </Form.Item> */}
 
-        <Form.Item hidden wrapperCol={{ span: 8, offset: 3 }}>
-          <Button hidden ref={buttonRef} type="primary" htmlType="submit">
+        <Form.Item wrapperCol={{ span: 8, offset: 3 }}>
+          <Button ref={buttonRef} type="primary" htmlType="submit">
             Submit
           </Button>
         </Form.Item>
       </Form>
 
     </Card >
-  )
-}
-
-const DoctosListForm: React.FC = () => {
-  return (
-    <Form.List name="doctos">
-      {(fields) => (
-        <>
-          {fields.map(({ key, name, ...restField }) => (
-            <Space key={key} size='small'>
-
-              <Form.Item
-                {...restField}
-
-                name={[name, 'docto']}
-                label='Docto'
-              >
-                <Input style={{ width: 100 }} />
-              </Form.Item>
-
-              <Form.Item
-                {...restField}
-
-                name={[name, 'referencia']}
-                label='Referencia'
-              >
-                <Input style={{ width: 100 }} />
-              </Form.Item>
-
-              <Form.Item
-                {...restField}
-
-                name={[name, 'referenciaEllos']}
-                label='Referencia Ellos'
-              >
-                <Input style={{ width: 100 }} />
-              </Form.Item>
-
-              <Form.Item
-                {...restField}
-                name={[name, 'montoFactura']}
-                label='Monto'
-              >
-                <Input style={{ width: 100 }} />
-              </Form.Item>
-
-              <Form.Item
-                {...restField}
-                name={[name, 'saldo']}
-                label='Saldo'
-              >
-                <InputNumber style={{ width: 100 }} />
-              </Form.Item>
-
-              <Form.Item
-                {...restField}
-                name={[name, 'pagado']}
-                label="Pagado"
-                rules={[{ required: true, message: 'Missing last pagado' }]}
-              >
-                <InputNumber style={{ width: 100 }} />
-              </Form.Item>
-            </Space>
-          ))}
-        </>
-      )}
-    </Form.List>
   )
 }

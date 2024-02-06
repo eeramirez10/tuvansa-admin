@@ -26,9 +26,19 @@ export const Menu: React.FC = () => {
 
   const items: MenuProps['items'] = [
     {
-      label: (<Link to='/payments'> Pagos </Link>),
+      label: 'Pagos',
       key: '1',
-      icon: (<PieChartOutlined />)
+      icon: (<PieChartOutlined />),
+      children: [
+        {
+          label: (<Link to='/doctos'> Doctos </Link>),
+          key: '11'
+        },
+        {
+          label: (<Link to='/payments'> Pagos </Link>),
+          key: '12'
+        }
+      ]
     },
     {
       label: 'Almacen',

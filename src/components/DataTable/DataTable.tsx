@@ -13,7 +13,7 @@ interface Props {
   rowKey: string | number | symbol | GetRowKey<any> | undefined
 }
 
-export const DataTable: React.FC<Props> = ({ columns, data, loading, expandedRowRender, rowExpandable, rowKey }) => {
+export const DataTable: React.FC<Props> = ({ columns, data, loading = false, expandedRowRender, rowExpandable, rowKey }) => {
   return (
     <Table
       scroll={{ scrollToFirstRowOnChange: true, x: 600 }}

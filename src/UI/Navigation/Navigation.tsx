@@ -1,62 +1,57 @@
-import React, { useEffect } from 'react'
+import React, { type RefObject, type MutableRefObject } from 'react'
 import { Button, Card, Flex } from 'antd'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import {
   UnorderedListOutlined
 } from '@ant-design/icons'
-import { useButtonRef } from '../../hooks/useButtonRef'
-import { useAppDispatch, useAppSelector } from 'src/hooks/useStore'
+import { useAppDispatch } from 'src/hooks/useStore'
 import { UploadFiles } from 'src/components/UploadFiles'
 import { selectPayment } from 'src/store/payments/slice'
 
-interface NameNavigation {
-  singularPath: string
-  capitalize: string
-  mainRoute: string
-  includesNewStringPath: boolean
-  includesEditStringPath: boolean
+// const useNameNavigation = (): NameNavigation => {
+//   const { pathname } = useLocation()
+
+//   const arrPathname = pathname.split('/').slice(1)
+
+//   const includesNewStringPath = arrPathname.includes('new')
+
+//   const includesEditStringPath = arrPathname.includes('edit')
+
+//   const mainRoute = arrPathname[0]
+
+//   const capitalize = `${mainRoute.charAt(0).toUpperCase()}${mainRoute.slice(1)}`
+
+//   const singularPath = capitalize.substring(0, mainRoute.length - 1)
+
+//   return {
+//     includesNewStringPath,
+//     includesEditStringPath,
+//     mainRoute,
+//     capitalize,
+//     singularPath
+//   }
+// }
+
+interface Props {
+  name: string
+  isNew?: boolean
+  isLoading?: boolean
+  hasFile?: boolean
+  saveRef?: RefObject<HTMLButtonElement> | null | MutableRefObject<undefined>
+
 }
 
-const useNameNavigation = (): NameNavigation => {
-  const { pathname } = useLocation()
-
-  const arrPathname = pathname.split('/').slice(1)
-
-  const includesNewStringPath = arrPathname.includes('new')
-
-  const includesEditStringPath = arrPathname.includes('edit')
-
-  const mainRoute = arrPathname[0]
-
-  const capitalize = `${mainRoute.charAt(0).toUpperCase()}${mainRoute.slice(1)}`
-
-  const singularPath = capitalize.substring(0, mainRoute.length - 1)
-
-  return {
-    includesNewStringPath,
-    includesEditStringPath,
-    mainRoute,
-    capitalize,
-    singularPath
-  }
-}
-
-export const Navigation: React.FC = () => {
-  const { capitalize, singularPath, includesNewStringPath, includesEditStringPath } = useNameNavigation()
-  const isLoading = useAppSelector(state => state.payments.isLoading)
-  const payment = useAppSelector(state => state.payments.selected)
+export const Navigation: React.FC<Props> = ({
+  name,
+  isNew = true,
+  isLoading = false,
+  hasFile = false,
+  saveRef = null
+}) => {
   const dispatch = useAppDispatch()
   const navigate = useNavigate()
-  const location = useLocation()
 
-
-  const pathname = location.pathname.split('/')[1]
-
-  const { buttonRef } = useButtonRef()
-
-  useEffect(() => {
-
-  }, [])
+  const { pathname } = useLocation()
 
   const handleListadoClick = (): void => {
     dispatch(selectPayment(null))
@@ -72,74 +67,49 @@ export const Navigation: React.FC = () => {
     >
       <Flex justify='space-between' align='center'>
 
-        <p> {capitalize} </p>
+        <p> {name} </p>
 
         {
-          (includesNewStringPath || includesEditStringPath || pathname === 'inventario')
-            ? (
-              <>
-                <Flex gap='small' wrap='wrap'>
-                  <Button
-                    type='primary'
-                    icon={<UnorderedListOutlined />}
-                    onClick={handleListadoClick}
-                  >
-                    Listado
-                  </Button>
+          !isNew
 
-                  {
-                    pathname !== 'inventario' &&
+            ? <Flex gap={10}>
 
-                    <Button
-                      onClick={() => {
-                        if (buttonRef !== null) {
-                          buttonRef.current?.click()
-                        }
-                      }}
-                      loading={isLoading}
-                      disabled={isLoading}
-                    >
-                      Guardar
-                    </Button>
+              <Button
+                type='primary'
+                icon={<UnorderedListOutlined />}
+                onClick={handleListadoClick}
+              >
+                Listado
+              </Button>
+
+              <Button
+                onClick={() => {
+                  if (saveRef !== null) {
+                    saveRef.current?.click()
                   }
+                }}
+                loading={isLoading}
+                disabled={isLoading}
+              >
+                Guardar
+              </Button>
 
-                  {
-                    (payment !== null)
-                      ? payment.id !== undefined
-                        ? <UploadFiles />
-                        : ''
-                      : ''
-                  }
+              {!hasFile && <UploadFiles />}
 
-                </Flex>
+            </Flex>
 
-              </>
-
-              )
             : (
+              <Link to={`${pathname}/new`} state={{ name: 'Nuevo', action: 'new' }}>
+                <Button
+                  type="primary"
+                  shape='round'
+                >
+                  Nuevo
+                </Button>
 
-              <>
-
-                {
-                  pathname !== 'inventories' &&
-
-                  <Link
-                    to={`${singularPath}/new`}
-                    state={{ name: 'Nuevo', action: 'new' }}
-                  >
-                    <Button
-                      type="primary"
-                      shape='round'
-                    >
-                      Nuevo
-                    </Button>
-
-                  </Link>
-                }
-
-              </>
-
+              </Link>
               )
+
         }
 
       </Flex>

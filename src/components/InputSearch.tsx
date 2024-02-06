@@ -2,20 +2,19 @@ import React from 'react'
 import { Button, Form, type FormInstance, Input } from 'antd'
 
 interface Props {
-  onSubmit: ({ value, from, almacen }: { value: { search: string }, from: string, almacen: string }) => Promise<void>
+  // onSubmit: ({ value, from, almacen }: { value: { search: string }, from: string, almacen: string }) => Promise<void>
   form: FormInstance<any>
-  options: {
-    from: string
-    almacen: string
-  }
+  handleSearch: ({ search }: { search: string }) => void
 }
 
-export const InputSearch: React.FC<Props> = ({ onSubmit, form, options }) => {
+export const InputSearch: React.FC<Props> = ({ form, handleSearch }) => {
   return (
     <Form
       form={form}
       layout="inline"
-      onFinish={(value) => { onSubmit({ value, from: options.from, almacen: options.almacen }) }}
+      onFinish={({ search }) => {
+        handleSearch({ search })
+      }}
       style={{ width: '100%' }}
       autoComplete="off"
     >
