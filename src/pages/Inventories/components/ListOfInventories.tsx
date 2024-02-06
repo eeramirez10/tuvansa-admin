@@ -15,8 +15,9 @@ export const ListOfInventories: React.FC = () => {
     isLoading,
     form,
     options,
-    handleOnSearch,
-    handleOptions
+    // handleOnSearch,
+    handleOptions,
+    getAll
   } = useInventories()
 
   const columns: ColumnsType<InventoryProscai> = [
@@ -73,12 +74,16 @@ export const ListOfInventories: React.FC = () => {
     }
   ]
 
+  const handleSearch = ({ search }: { search: string }): void => {
+    getAll({ search, from: 'proscai' })
+  }
+
   return (
     <>
       <Space direction="vertical" size="middle" style={{ display: 'flex' }}>
 
         <Space direction="horizontal" size="middle" style={{ display: 'flex', justifyContent: 'space-between' }} wrap>
-          <InputSearch onSubmit={handleOnSearch} form={form} options={options} />
+          <InputSearch handleSearch={handleSearch} form={form} />
           <SelectBranchOffice handleOptions={handleOptions} options={options} />
         </Space>
 
