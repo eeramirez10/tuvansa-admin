@@ -46,6 +46,7 @@ export interface Inventory {
   ean: string
   description: string
   quantity: string
+  costo?: string
   paused?: boolean
   counts: CountId[]
   shelters?: Shelter[]

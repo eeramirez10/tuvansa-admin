@@ -18,7 +18,8 @@ interface Response {
 //   error: string
 // }
 
-export const login = async ({ username, password }: LoginProps): Promise<Response> => {
+export const login = async (props: LoginProps): Promise<Response> => {
+  const { username, password } = props
   const resp = await fetch(`${API_URL}/auth/login`, {
     method: 'POST',
     headers: { 'Content-type': 'application/json; charset=UTF-8' },

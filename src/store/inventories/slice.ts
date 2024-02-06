@@ -29,9 +29,12 @@ export const inventoriesSlice = createSlice({
     selectInventory: (state, action: PayloadAction<InventoryId>) => {
       state.selected = action.payload
       state.isLoading = false
+    },
+    onFinishInventories: (state) => {
+      state.isLoading = false
     }
   }
 })
 
-export const { onStartInventories, loadInventories, selectInventory } = inventoriesSlice.actions
+export const { onStartInventories, loadInventories, selectInventory, onFinishInventories } = inventoriesSlice.actions
 export default inventoriesSlice.reducer
