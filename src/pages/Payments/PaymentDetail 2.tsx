@@ -27,7 +27,6 @@ export const PaymentDetail: React.FC = () => {
 
   const onFinish = (values: PaymentFormValues) => {
     if (payment === undefined || payment === null) return
-
     handleOnSubmit(values)
   }
 

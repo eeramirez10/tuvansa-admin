@@ -8,6 +8,8 @@ import { Radio } from 'antd'
 import { SupplierAutoComplete } from 'src/components/SupplierAutoComplete/SupplierAutoComplete'
 import { CreditorAutoComplete } from 'src/components/CreditorAutoComplete/CreditorAutoComplete'
 import { type Docto } from 'src/interfaces/Docto'
+import { getCategories } from 'src/services/categories'
+import { type Subcategory } from 'src/interfaces/Category'
 
 interface Props {
   form: FormInstance<any>
@@ -17,14 +19,43 @@ interface Props {
   radioValue?: number
   isLoading?: boolean
 }
-const CATEGORY_VALUES: Array<{ value: string, label: JSX.Element }> = [
-  { value: 'mantenimiento', label: <span>Mantenimiento</span> }
-]
+// const CATEGORY_VALUES: Array<{ value: string, label: JSX.Element }> = [
+//   { value: 'mantenimiento', label: <span>Mantenimiento</span> },
+//   { value: 'gasolina', label: <span>Gasolina</span> },
+//   { value: 'viaticos', label: <span>Viaticos</span> },
+//   { value: 'maquila', label: <span>Maquila</span> },
+//   { value: 'despensa', label: <span>Despensa</span> },
+//   { value: 'vigilancia', label: <span>Vigilancia</span> },
+//   { value: 'honorarios', label: <span>Honorarios</span> },
+//   { value: 'consultoria', label: <span>Consultoria</span> },
+//   { value: 'impuestos', label: <span>Declaracion de Impuestos</span> },
+//   { value: 'fumigacion', label: <span>Fumigacion</span> },
+//   { value: 'servicios', label: <span>Servicios</span> },
+//   { value: 'vales', label: <span>Vales</span> }
+
+// ]
+
+interface CategoryOptions {
+  id: string
+  name: string
+  subcategories: Subcategory[]
+  value: string
+  label: JSX.Element
+}
+
+interface SubCategoryOptions {
+  value: string
+  label: JSX.Element
+}
 
 export const PaymentForm: React.FC<Props> = ({ form, onFinish, formValues, disabled = false, radioValue = 1, isLoading = false }) => {
   const { buttonRef } = useButtonRef()
 
   const [value, setValue] = useState(radioValue)
+
+  const [categories, setCategories] = useState<CategoryOptions[]>([])
+
+  const [subCategories, setSubCategories] = useState<SubCategoryOptions[]>([])
 
   useEffect(() => {
     setValue(radioValue)
@@ -32,12 +63,27 @@ export const PaymentForm: React.FC<Props> = ({ form, onFinish, formValues, disab
 
   useEffect(() => {
     if (formValues !== undefined) {
+      console.log(formValues)
       form.setFieldsValue({
         supplier: formValues.supplier.name,
         idSupplier: formValues.supplier.uid
       })
     }
   }, [formValues])
+
+  useEffect(() => {
+    getCategories()
+      .then((resp) => {
+        const { categories } = resp
+        const categoriesOptions = categories.map((category) => ({
+          value: category.name,
+          label: <span>{category.name}</span>,
+          ...category
+        }))
+
+        setCategories(categoriesOptions)
+      })
+  }, [])
 
   const onChange = (e: RadioChangeEvent): void => {
     console.log('radio checked', e.target.value)
@@ -52,7 +98,6 @@ export const PaymentForm: React.FC<Props> = ({ form, onFinish, formValues, disab
       </Radio.Group>
       <Form
         form={form}
-
         layout='vertical'
 
         onFinish={onFinish}
@@ -90,7 +135,30 @@ export const PaymentForm: React.FC<Props> = ({ form, onFinish, formValues, disab
             <Select
               placeholder="Seleciona una cetegoria"
               allowClear
-              options={CATEGORY_VALUES}
+              options={categories}
+              onSelect={(_, option: any) => {
+                const categoriesOptions = categories.find(category => category.id === option.id)
+
+                const subCategories = categoriesOptions?.subcategories.map(
+                  subcategories => ({
+                    value: subcategories.name,
+                    label: <span>{subcategories.name}</span>
+                  }))
+
+                if (subCategories !== undefined) {
+                  setSubCategories(subCategories)
+                }
+              }}
+            />
+
+          </Form.Item>
+
+          <Form.Item name="subCategory" label="Subcategoria" rules={[{ required: true }]} style={{ width: 200 }}>
+            <Select
+              placeholder="Seleciona una cetegoria"
+              allowClear
+              options={subCategories}
+
             />
 
           </Form.Item>
@@ -117,7 +185,7 @@ export const PaymentForm: React.FC<Props> = ({ form, onFinish, formValues, disab
 
           </Form.Item>
 
-          <Form.Item name="branchOffice" label="Oficina" rules={[{ required: true }]} style={{ width: 200 }}>
+          <Form.Item name="branchOffice" label="Sucursal" rules={[{ required: true }]} style={{ width: 200 }}>
             <Select
               placeholder="Seleciona una Sucursal"
               allowClear
