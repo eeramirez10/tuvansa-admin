@@ -2,7 +2,7 @@ import { Space } from 'antd'
 import { type ColumnsType } from 'antd/es/table'
 import React, { useEffect } from 'react'
 import { Link } from 'react-router-dom'
-import { Navigation } from 'src/UI/Navigation/Navigation'
+// import { Navigation } from 'src/UI/Navigation/Navigation'
 import { DataTable } from 'src/components/DataTable/DataTable'
 import { InputSearch } from 'src/components/InputSearch'
 import { useDoctos } from 'src/hooks/useDoctos'
@@ -70,7 +70,7 @@ export const Doctos: React.FC = () => {
 
   return (
     <>
-      <Navigation name='Doctos' saveRef={null} />
+      {/* <Navigation name='Doctos' saveRef={null} /> */}
 
       <Space direction='vertical' style={{ width: '100%' }} >
         <InputSearch form={form} handleSearch={handleSearch} />
