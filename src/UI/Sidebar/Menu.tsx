@@ -55,6 +55,11 @@ export const Menu: React.FC = () => {
         }
       ]
     },
+    {
+      label: (<Link to='/competitions'> Competencia </Link>),
+      key: '3',
+      icon: (<PieChartOutlined />)
+    },
     // {
     //   label: 'Option 2',
     //   key: '2',

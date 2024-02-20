@@ -29,6 +29,12 @@ dependencies:
   firebase:
     specifier: ^10.7.1
     version: 10.8.0
+  highcharts:
+    specifier: ^11.3.0
+    version: 11.3.0
+  highcharts-react-official:
+    specifier: ^3.2.1
+    version: 3.2.1(highcharts@11.3.0)(react@18.2.0)
   moment:
     specifier: ^2.29.4
     version: 2.30.1
@@ -2542,6 +2548,20 @@ packages:
     engines: {node: '>= 0.4'}
     dependencies:
       function-bind: 1.1.2
+
+  /highcharts-react-official@3.2.1(highcharts@11.3.0)(react@18.2.0):
+    resolution: {integrity: sha512-hyQTX7ezCxl7JqumaWiGsroGWalzh24GedQIgO3vJbkGOZ6ySRAltIYjfxhrq4HszJOySZegotEF7v+haQ75UA==}
+    peerDependencies:
+      highcharts: '>=6.0.0'
+      react: '>=16.8.0'
+    dependencies:
+      highcharts: 11.3.0
+      react: 18.2.0
+    dev: false
+
+  /highcharts@11.3.0:
+    resolution: {integrity: sha512-Dk+Qfk/xit8KnXKPDxmcVcq48ZlcVSq7oYJR5VZlAVWnJ0BY3JFFi1GOvgSNUzlh2wzsfenihWpkAkWoag4Xqg==}
+    dev: false
 
   /hoist-non-react-statics@3.3.2:
     resolution: {integrity: sha512-/gGivxi8JPKWNm/W0jSmzcMPpfpPLc3dY/6GxhX2hQ9iGj3aDfklV4ET7NjKpSinLpJ5vafa9iiGIEZg10SfBw==}
