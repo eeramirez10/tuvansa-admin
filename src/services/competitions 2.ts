@@ -12,8 +12,8 @@ export const getCompetitions = async (): Promise<Response> => {
   return resp
 }
 
-export const getCompetition = async ({ RfcEmisor, EfectoComprobante = 'Ingreso', year = '2022' }: { RfcEmisor: string, EfectoComprobante?: EfectoComprobanteValues, year?: string }): Promise<{ competition: Competition }> => {
-  const params = new URLSearchParams({ EfectoComprobante, year })
+export const getCompetition = async ({ RfcEmisor, EfectoComprobante = 'Ingreso' }: { RfcEmisor: string, EfectoComprobante?: EfectoComprobanteValues }): Promise<{ competition: Competition }> => {
+  const params = new URLSearchParams({ EfectoComprobante })
   const resp = await fetchWithToken({ endpoint: `competitions/${RfcEmisor}?${params.toString()}`, method: METHOD_VALUES.GET })
 
   return resp

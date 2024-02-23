@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/strict-boolean-expressions */
 import { Col, Radio, Row } from 'antd'
 import React, { useEffect, useState } from 'react'
 import { Container } from 'src/components/Container/Container'
@@ -11,16 +10,6 @@ export const Competitions: React.FC = () => {
   const [competition, setCompetition] = useState<Competition>()
   const [customers, setCustomers] = useState<CompetitionCustomer[]>()
 
-  const [ingresos, setIngresos] = useState<{
-    RfcEmisor: string
-    NombreRazonSocialEmisor: string
-    data: Competition[]
-    series: [{
-      name: string
-      data: number[]
-    }]
-  }>()
-
   useEffect(() => {
     getCompetitions()
       .then((resp) => {
@@ -30,38 +19,22 @@ export const Competitions: React.FC = () => {
       })
   }, [])
 
-  const handleClick = async (RfcEmisor: string): Promise<void> => {
-    let ingresosData: Competition[] = []
+  const handleClick = (RfcEmisor: string): void => {
+    getCompetition({ RfcEmisor })
+      .then((resp) => {
+        const { competition } = resp
 
-    let series: [{
-      name: string
-      data: number[]
-    }] = [{ name: '', data: [] }]
+        setCompetition(competition)
+      })
 
-    for (const year of ['2022', '2023']) {
-      const { competition } = await getCompetition({ RfcEmisor, year })
+    getCompetition({ RfcEmisor, EfectoComprobante: 'Egreso' })
+      .then(resp => {
+        const { competition } = resp
 
-      if (!competition) continue
+        console.log(competition)
 
-      ingresosData = [...ingresosData, competition]
-
-      const competionInfo: {
-        name: string
-        data?: number[]
-      } = {
-        name: `${competition.anio}`,
-        data: competition.ingresos?.map(ingreso => ingreso.subTotalPorMes)
-      }
-
-      series = [...series, competionInfo]
-    }
-    console.log(series)
-
-    setIngresos({
-      RfcEmisor,
-      NombreRazonSocialEmisor: ingresosData[0].NombreRazonSocialEmisor,
-      data: series
-    })
+        setCompetition(prevState => ({ ...prevState, egresos: [...competition.ingresos] }))
+      })
 
     getCustomersByCompetition({ RfcEmisor })
       .then((resp) => {
@@ -69,7 +42,7 @@ export const Competitions: React.FC = () => {
       })
   }
 
-  console.log(ingresos)
+  console.log(competition)
 
   const data = competition !== undefined ? competition.ingresos?.map(ingreso => ingreso.subTotalPorMes) : []
 
@@ -100,7 +73,7 @@ export const Competitions: React.FC = () => {
         <Col md={24}>
           <Radio.Group defaultValue="a" buttonStyle="solid">
             {
-              competitions.map((competition) => (
+              competitions.map(competition => (
                 <Radio.Button
                   key={competition.RfcEmisor}
                   value={competition.RfcEmisor}
@@ -115,6 +88,8 @@ export const Competitions: React.FC = () => {
 
         {
 
+          competition !== undefined &&
+
           <>
 
             <Col md={12} sm={24}>
@@ -122,7 +97,7 @@ export const Competitions: React.FC = () => {
                 title={`${competition?.NombreRazonSocialEmisor} - INGRESOS - ${competition?.anio}`}
                 subtitle={`Venta ${new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN' }).format(sumSubtotal)}`}
                 color='#00cd00'
-                data={ingresos?.data}
+                data={data}
 
               />
 
@@ -134,7 +109,7 @@ export const Competitions: React.FC = () => {
                 subtitle=''
                 data={subTotalCustomers}
                 type='bar'
-                seriesType='bar'
+                seriesType = 'bar'
                 categories={customersName}
                 color='#00cd00'
 
