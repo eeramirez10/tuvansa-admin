@@ -33,7 +33,7 @@ const lineOptions: Highcharts.Options = {
   // },
 
   legend: {
-    enabled: false
+    enabled: true
   },
 
   plotOptions: {
@@ -93,12 +93,13 @@ const lineOptions: Highcharts.Options = {
 interface Props {
   title?: string
   name?: string
-  data?: number[]
+  data?: Highcharts.SeriesOptionsType[]
   subtitle?: string
   type?: string
   seriesType?: Highcharts.SeriesLineOptions
   categories?: string[]
   color?: string
+  legend?: boolean
 }
 
 export const LineChart: React.FC<Props> = ({
@@ -109,7 +110,8 @@ export const LineChart: React.FC<Props> = ({
   type = 'line',
   seriesType = 'line',
   categories = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
-  color = '#2caffe'
+  color = '#2caffe',
+  legend = true
 }) => {
   const [options, setOptions] = useState(lineOptions)
 
@@ -120,9 +122,10 @@ export const LineChart: React.FC<Props> = ({
       title: { ...options.title, text: title },
       chart: { ...options.chart, type },
       subtitle: { ...options.subtitle, text: subtitle },
-      series: [{ name, data, type: seriesType }],
+      series: data,
       xAxis: { ...options.xAxis, categories },
-      plotOptions: { ...options.plotOptions, series: { color } }
+      plotOptions: { ...options.plotOptions },
+      legend: { ...options.legend, enabled: legend }
 
     })
   }, [title, type, subtitle, seriesType, data])
