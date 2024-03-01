@@ -7,6 +7,8 @@ import { usePayments } from '../../hooks/usePayments'
 import { FilesModal } from '../../components/FilesModal/FilesModal'
 import { Navigation } from 'src/UI/Navigation/Navigation'
 import { OpenButtonModal } from 'src/components/OpenButtonModal'
+import { currencyMXNFormat } from 'src/helpers/formatCurrency'
+import { Button } from 'antd'
 
 const columns: ColumnsType<Payment> = [
   {
@@ -36,9 +38,7 @@ const columns: ColumnsType<Payment> = [
   {
     title: 'Importe',
     dataIndex: 'amount',
-    render: (_, value) => new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN' }).format(
-      value.amount
-    )
+    render: (_, value) => currencyMXNFormat({ value: value.amount })
   },
   {
     title: 'Archivos',
@@ -53,6 +53,15 @@ export const Payments: React.FC = () => {
   return (
     <>
       <Navigation name='Pagos' />
+      <Link to={'/payments/categories/new'} state={{ name: 'Nuevo', action: 'new' }}>
+        <Button
+          type="primary"
+          shape='round'
+        >
+          Categorias
+        </Button>
+
+      </Link>
       <FilesModal />
       <DataTable
         rowKey={(value) => value.id}
