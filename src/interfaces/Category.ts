@@ -1,8 +1,13 @@
 export interface Category {
   id: string
   name: string
-  subcategories: Subcategory []
+  subcategories: Subcategory[]
 
+}
+
+export interface CategoryBody {
+  name: string
+  subcategories: [{ name: string }]
 }
 
 export interface Subcategory {

@@ -3,8 +3,8 @@ import { Col, Radio, Row } from 'antd'
 import React, { useEffect, useState } from 'react'
 import { Container } from 'src/components/Container/Container'
 import { LineChart } from 'src/components/LineChart/LineChart'
-import { type Competition } from 'src/interfaces/Competition'
-import { getCompetition, getCompetitions, getCustomersByCompetition } from '../../services/competitions'
+import { type CompetitionCustomer, type Competition } from 'src/interfaces/Competition'
+import { getCompetition, getCompetitions, getCustomersByCompetition, getRecibidasByRfcEmisor, getRecibidasByRfcReceptor } from '../../services/competitions'
 import { currencyMXNFormat } from 'src/helpers/formatCurrency'
 
 interface CustomerChart {
@@ -29,13 +29,14 @@ export const Competitions: React.FC = () => {
   const [competitions, setCompetitions] = useState<Competition[]>([])
   const [competition, setCompetition] = useState<CompetitonChart>()
   const [customers, setCustomers] = useState<CustomerChart[]>()
+  const [competitionsRecibidas, setCompetitionsRecibidas] = useState<CustomerChart[]>()
+
+  const [emisorRecibidas, setEmisorRecibidas] = useState<CustomerChart[]>()
 
   useEffect(() => {
     getCompetitions()
       .then((resp) => {
         const { competitions } = resp
-
-        console.log(competitions)
 
         const com = competitions
           .filter(com => com.RfcEmisor !== null)
@@ -43,7 +44,27 @@ export const Competitions: React.FC = () => {
 
         setCompetitions(com)
       })
+
+    getTamsaData()
+      .then(resp => {
+        const customerInfo: Highcharts.SeriesOptionsType[] = [{
+          name: `${resp[0].anio}`,
+          data: resp?.map(ingreso => ingreso.subTotalPorAnio),
+          type: 'bar',
+          color: COLORS.PRIMARY
+
+        }]
+
+        setEmisorRecibidas([{
+          year: resp[0].anio,
+          NombreRazonSocialEmisor: 'TAMSA',
+          categories: resp.map(customer => customer.NombreRazonSocialReceptor),
+          series: customerInfo
+        }])
+      })
   }, [])
+
+  console.log(emisorRecibidas)
 
   const setDataVentaMensual = ({ competition }: { competition: Competition }): CompetitonChart => {
     const totalAnual = competition.ingresos?.reduce((acc, val) => acc + val.totalPorMes, 0)
@@ -72,6 +93,8 @@ export const Competitions: React.FC = () => {
 
     let customersData: CustomerChart[] = []
 
+    let recibidasData: CustomerChart[] = []
+
     for (const year of ['2022', '2023']) {
       const { competition } = await getCompetition({ RfcEmisor, year })
 
@@ -88,13 +111,35 @@ export const Competitions: React.FC = () => {
 
       const { customers } = await getCustomersByCompetition({ RfcEmisor, year })
 
+      const { customers: prov } = await getRecibidasByRfcReceptor({ RfcReceptor: RfcEmisor, year })
+
       const customerInfo: Highcharts.SeriesOptionsType[] = [{
         name: `${customers[0].anio}`,
-        data: customers?.map(ingreso => ingreso.totalPorAnio),
+        data: customers?.map(ingreso => ingreso.subTotalPorAnio),
         type: 'bar',
         color: year === '2023' ? COLORS.SECONDARY : COLORS.PRIMARY
 
       }]
+
+      if (prov.length > 0) {
+        const recibidasInfo: Highcharts.SeriesOptionsType[] = [{
+          name: `${prov[0].anio}`,
+          data: prov?.map(ingreso => ingreso.subTotalPorAnio),
+          type: 'bar',
+          color: 'red'
+
+        }]
+
+        recibidasData = [
+          ...recibidasData,
+          {
+            year: prov[0].anio,
+            NombreRazonSocialEmisor: competition.NombreRazonSocialEmisor,
+            categories: prov.map(customer => customer.NombreRazonSocialEmisor),
+            series: recibidasInfo
+          }
+        ]
+      }
 
       customersData = [
         ...customersData,
@@ -110,6 +155,14 @@ export const Competitions: React.FC = () => {
     setCompetition(ingresosData)
 
     setCustomers(customersData)
+
+    setCompetitionsRecibidas(recibidasData)
+  }
+
+  const getTamsaData = async (): Promise<CompetitionCustomer[]> => {
+    const resp = await getRecibidasByRfcEmisor({ RfcEmisor: 'TAM520130D49', year: '2023' })
+
+    return resp.customers
   }
 
   return (
@@ -165,6 +218,38 @@ export const Competitions: React.FC = () => {
                 <Col md={12} sm={24} key={customer.year}>
                   <LineChart
                     title={`TOP CLIENTES - ${customer.NombreRazonSocialEmisor} - ${customer.year}`}
+                    subtitle=''
+                    data={customer.series}
+                    type='bar'
+                    categories={customer.categories}
+                    color='#00cd00'
+                    legend={false}
+                  />
+                </Col>
+              ))
+            }
+
+            {
+              competitionsRecibidas?.map(customer => (
+                <Col md={12} sm={24} key={customer.year}>
+                  <LineChart
+                    title={`RECIBIDAS - ${customer.NombreRazonSocialEmisor} - ${customer.year}`}
+                    subtitle=''
+                    data={customer.series}
+                    type='bar'
+                    categories={customer.categories}
+                    color='#00cd00'
+                    legend={false}
+                  />
+                </Col>
+              ))
+            }
+
+            {
+              emisorRecibidas?.map(customer => (
+                <Col md={12} sm={24} key={customer.year}>
+                  <LineChart
+                    title={`Emitidas - ${customer.NombreRazonSocialEmisor} - ${customer.year}`}
                     subtitle=''
                     data={customer.series}
                     type='bar'

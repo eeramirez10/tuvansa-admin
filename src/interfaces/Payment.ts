@@ -7,7 +7,7 @@ import { type Dayjs } from 'dayjs'
 
 export interface PaymentFormValues {
   category: string
-  subCategory: string
+  subcategory: string
   amount: number
   coin: coinValues
   branchOffice: string
@@ -39,10 +39,20 @@ export interface Payment {
     name: string
     code: coinValues
   }
-  category: string
-  subCategory: string
+  category: Category
+  subcategory: Subcategory
   files: FileId[]
   proscai: Doctos | null
+}
+
+export interface Category {
+  id: string
+  name: string
+}
+
+export interface Subcategory {
+  id: string
+  name: string
 }
 
 export interface Doctos {

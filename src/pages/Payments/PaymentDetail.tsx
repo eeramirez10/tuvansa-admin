@@ -21,7 +21,18 @@ export const PaymentDetail: React.FC = () => {
 
   useEffect(() => {
     if (payment !== null) {
-      setFormValues(payment)
+      console.log(payment)
+      setFormValues({
+        ...payment,
+        category: {
+          value: payment.category.id,
+          label: <span>{payment.category.name}</span>
+        },
+        subcategory: {
+          value: payment.subcategory.id,
+          label: <span>{payment.subcategory.name}</span>
+        }
+      })
     }
   }, [payment])
 
@@ -45,7 +56,7 @@ export const PaymentDetail: React.FC = () => {
           form={form}
           onFinish={onFinish}
           radioValue={payment?.supplier !== null ? 1 : 2}
-          isLoading= {isLoading}
+          isLoading={isLoading}
         />
 
       </Container>

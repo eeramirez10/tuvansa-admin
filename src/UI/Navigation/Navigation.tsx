@@ -79,7 +79,7 @@ export const Navigation: React.FC<Props> = ({
                 icon={<UnorderedListOutlined />}
                 onClick={handleListadoClick}
               >
-                Listado
+                Regresar
               </Button>
 
               <Button

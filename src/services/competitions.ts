@@ -24,3 +24,18 @@ export const getCustomersByCompetition = async ({ RfcEmisor, EfectoComprobante =
 
   return resp
 }
+
+export const getRecibidasByRfcReceptor = async ({ RfcReceptor, EfectoComprobante = 'Ingreso', year = '2022' }: { RfcReceptor: string, EfectoComprobante?: EfectoComprobanteValues, year?: string }): Promise<{ customers: CompetitionCustomer[] }> => {
+  const params = new URLSearchParams({ EfectoComprobante, year })
+
+  const resp = await fetchWithToken({ endpoint: `competitions/recibidas/${RfcReceptor}?${params.toString()}`, method: METHOD_VALUES.GET })
+
+  return resp
+}
+
+export const getRecibidasByRfcEmisor = async ({ RfcEmisor, EfectoComprobante = 'Ingreso', year = '2022' }: { RfcEmisor: string, EfectoComprobante?: EfectoComprobanteValues, year?: string }): Promise<{ customers: CompetitionCustomer[] }> => {
+  const params = new URLSearchParams({ EfectoComprobante, year })
+  const resp = await fetchWithToken({ endpoint: `competitions/recibidas/emisor/${RfcEmisor}?${params.toString()}`, method: METHOD_VALUES.GET })
+
+  return resp
+}

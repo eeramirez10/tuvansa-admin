@@ -53,7 +53,7 @@ export const Payments: React.FC = () => {
   return (
     <>
       <Navigation name='Pagos' />
-      <Link to={'/payments/categories/new'} state={{ name: 'Nuevo', action: 'new' }}>
+      <Link to={'/payments/categories'} state={{ name: 'Nuevo', action: 'new' }} >
         <Button
           type="primary"
           shape='round'

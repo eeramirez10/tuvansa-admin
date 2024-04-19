@@ -21,6 +21,8 @@ import { Doctos } from './pages/Doctos/Doctos'
 import { DoctoDetail } from './pages/Doctos/DoctoDetail'
 import { Competitions } from './pages/Competitions/Competitions'
 import { NewCategory } from './pages/Payments/NewCategory'
+import { Categories } from './pages/Payments/Categories'
+import { Sales } from './pages/Sales/Sales'
 
 export const AppRouter: React.FC = () => {
   const { status, checkAuthToken, urlRedirect } = useAuth()
@@ -50,13 +52,17 @@ export const AppRouter: React.FC = () => {
               <Route path='/payment/:id/detail' element={<PaymentDetail />} />
               <Route path='/payments/new' element={<NewPayment />} />
               <Route path='/new' element={<h1> New </h1>} />
+              <Route path='/payments/categories' element={<Categories />} />
+
               <Route path='/payments/categories/new' element={<NewCategory />} />
               <Route path="/user/:id/info" element={<UserInfo />} />
 
-              <Route path="/*" element={<Navigate to={urlRedirect ?? '/payments'} />} />
 
               <Route path='/competitions' element={<Competitions />} />
 
+              <Route path='/sales' element={<Sales />} />
+
+              <Route path="/*" element={<Navigate to={urlRedirect ?? '/payments'} />} />
             </Route>
           )
         }

@@ -60,6 +60,11 @@ export const Menu: React.FC = () => {
       key: '3',
       icon: (<PieChartOutlined />)
     },
+    {
+      label: (<Link to='/sales'> Ventas </Link>),
+      key: '4',
+      icon: (<PieChartOutlined />)
+    },
     // {
     //   label: 'Option 2',
     //   key: '2',

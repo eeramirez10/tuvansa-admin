@@ -20,7 +20,7 @@ export interface PaymentBody {
   idProscai: string | null
   amount: number
   category: string
-  subCategory: string
+  subcategory: string
   creditor: {
     name: string
     uid: string

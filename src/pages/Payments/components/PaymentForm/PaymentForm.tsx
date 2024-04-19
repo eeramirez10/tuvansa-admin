@@ -36,7 +36,7 @@ interface Props {
 // ]
 
 interface CategoryOptions {
-  id: string
+  id?: string
   name: string
   subcategories: Subcategory[]
   value: string
@@ -63,7 +63,7 @@ export const PaymentForm: React.FC<Props> = ({ form, onFinish, formValues, disab
 
   useEffect(() => {
     if (formValues !== undefined) {
-      console.log(formValues)
+      console.log({ formValues })
       form.setFieldsValue({
         supplier: formValues.supplier.name,
         idSupplier: formValues.supplier.uid
@@ -75,8 +75,9 @@ export const PaymentForm: React.FC<Props> = ({ form, onFinish, formValues, disab
     getCategories()
       .then((resp) => {
         const { categories } = resp
+
         const categoriesOptions = categories.map((category) => ({
-          value: category.name,
+          value: category.id,
           label: <span>{category.name}</span>,
           ...category
         }))
@@ -141,7 +142,7 @@ export const PaymentForm: React.FC<Props> = ({ form, onFinish, formValues, disab
 
                 const subCategories = categoriesOptions?.subcategories.map(
                   subcategories => ({
-                    value: subcategories.name,
+                    value: subcategories.id,
                     label: <span>{subcategories.name}</span>
                   }))
 
@@ -153,7 +154,7 @@ export const PaymentForm: React.FC<Props> = ({ form, onFinish, formValues, disab
 
           </Form.Item>
 
-          <Form.Item name="subCategory" label="Subcategoria" rules={[{ required: true }]} style={{ width: 200 }}>
+          <Form.Item name="subcategory" label="Subcategoria" rules={[{ required: true }]} style={{ width: 200 }}>
             <Select
               placeholder="Seleciona una cetegoria"
               allowClear

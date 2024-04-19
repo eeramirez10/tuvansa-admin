@@ -9,6 +9,7 @@ import dayjs from 'dayjs'
 import { addNewPayment, loadPayments, onStartPayment, selectPayment } from 'src/store/payments/slice'
 import { type PaymentBody, createPayment, getAllPayments, getPaymentById, editPaymentService } from 'src/services/payments'
 import { toast } from 'sonner'
+import { createCategory } from 'src/services/categories'
 
 interface Props {
   payments: Payment[]
@@ -18,7 +19,8 @@ interface Props {
   buttonSaveRef: RefObject<HTMLButtonElement>
   handleOnSubmit: (values: PaymentFormValues) => void
   getById: ({ id }: { id: string }) => Promise<void>
-  setFormValues: (paymet: Payment) => void
+  setFormValues: (paymet: any) => void
+  handleOnSubmitCategory: (values: CategoryFormValues) => void
 }
 
 export const COIN_VALUES = {
@@ -30,6 +32,18 @@ export const COIN_VALUES = {
     code: 'USD',
     name: 'dolares'
   }
+}
+
+interface CategoryFormValues {
+
+  items: [
+    {
+      name: string
+      subcategories: [{ name: string }]
+
+    }
+  ]
+
 }
 
 export const usePayments = (): Props => {
@@ -63,7 +77,7 @@ export const usePayments = (): Props => {
   }, [])
 
   const handleOnSubmit = async (values: PaymentFormValues): Promise<void> => {
-    const { supplier, creditor, amount, category, coin, datePaid, idCreditor, idSupplier, branchOffice, subCategory } = values
+    const { supplier, creditor, amount, category, coin, datePaid, idCreditor, idSupplier, branchOffice, subcategory } = values
 
     const newPayment: PaymentBody = {
       datePaid: dayjs(datePaid).toDate(),
@@ -81,7 +95,7 @@ export const usePayments = (): Props => {
         : null,
       amount,
       category,
-      subCategory,
+      subcategory,
       coin: COIN_VALUES[coin],
       idProscai: null,
       branchOffice
@@ -110,6 +124,25 @@ export const usePayments = (): Props => {
     }
   }
 
+  const handleOnSubmitCategory = async (values: CategoryFormValues): Promise<void> => {
+    const category = values.items[0]
+
+    try {
+      const resp = await createCategory({ category })
+
+      console.log(resp)
+
+      if (!resp.ok) {
+        toast.warning(resp.msg)
+        return
+      }
+
+      toast.success('Creado correctamente')
+    } catch (error) {
+
+    }
+  }
+
   const getById = async ({ id }: { id: string }): Promise<void> => {
     dispatch(onStartPayment())
     const { payment } = await getPaymentById({ id })
@@ -121,19 +154,21 @@ export const usePayments = (): Props => {
       supplier,
       creditor,
       category,
-      subCategory,
+      subcategory,
       amount,
       coin,
       branchOffice,
       datePaid
     } = payment
 
+    console.log(payment)
+
     form.setFieldsValue({
       supplier: supplier?.name,
       idSupplier: supplier?.uid,
       creditor: creditor?.name,
       idCreditor: creditor?.uid,
-      subCategory,
+      subcategory,
       category,
       amount,
       coin: coin.code,
@@ -150,6 +185,7 @@ export const usePayments = (): Props => {
     isLoading,
     handleOnSubmit,
     getById,
-    setFormValues
+    setFormValues,
+    handleOnSubmitCategory
   }
 }

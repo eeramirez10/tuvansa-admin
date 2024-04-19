@@ -2,16 +2,15 @@ import React from 'react'
 import { Container } from 'src/components/Container/Container'
 import { CloseOutlined } from '@ant-design/icons'
 import { Button, Form, Input, Space } from 'antd'
+import { usePayments } from 'src/hooks/usePayments'
 
 export const NewCategory: React.FC = () => {
   const [form] = Form.useForm()
+  const { handleOnSubmitCategory } = usePayments()
 
-  const onFinish = (values: any): void => {
-    console.log(values.items[0])
-  }
   return (
     <Container>
-      <h1>New Category</h1>
+      <h1>Agregar Categoria</h1>
 
       <Form
 
@@ -20,7 +19,7 @@ export const NewCategory: React.FC = () => {
         style={{ maxWidth: '100vw' }}
         autoComplete="off"
         initialValues={{ items: [{}] }}
-        onFinish={onFinish}
+        onFinish={handleOnSubmitCategory}
       >
         <Form.List name="items">
           {(fields) => {
@@ -32,7 +31,7 @@ export const NewCategory: React.FC = () => {
                     key={field.key}
                   >
 
-                    <Form.Item label="Name" name={[field.name, 'name']}>
+                    <Form.Item rules={[{ required: true }]} label="Name" name={[field.name, 'name']}>
                       <Input />
                     </Form.Item>
 
@@ -43,7 +42,7 @@ export const NewCategory: React.FC = () => {
                           <div style={{ display: 'flex', flexDirection: 'column', rowGap: 16 }}>
                             {subFields.map((subField) => (
                               <Space key={subField.key}>
-                                <Form.Item noStyle name={[subField.name, 'name']}>
+                                <Form.Item rules={[{ required: true }]} noStyle name={[subField.name, 'name']}>
                                   <Input placeholder="name" />
                                 </Form.Item>
                                 <CloseOutlined
