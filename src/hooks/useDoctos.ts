@@ -51,18 +51,21 @@ export const useDoctos = (): Props => {
   const handleOnSubmit = async ({ values }: { values: PaymentFormValues }): Promise<void> => {
     if (docto === undefined || docto === null) return
 
+    const { supplier, amount, category, coin, datePaid, idSupplier, branchOffice, subcategory } = values
+
     const newPayment: PaymentBody = {
       idProscai: docto.idProscai,
-      amount: values.amount,
-      category: values.category,
+      amount,
+      category,
       creditor: null,
-      coin: COIN_VALUES[values.coin],
-      datePaid: dayjs(values.datePaid).toDate(),
+      coin: COIN_VALUES[coin],
+      datePaid: dayjs(datePaid).toDate(),
       supplier: {
-        uid: values.idSupplier,
-        name: values.supplier
+        uid: idSupplier,
+        name: supplier
       },
-      branchOffice: values.branchOffice
+      branchOffice,
+      subcategory
     }
 
     try {
