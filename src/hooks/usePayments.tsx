@@ -79,6 +79,9 @@ export const usePayments = (): Props => {
   const handleOnSubmit = async (values: PaymentFormValues): Promise<void> => {
     const { supplier, creditor, amount, category, coin, datePaid, idCreditor, idSupplier, branchOffice, subcategory } = values
 
+    console.log(values)
+    return
+
     const newPayment: PaymentBody = {
       datePaid: dayjs(datePaid).toDate(),
       supplier: supplier !== undefined
@@ -160,8 +163,6 @@ export const usePayments = (): Props => {
       branchOffice,
       datePaid
     } = payment
-
-    console.log(payment)
 
     form.setFieldsValue({
       supplier: supplier?.name,

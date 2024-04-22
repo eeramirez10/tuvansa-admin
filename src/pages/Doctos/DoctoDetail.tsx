@@ -29,7 +29,6 @@ export const DoctoDetail: React.FC = () => {
   }, [id])
 
   const onFinish = (values: any) => {
-    console.log(values)
     handleOnSubmit({ values })
   }
 
