@@ -5,7 +5,7 @@ import { loadDoctos, onStartDoctos, selectDocto } from 'src/store/doctos/slice'
 import { useDispatch } from 'react-redux'
 import { getAllDoctos } from '../services/docto'
 import { toast } from 'sonner'
-import { type PaymentBody, createPayment } from 'src/services/payments'
+import { type PaymentBody, createPayment, getAllPayments } from 'src/services/payments'
 import { Form, type FormInstance } from 'antd'
 import { type PaymentFormValues } from 'src/interfaces/Payment'
 import { COIN_VALUES } from './usePayments'
@@ -34,12 +34,25 @@ export const useDoctos = (): Props => {
     dispatch(onStartDoctos())
     const resp = await getAllDoctos({ search })
 
+    const respPayments = await getAllPayments()
+
+    const payments = respPayments.payments?.filter(payment => payment.proscai !== null)
+
+    // console.log(payments)
+    // console.log(resp.doctos)
+
     if (resp.error !== undefined) {
       console.log(resp.error)
       dispatch(loadDoctos([]))
       return
     }
-    dispatch(loadDoctos(resp.doctos !== undefined ? resp?.doctos : []))
+    dispatch(
+      loadDoctos(
+        resp.doctos !== undefined
+          ? resp?.doctos.filter(docto => !((payments?.some(payment => payment.proscai?.idProscai === docto.idProscai)) ?? false))
+          : []
+      )
+    )
   }
 
   const getById = async ({ id }: { id: string }): Promise<void> => {

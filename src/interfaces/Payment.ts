@@ -58,6 +58,7 @@ export interface Subcategory {
 export interface Doctos {
   id: string
   factura: string
+  idProscai: string
   ordenCompra: string
   supplierFactura: string
   importePesos: string
