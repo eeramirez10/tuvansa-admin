@@ -8,7 +8,8 @@ import { useEffect } from 'react'
 
 interface Props {
   status: StatusValue
-  user: User | Record<string, unknown>
+  // eslint-disable-next-line @typescript-eslint/ban-types
+  user: User
   errorMessage: string | undefined
   urlRedirect: string | null
   startLogin: ({ username, password }: LoginProps) => Promise<void>

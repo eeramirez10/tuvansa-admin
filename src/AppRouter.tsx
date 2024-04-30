@@ -23,6 +23,8 @@ import { Competitions } from './pages/Competitions/Competitions'
 import { NewCategory } from './pages/Payments/NewCategory'
 import { Categories } from './pages/Payments/Categories'
 import { Sales } from './pages/Sales/Sales'
+import { CategoryEdit } from './pages/Categories/CategoryEdit'
+import { Receptions } from './pages/Receptions/Receptions'
 
 export const AppRouter: React.FC = () => {
   const { status, checkAuthToken, urlRedirect } = useAuth()
@@ -55,10 +57,13 @@ export const AppRouter: React.FC = () => {
               <Route path='/payments/categories' element={<Categories />} />
 
               <Route path='/payments/categories/new' element={<NewCategory />} />
+              <Route path='/payments/categories/:id/edit' element={<CategoryEdit />} />
+
               <Route path="/user/:id/info" element={<UserInfo />} />
 
-
               <Route path='/competitions' element={<Competitions />} />
+
+              <Route path='/receptions' element={<Receptions />} />
 
               <Route path='/sales' element={<Sales />} />
 

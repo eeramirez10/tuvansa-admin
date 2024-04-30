@@ -1,8 +1,11 @@
 import React from 'react'
 import {
+  BarChartOutlined,
   // DesktopOutlined,
   PieChartOutlined,
-  UserOutlined
+  ReconciliationOutlined,
+  UserOutlined,
+  WalletOutlined
 } from '@ant-design/icons'
 import type { MenuProps } from 'antd'
 import { Menu as Me } from 'antd'
@@ -21,14 +24,31 @@ import { useAuth } from 'src/hooks/useAuth'
 //   getItem('Files', '9', <FileOutlined />)
 // ]
 
+const Roles = {
+  ADMIN: 'admin'
+} as const
+
+const PAGE_PERMISSION = {
+  PAYMENTS: 'payments',
+  COUNTS: 'counts',
+  INVENTORIES: 'inventories',
+  SALES: 'sales',
+  COMPETITIONS: 'competitions'
+}
+
 export const Menu: React.FC = () => {
-  const { startLogout } = useAuth()
+  const { startLogout, user } = useAuth()
+
+  console.log(user)
+
+  console.log()
 
   const items: MenuProps['items'] = [
     {
       label: 'Pagos',
       key: '1',
-      icon: (<PieChartOutlined />),
+      icon: (<WalletOutlined />),
+      disabled: !user.pagePermission.includes(PAGE_PERMISSION.PAYMENTS),
       children: [
         {
           label: (<Link to='/doctos'> Doctos </Link>),
@@ -43,7 +63,8 @@ export const Menu: React.FC = () => {
     {
       label: 'Almacen',
       key: '2',
-      icon: (<PieChartOutlined />),
+      icon: (<ReconciliationOutlined />),
+      disabled: !user.pagePermission.includes(PAGE_PERMISSION.INVENTORIES),
       children: [
         {
           label: (<Link to='/inventories'> Inventarios </Link>),
@@ -56,14 +77,16 @@ export const Menu: React.FC = () => {
       ]
     },
     {
-      label: (<Link to='/competitions'> Competencia </Link>),
+      label: user?.rol !== Roles.ADMIN ? '' : (<Link to='/competitions'> Competencia </Link>),
       key: '3',
-      icon: (<PieChartOutlined />)
+      icon: (<PieChartOutlined />),
+      disabled: !user.pagePermission.includes(PAGE_PERMISSION.COMPETITIONS)
     },
     {
-      label: (<Link to='/sales'> Ventas </Link>),
+      label: !user.pagePermission.includes(PAGE_PERMISSION.SALES) ? '' : (<Link to='/sales'> Ventas </Link>),
       key: '4',
-      icon: (<PieChartOutlined />)
+      icon: (<BarChartOutlined />),
+      disabled: !user.pagePermission.includes(PAGE_PERMISSION.SALES)
     },
     // {
     //   label: 'Option 2',

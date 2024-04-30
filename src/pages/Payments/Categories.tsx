@@ -12,7 +12,8 @@ const columns: ColumnsType<Category> = [
     dataIndex: 'id',
     width: '20%',
     render: (_, { id }) => {
-      return (<Link to={`/payment/${id}/detail`} >{id.slice(5, 15)} </Link>)
+      console.log(id)
+      return (<Link to={`/payments/categories/${id}/edit`} >{id.slice(5, 15)} </Link>)
     }
   },
 
@@ -40,7 +41,7 @@ export const Categories: React.FC = () => {
   return (
     <>
 
-      <Navigation name='Categorias' isNew={false} hasFile={true} />
+      <Navigation name='Categorias' isNew={true} />
 
       <DataTable columns={columns} data={categories} rowKey={(value) => value.id} />
     </>

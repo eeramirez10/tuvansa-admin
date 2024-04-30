@@ -14,4 +14,5 @@ export interface User {
   branchOffice: string
   rol: string
   token: string
+  pagePermission: string[]
 }

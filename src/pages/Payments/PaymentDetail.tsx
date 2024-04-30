@@ -42,12 +42,14 @@ export const PaymentDetail: React.FC = () => {
     handleOnSubmit(values)
   }
 
+  console.log(payment)
+
   return (
     <>
       <Navigation
         name='Detalle de Pago'
         isNew={false}
-        hasFile={payment !== null ? payment.files.length > 0 : false}
+        hasFile={ payment?.files.length === 0 }
         saveRef={saveButtonRef}
       />
       <Container>

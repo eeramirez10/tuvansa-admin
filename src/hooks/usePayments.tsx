@@ -9,7 +9,8 @@ import dayjs from 'dayjs'
 import { addNewPayment, loadPayments, onStartPayment, selectPayment } from 'src/store/payments/slice'
 import { type PaymentBody, createPayment, getAllPayments, getPaymentById, editPaymentService } from 'src/services/payments'
 import { toast } from 'sonner'
-import { createCategory } from 'src/services/categories'
+import { createCategory, updateCategory } from 'src/services/categories'
+import { type Category } from 'src/interfaces/Category'
 
 interface Props {
   payments: Payment[]
@@ -36,13 +37,7 @@ export const COIN_VALUES = {
 
 interface CategoryFormValues {
 
-  items: [
-    {
-      name: string
-      subcategories: [{ name: string }]
-
-    }
-  ]
+  items: Category[]
 
 }
 
@@ -125,21 +120,22 @@ export const usePayments = (): Props => {
   }
 
   const handleOnSubmitCategory = async (values: CategoryFormValues): Promise<void> => {
-    const category = values.items[0]
+    const [category] = values.items
 
     try {
-      const resp = await createCategory({ category })
-
-      console.log(resp)
-
-      if (!resp.ok) {
-        toast.warning(resp.msg)
+      if (category.id !== undefined) {
+        await updateCategory({ id: category.id, category })
+        toast.success('actualizado correctamente')
         return
       }
-
+      const resp = await createCategory({ category })
+      if (!resp.ok) {
+        toast.warning('Hubo un error')
+        return
+      }
       toast.success('Creado correctamente')
     } catch (error) {
-
+      toast.error('Hubo un error hable con el administrador')
     }
   }
 

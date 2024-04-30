@@ -16,6 +16,7 @@ export const UserInfo: React.FC = () => {
         let userDescription: any[] = []
         Object.entries(user)
           .forEach(([key, value], index) => {
+            console.log({ value })
             userDescription = [
               ...userDescription,
               {

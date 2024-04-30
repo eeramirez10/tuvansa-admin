@@ -3,13 +3,22 @@ import { type StatusValue, type User } from 'src/interfaces/Auth'
 
 interface InitialState {
   status: StatusValue
-  user: User | Record<string, unknown>
+  // eslint-disable-next-line @typescript-eslint/ban-types
+  user: User
   errorMessage: string | undefined
 }
 
 const DEFAULT_STATE: InitialState = {
   status: 'checking',
-  user: {},
+  user: {
+    username: '',
+    name: '',
+    last: '',
+    branchOffice: '',
+    rol: '',
+    token: '',
+    pagePermission: []
+  },
   errorMessage: undefined
 }
 
@@ -19,7 +28,15 @@ export const authSlice = createSlice({
   reducers: {
     onChecking: (state) => {
       state.status = 'checking'
-      state.user = {}
+      state.user = {
+        username: '',
+        name: '',
+        last: '',
+        branchOffice: '',
+        rol: '',
+        token: '',
+        pagePermission: []
+      }
       state.errorMessage = undefined
     },
     onLogin: (state, action: PayloadAction<User>) => {
@@ -29,12 +46,28 @@ export const authSlice = createSlice({
     },
     onLogout: (state) => {
       state.status = 'notauthenticated'
-      state.user = {}
+      state.user = {
+        username: '',
+        name: '',
+        last: '',
+        branchOffice: '',
+        rol: '',
+        token: '',
+        pagePermission: []
+      }
       state.errorMessage = undefined
     },
     onError: (state, action: PayloadAction<string>) => {
       state.status = 'notauthenticated'
-      state.user = {}
+      state.user = {
+        username: '',
+        name: '',
+        last: '',
+        branchOffice: '',
+        rol: '',
+        token: '',
+        pagePermission: []
+      }
       state.errorMessage = action.payload
     }
   }
