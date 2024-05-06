@@ -1,6 +1,7 @@
 import React from 'react'
 import {
   BarChartOutlined,
+  BorderOutlined,
   // DesktopOutlined,
   PieChartOutlined,
   ReconciliationOutlined,
@@ -11,20 +12,9 @@ import type { MenuProps } from 'antd'
 import { Menu as Me } from 'antd'
 import { Link } from 'react-router-dom'
 import { useAuth } from 'src/hooks/useAuth'
+import { getPermission } from 'src/helpers/getPermissions'
 
-// const items: MenuItem[] = [
-//   getItem((<Link to='/payments'> Pagos </Link>), '1', <PieChartOutlined />),
-//   getItem('Option 2', '2', <DesktopOutlined />),
-//   getItem('User', 'sub1', <UserOutlined />, [
-//     getItem('Tom', '3'),
-//     getItem('Bill', '4'),
-//     getItem('Alex', '5')
-//   ]),
-//   getItem('Team', 'sub2', <TeamOutlined />, [getItem('Team 1', '6'), getItem('Team 2', '7')]),
-//   getItem('Files', '9', <FileOutlined />)
-// ]
-
-const Roles = {
+export const ROLES = {
   ADMIN: 'admin'
 } as const
 
@@ -33,8 +23,11 @@ const PAGE_PERMISSION = {
   COUNTS: 'counts',
   INVENTORIES: 'inventories',
   SALES: 'sales',
-  COMPETITIONS: 'competitions'
-}
+  COMPETITIONS: 'competitions',
+  RECEPTIONS: 'receptions'
+} as const
+
+export type PermissionValues = typeof PAGE_PERMISSION[keyof typeof PAGE_PERMISSION]
 
 export const Menu: React.FC = () => {
   const { startLogout, user } = useAuth()
@@ -48,7 +41,7 @@ export const Menu: React.FC = () => {
       label: 'Pagos',
       key: '1',
       icon: (<WalletOutlined />),
-      disabled: !user.pagePermission.includes(PAGE_PERMISSION.PAYMENTS),
+      disabled: !getPermission({ user, permission: 'payments' }),
       children: [
         {
           label: (<Link to='/doctos'> Doctos </Link>),
@@ -64,7 +57,7 @@ export const Menu: React.FC = () => {
       label: 'Almacen',
       key: '2',
       icon: (<ReconciliationOutlined />),
-      disabled: !user.pagePermission.includes(PAGE_PERMISSION.INVENTORIES),
+      disabled: !getPermission({ user, permission: 'inventories' }),
       children: [
         {
           label: (<Link to='/inventories'> Inventarios </Link>),
@@ -77,16 +70,22 @@ export const Menu: React.FC = () => {
       ]
     },
     {
-      label: user?.rol !== Roles.ADMIN ? '' : (<Link to='/competitions'> Competencia </Link>),
+      label: !getPermission({ user, permission: 'competitions' }) ? '' : (<Link to='/competitions'> Competencia </Link>),
       key: '3',
       icon: (<PieChartOutlined />),
-      disabled: !user.pagePermission.includes(PAGE_PERMISSION.COMPETITIONS)
+      disabled: !getPermission({ user, permission: 'competitions' })
     },
     {
-      label: !user.pagePermission.includes(PAGE_PERMISSION.SALES) ? '' : (<Link to='/sales'> Ventas </Link>),
+      label: !getPermission({ user, permission: 'sales' }) ? '' : (<Link to='/sales'> Ventas </Link>),
       key: '4',
       icon: (<BarChartOutlined />),
-      disabled: !user.pagePermission.includes(PAGE_PERMISSION.SALES)
+      disabled: !getPermission({ user, permission: 'sales' })
+    },
+    {
+      label: !getPermission({ user, permission: 'receptions' }) ? '' : (<Link to='/receptions'> RECEPCIONES </Link>),
+      key: '5',
+      icon: (<BorderOutlined />),
+      disabled: !getPermission({ user, permission: 'receptions' })
     },
     // {
     //   label: 'Option 2',

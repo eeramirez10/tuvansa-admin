@@ -48,7 +48,7 @@ const columns: ColumnsType<Payment> = [
 ]
 
 export const Payments: React.FC = () => {
-  const { payments } = usePayments()
+  const { payments, isLoading } = usePayments()
 
   return (
     <>
@@ -69,6 +69,7 @@ export const Payments: React.FC = () => {
         data={payments}
         expandedRowRender={(record: Payment) => PaymentExpandRow({ payment: record })}
         rowExpandable={(record: Payment) => record.proscai !== null}
+        loading={isLoading}
       />
     </>
 

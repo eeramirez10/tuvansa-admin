@@ -11,4 +11,5 @@ export interface Reception {
   proveedor: string
   dcantf: string
   dcfdiuuid: string
+  hasFile: boolean
 }

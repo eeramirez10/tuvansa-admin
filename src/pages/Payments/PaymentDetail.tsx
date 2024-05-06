@@ -21,17 +21,19 @@ export const PaymentDetail: React.FC = () => {
 
   useEffect(() => {
     if (payment !== null) {
-      console.log(payment)
       setFormValues({
         ...payment,
         category: {
           value: payment.category.id,
           label: <span>{payment.category.name}</span>
         },
-        subcategory: {
-          value: payment.subcategory.id,
-          label: <span>{payment.subcategory.name}</span>
-        }
+        subcategory: payment.subcategory === null
+          ? null
+          : {
+              value: payment.subcategory.id,
+              label: <span>{payment.subcategory.name}</span>
+            }
+
       })
     }
   }, [payment])
@@ -42,14 +44,12 @@ export const PaymentDetail: React.FC = () => {
     handleOnSubmit(values)
   }
 
-  console.log(payment)
-
   return (
     <>
       <Navigation
         name='Detalle de Pago'
         isNew={false}
-        hasFile={ payment?.files.length === 0 }
+        hasFile={payment?.files.length === 0}
         saveRef={saveButtonRef}
       />
       <Container>

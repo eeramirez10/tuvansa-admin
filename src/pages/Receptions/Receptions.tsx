@@ -1,11 +1,14 @@
-import { Form, Space } from 'antd'
+import { getApiUrl } from 'src/helpers/getApiUrl'
+import { Button, Form, Space } from 'antd'
 import { type ColumnsType } from 'antd/es/table'
 import React, { useState } from 'react'
 import { DataTable } from 'src/components/DataTable/DataTable'
 import { InputSearch } from 'src/components/InputSearch'
-import { OpenButtonModal } from 'src/components/OpenButtonModal'
+// import { OpenButtonModal } from 'src/components/OpenButtonModal'
 import { type Reception } from 'src/interfaces/Reception'
 import { getReceptions } from 'src/services/receptons'
+
+const { URL } = getApiUrl()
 
 export const Receptions: React.FC = () => {
   const [receptions, setReceptions] = useState<Reception[]>([])
@@ -41,7 +44,13 @@ export const Receptions: React.FC = () => {
     {
       title: 'Archivos',
       align: 'center',
-      render: (_, { dnum }) => <OpenButtonModal id={dnum} />
+      render: (_, { dnum, hasFile }) => hasFile
+        ? <Button
+        onClick={() => {
+          window.open(`${URL}/public/RECEPCIONES/${dnum}.pdf`, '_blank')
+        }}
+      > {dnum}</Button>
+        : ''
     }
   ]
 

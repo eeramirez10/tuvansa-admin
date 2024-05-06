@@ -2,8 +2,6 @@
 import React, { useEffect, useState } from 'react'
 import { Button, Card, Form, type FormInstance, DatePicker, Row, Select, Flex, type RadioChangeEvent, InputNumber } from 'antd'
 import { useButtonRef } from 'src/hooks/useButtonRef'
-// import { getSuppliersProscai } from 'src/services/supplier'
-
 import { Radio } from 'antd'
 import { SupplierAutoComplete } from 'src/components/SupplierAutoComplete/SupplierAutoComplete'
 import { CreditorAutoComplete } from 'src/components/CreditorAutoComplete/CreditorAutoComplete'
@@ -19,21 +17,6 @@ interface Props {
   radioValue?: number
   isLoading?: boolean
 }
-// const CATEGORY_VALUES: Array<{ value: string, label: JSX.Element }> = [
-//   { value: 'mantenimiento', label: <span>Mantenimiento</span> },
-//   { value: 'gasolina', label: <span>Gasolina</span> },
-//   { value: 'viaticos', label: <span>Viaticos</span> },
-//   { value: 'maquila', label: <span>Maquila</span> },
-//   { value: 'despensa', label: <span>Despensa</span> },
-//   { value: 'vigilancia', label: <span>Vigilancia</span> },
-//   { value: 'honorarios', label: <span>Honorarios</span> },
-//   { value: 'consultoria', label: <span>Consultoria</span> },
-//   { value: 'impuestos', label: <span>Declaracion de Impuestos</span> },
-//   { value: 'fumigacion', label: <span>Fumigacion</span> },
-//   { value: 'servicios', label: <span>Servicios</span> },
-//   { value: 'vales', label: <span>Vales</span> }
-
-// ]
 
 interface CategoryOptions {
   id?: string
@@ -41,6 +24,7 @@ interface CategoryOptions {
   subcategories: Subcategory[]
   value: string
   label: JSX.Element
+
 }
 
 interface SubCategoryOptions {
@@ -57,13 +41,14 @@ export const PaymentForm: React.FC<Props> = ({ form, onFinish, formValues, disab
 
   const [subCategories, setSubCategories] = useState<SubCategoryOptions[]>([])
 
+  const [isSubcategory, setSubcategory] = useState(false)
+
   useEffect(() => {
     setValue(radioValue)
   }, [radioValue])
 
   useEffect(() => {
     if (formValues !== undefined) {
-      console.log({ formValues })
       form.setFieldsValue({
         supplier: formValues.supplier.name,
         idSupplier: formValues.supplier.uid
@@ -86,9 +71,32 @@ export const PaymentForm: React.FC<Props> = ({ form, onFinish, formValues, disab
       })
   }, [])
 
+  useEffect(() => {
+    if (form.getFieldValue('subcategory')?.value !== undefined) {
+      setSubcategory(true)
+    }
+  }, [form.getFieldValue('subcategory')?.value])
+
+  console.log()
+
   const onChange = (e: RadioChangeEvent): void => {
-    console.log('radio checked', e.target.value)
     setValue(e.target.value)
+  }
+
+  const onSelectCategory = (_: any, option: any): void => {
+    setSubCategories([])
+    const categoriesOptions = categories.find(category => category.id === option.id)
+    if (categoriesOptions?.subcategories.length === 0) return
+
+    const subCategories = categoriesOptions?.subcategories.map(
+      subcategories => ({
+        value: subcategories.id,
+        label: <span>{subcategories.name}</span>
+      }))
+
+    if (subCategories !== undefined) {
+      setSubCategories(subCategories)
+    }
   }
 
   return (
@@ -100,7 +108,6 @@ export const PaymentForm: React.FC<Props> = ({ form, onFinish, formValues, disab
       <Form
         form={form}
         layout='vertical'
-
         onFinish={onFinish}
         style={{ width: '100%' }}
 
@@ -137,32 +144,24 @@ export const PaymentForm: React.FC<Props> = ({ form, onFinish, formValues, disab
               placeholder="Seleciona una cetegoria"
               allowClear
               options={categories}
-              onSelect={(_, option: any) => {
-                const categoriesOptions = categories.find(category => category.id === option.id)
-
-                const subCategories = categoriesOptions?.subcategories.map(
-                  subcategories => ({
-                    value: subcategories.id,
-                    label: <span>{subcategories.name}</span>
-                  }))
-
-                if (subCategories !== undefined) {
-                  setSubCategories(subCategories)
-                }
-              }}
+              onSelect={onSelectCategory}
             />
 
           </Form.Item>
 
-          <Form.Item name="subcategory" label="Subcategoria" rules={[{ required: true }]} style={{ width: 200 }}>
-            <Select
-              placeholder="Seleciona una cetegoria"
-              allowClear
-              options={subCategories}
+          {
+            (subCategories.length > 0 || isSubcategory) &&
 
-            />
+            <Form.Item name="subcategory" label="Subcategoria" rules={[{ required: true }]} style={{ width: 200 }}>
+              <Select
+                placeholder="Seleciona una cetegoria"
+                allowClear
+                options={subCategories}
 
-          </Form.Item>
+              />
+
+            </Form.Item>
+          }
 
           <Form.Item
             name={'amount'}
