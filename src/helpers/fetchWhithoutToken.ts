@@ -10,7 +10,7 @@ const METHOD_VALUES = {
 interface Props {
   endpoint: string
   method?: typeof METHOD_VALUES[keyof typeof METHOD_VALUES]
-  body?: Record<string, unknown>
+  body?: Record<string, string>
 }
 
 // interface ReturnFetch {
@@ -37,6 +37,7 @@ export const fetchWithoutToken = async ({ endpoint, method, body }: Props): Prom
 
   try {
     const resp = await fetch(`${API_URL}/${endpoint}`, method === 'GET' ? options : postOptions)
+
 
     const data = await resp.json()
 

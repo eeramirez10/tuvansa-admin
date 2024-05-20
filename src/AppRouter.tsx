@@ -25,6 +25,7 @@ import { Categories } from './pages/Payments/Categories'
 import { Sales } from './pages/Sales/Sales'
 import { CategoryEdit } from './pages/Categories/CategoryEdit'
 import { Receptions } from './pages/Receptions/Receptions'
+import { Shipments } from './pages/Shipments/Shipments';
 
 export const AppRouter: React.FC = () => {
   const { status, checkAuthToken, urlRedirect } = useAuth()
@@ -66,6 +67,8 @@ export const AppRouter: React.FC = () => {
               <Route path='/receptions' element={<Receptions />} />
 
               <Route path='/sales' element={<Sales />} />
+
+              <Route path='/shipments' element={<Shipments />} />
 
               <Route path="/*" element={<Navigate to={urlRedirect ?? '/payments'} />} />
             </Route>

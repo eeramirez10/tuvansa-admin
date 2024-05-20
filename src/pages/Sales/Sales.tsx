@@ -82,7 +82,6 @@ export const Sales: React.FC = () => {
     }
   }, [])
 
-  console.log(total)
 
   const header = <div style={{ display: 'flex', justifyContent: 'space-between' }}>
 

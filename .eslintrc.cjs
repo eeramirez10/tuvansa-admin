@@ -33,5 +33,6 @@ module.exports = {
     "react/react-in-jsx-scope": "off",
     "react/jsx-uses-react": "off",
     "@typescript-eslint/no-misused-promises": "off"
-  }
+  },
+  "ignorePatterns": [".eslintrc.cjs", "vite.config.ts"]
 }
