@@ -11,7 +11,8 @@ export const Login: React.FC = () => {
   const { startLogin } = useAuth()
 
   const onFinish = (values: { username: string, password: string }): void => {
-    const { username, password } = values
+    const username = values.username.trim()
+    const password = values.password.trim()
 
     startLogin({ username, password })
   }

@@ -1,3 +1,4 @@
+import { METHOD_VALUES, fetchAPIWithToken } from 'src/helpers/fetchWithToken'
 import { getApiUrl } from 'src/helpers/getApiUrl'
 import { type User } from 'src/interfaces/Auth'
 
@@ -42,4 +43,14 @@ export const renewToken = async (): Promise<Response> => {
   const body = await resp.json()
 
   return body
+}
+
+export const createUser = async (user: User): Promise<[Error | null, User | null]> => {
+  const resp = await fetchAPIWithToken({
+    endpoint: 'auth/register',
+    method: METHOD_VALUES.POST,
+    body: user
+  })
+
+  return resp
 }

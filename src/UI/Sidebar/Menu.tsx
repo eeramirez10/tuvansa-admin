@@ -6,7 +6,9 @@ import {
   PieChartOutlined,
   ReconciliationOutlined,
   UserOutlined,
-  WalletOutlined
+  WalletOutlined,
+  TruckOutlined
+
 } from '@ant-design/icons'
 import type { MenuProps } from 'antd'
 import { Menu as Me } from 'antd'
@@ -18,13 +20,14 @@ export const ROLES = {
   ADMIN: 'admin'
 } as const
 
-const PAGE_PERMISSION = {
+export const PAGE_PERMISSION = {
   PAYMENTS: 'payments',
   COUNTS: 'counts',
   INVENTORIES: 'inventories',
   SALES: 'sales',
   COMPETITIONS: 'competitions',
-  RECEPTIONS: 'receptions'
+  RECEPTIONS: 'receptions',
+  SHIPMENTS: 'shipments'
 } as const
 
 export type PermissionValues = typeof PAGE_PERMISSION[keyof typeof PAGE_PERMISSION]
@@ -87,6 +90,12 @@ export const Menu: React.FC = () => {
       icon: (<BorderOutlined />),
       disabled: !getPermission({ user, permission: 'receptions' })
     },
+    {
+      label: !getPermission({ user, permission: 'shipments' }) ? '' : (<Link to='/shipments'> Embarques </Link>),
+      key: '6',
+      icon: (<TruckOutlined />),
+      disabled: !getPermission({ user, permission: 'shipments' })
+    },
     // {
     //   label: 'Option 2',
     //   key: '2',
@@ -104,6 +113,10 @@ export const Menu: React.FC = () => {
         {
           label: (<Link to="/user/1/info"> Info </Link>),
           key: '4'
+        },
+        {
+          label: (<Link to="/user/new"> Nuevo </Link>),
+          key: '2828'
         },
         {
           label: 'Logout',

@@ -9,6 +9,7 @@ export type StatusValue = typeof AUTH_STATUS[keyof typeof AUTH_STATUS]
 export interface User {
   id?: string
   username: string
+  gender: string
   name: string
   last: string
   branchOffice: string

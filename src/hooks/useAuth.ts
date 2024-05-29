@@ -1,10 +1,11 @@
 import { onChecking, onError, onLogin, onLogout } from 'src/store/auth/slice'
 import { useAppDispatch, useAppSelector } from './useStore'
-import { type LoginProps, login, renewToken } from 'src/services/auth'
+import { type LoginProps, login, renewToken, createUser } from 'src/services/auth'
 import type { StatusValue, User } from 'src/interfaces/Auth'
 import { toast } from 'sonner'
 import { useLocation } from 'react-router-dom'
 import { useEffect } from 'react'
+import { Form, type FormInstance } from 'antd'
 
 interface Props {
   status: StatusValue
@@ -15,6 +16,8 @@ interface Props {
   startLogin: ({ username, password }: LoginProps) => Promise<void>
   checkAuthToken: () => Promise<void>
   startLogout: () => void
+  userRegister: (user: User) => Promise<[Error | null, User | null]>
+  form: FormInstance<any>
 }
 
 export const useAuth = (): Props => {
@@ -22,6 +25,8 @@ export const useAuth = (): Props => {
   const dispatch = useAppDispatch()
   const location = useLocation()
   const urlRedirect = localStorage.getItem('urlRedirect')
+
+  const [form] = Form.useForm()
 
   useEffect(() => {
     if (location.key === 'default') {
@@ -54,7 +59,7 @@ export const useAuth = (): Props => {
       //       localStorage.removeItem('urlRedirect')
       //     }
 
-    // }
+      // }
     } catch (error) {
       dispatch(onLogout())
       toast.error('hubo un error interno, hable con el administrador')
@@ -91,13 +96,33 @@ export const useAuth = (): Props => {
     }
   }
 
+  const userRegister = async (user: User): Promise<[Error | null, User | null]> => {
+    try {
+      const [error, newUser] = await createUser(user)
+
+      if (error !== null) {
+        return [error, null]
+      }
+
+      toast.success('Usuario credo correctamente')
+
+      return [null, newUser]
+    } catch (error) {
+      if (error instanceof Error) return [error, null]
+    }
+
+    return [new Error(' Error desconocido'), null]
+  }
+
   return {
     status,
     user,
     errorMessage,
     urlRedirect,
+    form,
     startLogin,
     checkAuthToken,
-    startLogout
+    startLogout,
+    userRegister
   }
 }

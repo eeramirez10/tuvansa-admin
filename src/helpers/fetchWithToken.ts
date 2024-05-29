@@ -12,9 +12,11 @@ export const METHOD_VALUES = {
 interface Props {
   endpoint: string
   method?: typeof METHOD_VALUES[keyof typeof METHOD_VALUES]
-  body?: Record<string, unknown>
+  body?: any
   abortController?: AbortController
 }
+
+// type Data = Array<Record<string, string>> | Record<string, string>
 
 // interface ReturnFetch {
 //   payments?: Payment[]
@@ -60,4 +62,45 @@ export const fetchWithToken = async (props: Props): Promise<any> => {
     console.log(error)
     toast.error('Hubo un error, hable con el administrador')
   }
+}
+
+export const fetchAPIWithToken = async (props: Props): Promise<[Error | null, any | null]> => {
+  const { endpoint, method, body, abortController } = props
+
+  const options = {
+    signal: abortController?.signal,
+    method: METHOD_VALUES.GET,
+    headers: {
+      Authorization: `bearer ${localStorage.getItem('token')}`
+    }
+  }
+
+  const postOptions = {
+    signal: abortController?.signal,
+    method,
+    body: JSON.stringify(body),
+    headers: {
+      'Content-type': 'application/json; charset=UTF-8',
+      Authorization: `bearer ${localStorage.getItem('token')}`
+    }
+  }
+
+  try {
+    const resp = await fetch(`${API_URL}/${endpoint}`, method === 'GET' ? options : postOptions)
+
+    const data = await resp.json()
+
+    if (!resp.ok) {
+      toast.error(data.error)
+      return [new Error(`${resp.statusText}`), null]
+    }
+
+    return [null, data]
+  } catch (error) {
+    toast.error('Hubo un error, hable con el administrador')
+
+    if (error instanceof Error) return [error, null]
+  }
+
+  return [new Error('Error desconocido'), null]
 }

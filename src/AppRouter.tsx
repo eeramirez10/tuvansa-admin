@@ -25,7 +25,11 @@ import { Categories } from './pages/Payments/Categories'
 import { Sales } from './pages/Sales/Sales'
 import { CategoryEdit } from './pages/Categories/CategoryEdit'
 import { Receptions } from './pages/Receptions/Receptions'
-import { Shipments } from './pages/Shipments/Shipments';
+import { Shipments } from './pages/Shipments/Shipments'
+import { SalesShipments } from './pages/SalesShipments/SalesShipments'
+import { NewUser } from './pages/User/newUser'
+import { Users } from './pages/User/Users'
+import { EditUser } from './pages/User/EditUser'
 
 export const AppRouter: React.FC = () => {
   const { status, checkAuthToken, urlRedirect } = useAuth()
@@ -62,6 +66,10 @@ export const AppRouter: React.FC = () => {
 
               <Route path="/user/:id/info" element={<UserInfo />} />
 
+              <Route path="/user/new" element={<NewUser />} />
+              <Route path="/user/users" element={<Users />} />
+              <Route path="/user/:id/edit" element={<EditUser />} />
+
               <Route path='/competitions' element={<Competitions />} />
 
               <Route path='/receptions' element={<Receptions />} />
@@ -69,6 +77,8 @@ export const AppRouter: React.FC = () => {
               <Route path='/sales' element={<Sales />} />
 
               <Route path='/shipments' element={<Shipments />} />
+
+              <Route path='/sales-shipments' element={<SalesShipments />} />
 
               <Route path="/*" element={<Navigate to={urlRedirect ?? '/payments'} />} />
             </Route>
