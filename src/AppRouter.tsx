@@ -30,6 +30,7 @@ import { SalesShipments } from './pages/SalesShipments/SalesShipments'
 import { NewUser } from './pages/User/newUser'
 import { Users } from './pages/User/Users'
 import { EditUser } from './pages/User/EditUser'
+import DocAuth from './pages/DocumentAuthorization/Index'
 
 export const AppRouter: React.FC = () => {
   const { status, checkAuthToken, urlRedirect } = useAuth()
@@ -79,6 +80,8 @@ export const AppRouter: React.FC = () => {
               <Route path='/shipments' element={<Shipments />} />
 
               <Route path='/sales-shipments' element={<SalesShipments />} />
+
+              <Route path='/doc-auth' element={<DocAuth />} />
 
               <Route path="/*" element={<Navigate to={urlRedirect ?? '/payments'} />} />
             </Route>

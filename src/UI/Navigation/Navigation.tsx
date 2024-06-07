@@ -8,30 +8,6 @@ import { useAppDispatch } from 'src/hooks/useStore'
 import { UploadFiles } from 'src/components/UploadFiles'
 import { selectPayment } from 'src/store/payments/slice'
 
-// const useNameNavigation = (): NameNavigation => {
-//   const { pathname } = useLocation()
-
-//   const arrPathname = pathname.split('/').slice(1)
-
-//   const includesNewStringPath = arrPathname.includes('new')
-
-//   const includesEditStringPath = arrPathname.includes('edit')
-
-//   const mainRoute = arrPathname[0]
-
-//   const capitalize = `${mainRoute.charAt(0).toUpperCase()}${mainRoute.slice(1)}`
-
-//   const singularPath = capitalize.substring(0, mainRoute.length - 1)
-
-//   return {
-//     includesNewStringPath,
-//     includesEditStringPath,
-//     mainRoute,
-//     capitalize,
-//     singularPath
-//   }
-// }
-
 interface Props {
   name: string
   isNew?: boolean

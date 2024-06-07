@@ -8,6 +8,9 @@ import './index.css'
 import { ModalProvider } from './context/Modal.tsx'
 import { Toaster } from 'sonner'
 import ThemeProvider from './context/Theme.tsx'
+import { prepareAssets } from 'src/pdf/utils/prepareAssets.ts'
+
+prepareAssets()
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <BrowserRouter>
