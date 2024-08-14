@@ -26,7 +26,7 @@ export const DrawingModal = ({ open, dismiss, confirm, drawing }: Props) => {
   const [minY, setMinY] = useState(Infinity)
   const [maxY, setMaxY] = useState(0)
   const [mouseDown, setMouseDown] = useState(false)
-  const [strokeWidth, setStrokeWidth] = useState(1)
+  const [strokeWidth, setStrokeWidth] = useState(2)
   const [stroke, setStroke] = useState(Color.BLACK)
   const [strokeDropdownOpen, setStrokeDropdownOpen] = useState(false)
 
@@ -72,17 +72,19 @@ export const DrawingModal = ({ open, dismiss, confirm, drawing }: Props) => {
   }
 
   const resetDrawingBoard = (): void => {
+    
     setPaths([])
     setPath('')
     setMinX(Infinity)
     setMaxX(0)
     setMinY(Infinity)
     setMaxY(0)
-    setStrokeWidth(1)
+    setStrokeWidth(strokeWidth)
     setStroke(Color.BLACK)
   }
 
   const handleDone = (): void => {
+ 
     if (paths.length === 0) {
       confirm()
       return

@@ -1,4 +1,6 @@
 import { useReducer, useCallback } from 'react'
+import { useDispatch } from 'react-redux'
+import { signDocument, unsignDocument } from 'src/store/signature/slice'
 
 enum ActionType {
   RESET = 'RESET',
@@ -111,10 +113,18 @@ const reducer = (state: State, action: Action) => {
 export const useAttachments = () => {
   const [state, dispatch] = useReducer(reducer, initialState)
   const { allPageAttachments, pageAttachments } = state
+  const dispatc = useDispatch()
 
-  const add = (newAttachment: Attachment) => { dispatch({ type: ActionType.ADD_ATTACHMENT, attachment: newAttachment }) }
+  const add = (newAttachment: Attachment) => { 
 
-  const remove = (attachmentIndex: number) => { dispatch({ type: ActionType.REMOVE_ATTACHMENT, attachmentIndex }) }
+    dispatc(signDocument())
+    dispatch({ type: ActionType.ADD_ATTACHMENT, attachment: newAttachment }) 
+  }
+
+  const remove = (attachmentIndex: number) => {
+    dispatc(unsignDocument())
+    dispatch({ type: ActionType.REMOVE_ATTACHMENT, attachmentIndex })
+  }
 
   const update = (attachmentIndex: number, attachment: Partial<Attachment>) => {
     dispatch({

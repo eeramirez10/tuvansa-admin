@@ -5,12 +5,14 @@ interface InitialState {
   isLoading: boolean
   data: PurchaseOrder[]
   selected: PurchaseOrder | null
+  isSign: boolean
 }
 
 const initialState: InitialState = {
   isLoading: false,
   data: [],
-  selected: null
+  selected: null,
+  isSign: false
 }
 
 export const purchaseOrdersSlices = createSlice({
@@ -30,7 +32,8 @@ export const purchaseOrdersSlices = createSlice({
     },
     cleanPurchaseOrder: (state) => {
       state.selected = null
-    }
+    },
+    
   }
 })
 

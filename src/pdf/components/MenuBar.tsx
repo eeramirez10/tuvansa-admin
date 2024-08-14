@@ -17,7 +17,6 @@ export const MenuBar: React.FC<Props> = ({
   uploadNewPdf,
   addDrawing,
   upload,
-  isPdfLoaded,
   savingPdfStatus,
   savePdf,
   canAuthorize,
@@ -27,55 +26,55 @@ export const MenuBar: React.FC<Props> = ({
     <Menu.Item header>PDF Editor</Menu.Item>
     <Menu.Menu position="right">
 
-        <>
-          {
-            canAuthorize &&
-            <>
-              <Dropdown
-                data-testid='edit-menu-dropdown'
-                item
-                closeOnBlur
-                icon="edit outline" simple
+      <>
+        {
+          canAuthorize &&
+          <>
+            <Dropdown
+              data-testid='edit-menu-dropdown'
+              item
+              closeOnBlur
+              icon="edit outline" simple
+            >
+              <Dropdown.Menu
+
               >
-                <Dropdown.Menu
-
-                >
-                  {/* <Dropdown.Item onClick={addText}>Add Text</Dropdown.Item>
+                {/* <Dropdown.Item onClick={addText}>Add Text</Dropdown.Item>
               <Dropdown.Item onClick={addImage}>Add Image</Dropdown.Item> */}
-                  <Dropdown.Item onClick={addDrawing} disabled={!canAuthorize}>Agregar firma</Dropdown.Item>
-                </Dropdown.Menu>
-              </Dropdown>
-              <Menu.Item
-                data-testid='save-menu-item'
-                name={savingPdfStatus ? 'Guardando...' : 'Guardar firmado'}
-                disabled={savingPdfStatus || !canAuthorize}
-                onClick={savePdf}
-              />
-            </>
+                <Dropdown.Item onClick={addDrawing} disabled={!canAuthorize}>Agregar firma</Dropdown.Item>
+              </Dropdown.Menu>
+            </Dropdown>
+            <Menu.Item
+              data-testid='save-menu-item'
+              name={savingPdfStatus ? 'Guardando...' : 'Guardar firmado'}
+              disabled={savingPdfStatus || !canAuthorize}
+              onClick={savePdf}
+            />
+          </>
 
-          }
-          {
+        }
+        {
 
-            canUpload &&
-            <>
+          canUpload &&
+          <>
 
-              <Menu.Item
-                data-testid='save-menu-item'
-                name={savingPdfStatus ? 'Guardando...' : 'Subir a servidor'}
+            <Menu.Item
+              data-testid='save-menu-item'
+              name={savingPdfStatus ? 'Guardando...' : 'Subir a servidor'}
 
-                onClick={upload}
-              />
-              <Menu.Item
-                data-testid='upload-menu-item'
-                name="Subir nuevo"
-                onClick={uploadNewPdf}
-              />
+              onClick={upload}
+            />
+            <Menu.Item
+              data-testid='upload-menu-item'
+              name="Subir nuevo"
+              onClick={uploadNewPdf}
+            />
 
-            </>
+          </>
 
-          }
+        }
 
-        </>
+      </>
 
       {/* <Menu.Item data-testid="help-menu-item" onClick={openHelp}>
         <Icon name="question circle outline" />

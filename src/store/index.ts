@@ -4,6 +4,7 @@ import authSlice from './auth/slice'
 import inventoriesReducer from './inventories/slice'
 import doctosReducer from './doctos/slice'
 import purchaseOrdersReducer from './purchase-orders/slice'
+import signReducer from './signature/slice'
 
 export const store = configureStore({
   reducer: {
@@ -11,7 +12,8 @@ export const store = configureStore({
     auth: authSlice,
     inventories: inventoriesReducer,
     doctos: doctosReducer,
-    purchaseOrders: purchaseOrdersReducer
+    purchaseOrders: purchaseOrdersReducer,
+    sign: signReducer
   }
 })
 

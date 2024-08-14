@@ -66,7 +66,7 @@ export const Orders: React.FC = () => {
     {
       title: 'Autorizado',
       dataIndex: 'authorized',
-      render: (_, value) => value.authorized === true ? 'Si' : 'No'
+      render: (_, value) => value.authorized ? 'Si' : 'No'
     },
     {
       title: 'Autorizado por',
@@ -81,7 +81,7 @@ export const Orders: React.FC = () => {
       render: (_, value) => {
         const { file, signedFile, id, authorized } = value
 
-        return <Link onClick={handleSelectCurrentOrder(value)} to={`${authorized === true ? signedFile : file?.id}/authorize/${id}/order`} >Ver</Link>
+        return <Link onClick={handleSelectCurrentOrder(value)} to={`${(authorized) ? signedFile : file?.id}/authorize/${id}/order`} >Ver</Link>
       }
 
     }
@@ -93,7 +93,12 @@ export const Orders: React.FC = () => {
 
         <Title level={3}>Autorizacion de Ordenes</Title>
 
-        <DataTable loading={fetching} columns={columns} data={orders} rowKey={(value) => value.id} />
+        <DataTable
+          loading={fetching}
+          columns={columns}
+          data={orders}
+          rowKey={(value) => value.id}
+        />
 
       </Container>
 

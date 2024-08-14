@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useDispatch } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 // import { useParams } from 'react-router-dom'
@@ -19,6 +19,7 @@ export const UploadFile: React.FC = () => {
   // const { id } = useParams()
 
   const order = useAppSelector(state => state.purchaseOrders.selected)
+  const [isLoading, setIsLoading] = useState(false)
   const dispatch = useDispatch()
   const navigate = useNavigate()
 
@@ -108,7 +109,7 @@ export const UploadFile: React.FC = () => {
   return (
     <Container>
       <Title level={3}>Subir Orden de compra</Title>
-      <PdfEditor isLoading={false} getPdf={savePdf} canAuthorize={false} canUpload={true} />
+      <PdfEditor isLoading={isLoading} getPdf={savePdf} canAuthorize={false} canUpload={true}  />
     </Container>
   )
 }

@@ -2,6 +2,16 @@ import { Button, Col, Form, type FormInstance, Input, Row, Select, Space } from 
 import React from 'react'
 import { PAGE_PERMISSION } from 'src/UI/Sidebar/Menu'
 import { type User } from 'src/interfaces/Auth'
+import { Label } from 'semantic-ui-react';
+
+
+
+const DOCUMENTS_AUTHORIZATION = {
+  purchaseOrder: 'purchaseOrder',
+  remission: 'remissions'
+} as const
+
+type documentAuthorizationValues = typeof DOCUMENTS_AUTHORIZATION[keyof typeof DOCUMENTS_AUTHORIZATION]
 
 interface FieldType {
   username?: string
@@ -12,10 +22,14 @@ interface FieldType {
   gender: string
   pagePermission: string[]
   password?: string
-  remember?: string
+  remember?: string,
+  documentsAuthorization: string[]
 }
 
 type SelectOptions = Array<{ value: string, label: string }>
+
+type documentAuthorizationSelectOptions = Array<{ value: documentAuthorizationValues, label: string, desc: string }>
+
 
 const branchOfficeOptions: SelectOptions = [
   { value: 'Mexico', label: 'Mexico' },
@@ -25,6 +39,19 @@ const branchOfficeOptions: SelectOptions = [
   { value: 'Queretaro', label: 'Queretaro' },
   { value: 'Cancun', label: 'Cancun' }
 
+]
+
+const documentsAuthorizationOptions: documentAuthorizationSelectOptions = [
+  {
+    value: 'purchaseOrder',
+    label: 'Ordenes de compra',
+    desc: 'Ordenes de compra'
+  },
+  {
+    value: 'remissions',
+    label: 'Remissiones',
+    desc: 'Remissiones'
+  }
 ]
 
 const genderOptions: SelectOptions = [
@@ -130,14 +157,40 @@ export const UserForm: React.FC<Props> = ({ hadleSubmit, form }) => {
               style={{ width: '100%' }}
               placeholder="Selecciona los permisos"
               options={permissionsOptions}
-              optionRender={(option) => (
+              optionRender={(option) => {
+                
+                return (
                 <Space>
                   <span role="img" aria-label={option.data.label}>
                     {option.data.emoji}
                   </span>
                   {option.data.desc}
                 </Space>
-              )}
+              )}}
+            />
+          </Form.Item>
+
+          <Form.Item<FieldType>
+            label="Autorizacion de documentos"
+            name="documentsAuthorization"
+            rules={[{ required: true, message: 'Autorizacion de documentos' }]}
+          >
+            <Select
+              mode="multiple"
+              style={{ width: '100%' }}
+              placeholder="Selecciona los permisos"
+              options={documentsAuthorizationOptions}
+              optionRender={(option) => {
+                console.log(option)
+                
+                return (
+                <Space>
+                  <span role="img" aria-label={option.data.label}>
+                    {option.data.emoji}
+                  </span>
+                  {option.data.desc}
+                </Space>
+              )}}
             />
           </Form.Item>
 

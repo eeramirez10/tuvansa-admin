@@ -34,12 +34,14 @@ const Index: React.FC = () => {
   const { id, docId, docModel } = useParams<keyof Params>() as Params
   const [fileServer, SetFileServer] = useState<File>()
   const order = useAppSelector(state => state.purchaseOrders.selected)
+  const isSign = useAppSelector(state => state.sign.isSign)
   const { user } = useAuth()
   const navigate = useNavigate()
 
   const canAuthorize = (): boolean => {
     if (order === null) return false
     if (order.authorized) return false
+    if (user.rol === 'admin') return true
     return documentsAuthorization.some(docAuth => user.documentsAuthorization.includes(docAuth))
   }
 
@@ -91,6 +93,7 @@ const Index: React.FC = () => {
     if (docId === undefined || docModel === undefined) return
 
     toast.promise(handleAuthorize(signedFile), {
+      loading: '...Subiendo',
       success: () => {
         return 'Autorizado Correctamente'
       },
@@ -115,6 +118,7 @@ const Index: React.FC = () => {
             canAuthorize={canAuthorize()}
             canUpload={false}
             isLoading={false}
+            isSign={isSign}
           />
           : <></>
 

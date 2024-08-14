@@ -11,6 +11,7 @@ import { Grid, Button, Segment } from 'semantic-ui-react'
 import { MenuBar } from './MenuBar'
 import { Page } from './Page'
 import { Attachments } from './Attachments'
+import { toast } from 'sonner'
 
 interface Props {
   fileServer?: File
@@ -19,12 +20,15 @@ interface Props {
   canAuthorize: boolean
   isLoading: boolean
   canUpload: boolean
+  isSign?: boolean
 }
 
-const Index: React.FC<Props> = ({ fileServer, getPdf, getSignedPdf, canAuthorize = false, canUpload = false, isLoading }) => {
+const Index: React.FC<Props> = ({ fileServer, getPdf, getSignedPdf, canAuthorize = false, canUpload = false, isSign = false, isLoading }) => {
   const [drawingModalOpen, setDrawingModalOpen] = useState(false)
   const { file, initialize, pageIndex, isMultiPage, isFirstPage, isLastPage, currentPage, isSaving, previousPage, nextPage, setDimensions, name, dimensions, saveSignedPdf } = usePdf()
   const { add: addAttachment, allPageAttachments, pageAttachments, reset: resetAttachments, update, remove, setPageIndex } = useAttachments()
+
+
 
   const refPage: MutableRefObject<HTMLDivElement | null> = useRef(null)
   const initializePageAndAttachments = (pdfDetails: Pdf): void => {
@@ -44,8 +48,8 @@ const Index: React.FC<Props> = ({ fileServer, getPdf, getSignedPdf, canAuthorize
     if (refPage.current !== null) {
       const { offsetHeight, offsetWidth } = refPage.current
 
-      const x = offsetWidth - 200
-      const y = offsetHeight - 200
+      const x = offsetWidth - 250
+      const y = offsetHeight - 250
 
       const newDrawingAttachment: DrawingAttachment = {
         id: ggID(),
@@ -71,6 +75,11 @@ const Index: React.FC<Props> = ({ fileServer, getPdf, getSignedPdf, canAuthorize
   }
 
   const handleUploadSignedPdf = async (): Promise<void> => {
+
+    if (!isSign) {
+      toast.warning('Debe de firmar primero el documento')
+      return
+    }
     const signedFile = await saveSignedPdf(allPageAttachments)
 
     if (signedFile !== undefined && getSignedPdf !== undefined) {
@@ -133,6 +142,7 @@ const Index: React.FC<Props> = ({ fileServer, getPdf, getSignedPdf, canAuthorize
         upload={handleUploadPdf}
         canAuthorize={canAuthorize}
         canUpload={canUpload}
+        
       />
 
       {file === undefined
@@ -141,7 +151,7 @@ const Index: React.FC<Props> = ({ fileServer, getPdf, getSignedPdf, canAuthorize
             loading={isUploading}
             uploadPdf={handlePdfClick}
           />
-          )
+        )
         : (
           <Grid>
             <Grid.Row>
@@ -158,7 +168,7 @@ const Index: React.FC<Props> = ({ fileServer, getPdf, getSignedPdf, canAuthorize
                     stacked={isMultiPage && !isLastPage}
                   >
                     <div
-                      style={{ position: 'relative' }}
+                      // style={{ position: 'relative' }}
                       ref={refPage}
                     >
                       <Page
@@ -187,7 +197,7 @@ const Index: React.FC<Props> = ({ fileServer, getPdf, getSignedPdf, canAuthorize
               </Grid.Column>
             </Grid.Row>
           </Grid>
-          )}
+        )}
       <DrawingModal
         open={drawingModalOpen}
         dismiss={() => { setDrawingModalOpen(false) }}
