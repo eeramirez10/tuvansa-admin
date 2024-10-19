@@ -1,9 +1,13 @@
 import { readAsArrayBuffer } from './asyncReader'
 import { getAsset } from './prepareAssets'
 import { normalize } from './helpers'
-import { uploadRemission } from 'src/services/sales'
 
-export async function save (pdfFile: File, objects: Attachments[], name: string) {
+import { Attachment, Attachments, DrawingAttachment, ImageAttachment, TextAttachment } from '../types'
+import { uploadRemission } from '../../services/sales';
+
+
+
+export async function save(pdfFile: File, objects: Attachments[], name: string) {
   const PDFLib = await getAsset('PDFLib')
   const download = await getAsset('download')
   let pdfDoc: {
@@ -133,6 +137,115 @@ export async function save (pdfFile: File, objects: Attachments[], name: string)
 }
 
 export const signedPdf = async (pdfFile: File, objects: Attachments[]): Promise<File> => {
+  const PDFLib = await getAsset('PDFLib')
+  let pdfDoc: {
+    getPages: () => any[]
+    embedFont: (arg0: unknown) => any
+    embedJpg: (arg0: unknown) => any
+    embedPng: (arg0: unknown) => any
+    embedPdf: (arg0: any) => [any] | PromiseLike<[any]>
+    save: () => any
+  }
+
+  try {
+    pdfDoc = await PDFLib.PDFDocument.load(await readAsArrayBuffer(pdfFile), { ignoreEncryption: true })
+  } catch (e) {
+    console.log('Failed to load PDF.')
+    throw e
+  }
+
+  const pagesProcesses = pdfDoc.getPages().map(async (page, pageIndex) => {
+    const pageObjects = objects[pageIndex]
+    // 'y' starts from bottom in PDFLib, use this to calculate y
+    const pageHeight = page.getHeight()
+    const embedProcesses = pageObjects.map(async (object: Attachment) => {
+
+      if (object.type === 'text') {
+        const {
+          x,
+          y,
+          text,
+          lineHeight,
+          size,
+          fontFamily,
+          width
+        } = object as TextAttachment
+        const pdfFont = await pdfDoc.embedFont(fontFamily)
+        return () =>
+          page.drawText(text, {
+            maxWidth: width,
+            font: pdfFont,
+            size,
+            lineHeight,
+            x,
+            y: pageHeight - size! - y
+          })
+      } else {
+
+        const {
+          x,
+          y,
+          path,
+          scale,
+          stroke,
+          strokeWidth
+        } = object as DrawingAttachment
+        const {
+          pushGraphicsState,
+          setLineCap,
+          popGraphicsState,
+          setLineJoin,
+          LineCapStyle,
+          LineJoinStyle,
+          rgb
+        } = PDFLib
+        return () => {
+          page.pushOperators(
+            pushGraphicsState(),
+            setLineCap(LineCapStyle.Round),
+            setLineJoin(LineJoinStyle.Round)
+          )
+
+          const color = window.w3color(stroke!).toRgb()
+
+          page.drawSvgPath(path, {
+            borderColor: rgb(
+              normalize(color.r),
+              normalize(color.g),
+              normalize(color.b)
+            ),
+            borderWidth: strokeWidth,
+            scale,
+            x,
+            y: pageHeight - y
+          })
+          page.pushOperators(popGraphicsState())
+        }
+      }
+    })
+    // embed objects in order
+    const drawProcesses: any[] = await Promise.all(embedProcesses)
+    drawProcesses.forEach((p) => p())
+
+
+
+  })
+  await Promise.all(pagesProcesses)
+  try {
+    const pdfBytes = await pdfDoc.save()
+
+    const pdfBLob = new Blob([pdfBytes], { type: 'application/pdf' })
+
+    const pdfFile = new File([pdfBLob], 'ejemplo.pdf', { type: 'application/pdf', lastModified: Date.now() })
+
+    return pdfFile
+  } catch (e) {
+    console.log('Failed to save PDF.')
+    throw e
+  }
+}
+
+export const signedPdf2 = async (pdfFile: File, objects: Attachments[]): Promise<File> => {
   const PDFLib = await getAsset('PDFLib')
   let pdfDoc: {
     getPages: () => any[]

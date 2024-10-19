@@ -3,7 +3,7 @@ import React, { type MutableRefObject, useLayoutEffect, useRef, useState, useEff
 import { Empty } from './Empty'
 import { type Pdf, usePdf } from '../hooks/usePdf'
 import { useAttachments } from '../hooks/useAttachments'
-import { ggID } from 'src/utils/helpers'
+
 import { AttachmentTypes } from '../entities'
 import { UploadTypes, useUploader } from '../hooks/useUploader'
 import { DrawingModal } from '../modals/components/DrawingModal'
@@ -12,6 +12,8 @@ import { MenuBar } from './MenuBar'
 import { Page } from './Page'
 import { Attachments } from './Attachments'
 import { toast } from 'sonner'
+import { DrawingAttachment, TextAttachment } from '../types'
+import { ggID } from '../utils/helpers'
 
 interface Props {
   fileServer?: File
@@ -41,15 +43,37 @@ const Index: React.FC<Props> = ({ fileServer, getPdf, getSignedPdf, canAuthorize
     use: UploadTypes.PDF,
     afterUploadPdf: initializePageAndAttachments
   })
+  const addText = () => {
+    if (refPage.current !== null) {
+      const { offsetHeight, offsetWidth } = refPage.current
 
-  const addDrawing = (drawing?: { width: number, height: number, path: string }): void => {
+      const newTextAttachment: TextAttachment = {
+        id: ggID(),
+        type: AttachmentTypes.TEXT,
+        x: offsetWidth - 250,
+        y: offsetHeight ,
+        width: 120,
+        height: 25,
+        size: 16,
+        lineHeight: 1.4,
+        fontFamily: 'Times-Roman',
+        text: 'Enter Text Here',
+      };
+      addAttachment(newTextAttachment);
+
+
+    }
+
+  };
+
+  const addDrawing = (drawing?: { width: number, height: number, path: string, svgContent?: string }): void => {
     if (drawing == null) return
 
     if (refPage.current !== null) {
       const { offsetHeight, offsetWidth } = refPage.current
 
-      const x = offsetWidth - 250
-      const y = offsetHeight - 250
+      const x = offsetWidth - 150
+      const y = offsetHeight - 100
 
       const newDrawingAttachment: DrawingAttachment = {
         id: ggID(),
@@ -59,7 +83,9 @@ const Index: React.FC<Props> = ({ fileServer, getPdf, getSignedPdf, canAuthorize
         y,
         scale: 1
       }
+
       addAttachment(newDrawingAttachment)
+
     }
   }
 
@@ -138,11 +164,12 @@ const Index: React.FC<Props> = ({ fileServer, getPdf, getSignedPdf, canAuthorize
         addDrawing={() => { setDrawingModalOpen(true) }}
         savingPdfStatus={isSaving}
         uploadNewPdf={handlePdfClick}
+        addText={addText}
         isPdfLoaded={!(file == null)}
         upload={handleUploadPdf}
         canAuthorize={canAuthorize}
         canUpload={canUpload}
-        
+
       />
 
       {file === undefined
@@ -201,7 +228,6 @@ const Index: React.FC<Props> = ({ fileServer, getPdf, getSignedPdf, canAuthorize
       <DrawingModal
         open={drawingModalOpen}
         dismiss={() => { setDrawingModalOpen(false) }}
-        confirm={addDrawing}
 
       />
 

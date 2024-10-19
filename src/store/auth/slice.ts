@@ -3,8 +3,10 @@ import { type StatusValue, type User } from 'src/interfaces/Auth'
 
 interface InitialState {
   status: StatusValue
+  users: User[]
   // eslint-disable-next-line @typescript-eslint/ban-types
-  user: User
+  user: User,
+  selected: User | null
   errorMessage: string | undefined
 }
 
@@ -21,7 +23,9 @@ const DEFAULT_STATE: InitialState = {
     pagePermission: [],
     documentsAuthorization: []
   },
-  errorMessage: undefined
+  errorMessage: undefined,
+  users: [],
+  selected: null
 }
 
 export const authSlice = createSlice({

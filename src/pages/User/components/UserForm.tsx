@@ -173,7 +173,7 @@ export const UserForm: React.FC<Props> = ({ hadleSubmit, form }) => {
           <Form.Item<FieldType>
             label="Autorizacion de documentos"
             name="documentsAuthorization"
-            rules={[{ required: true, message: 'Autorizacion de documentos' }]}
+            rules={[{ required: false, message: 'Autorizacion de documentos' }]}
           >
             <Select
               mode="multiple"

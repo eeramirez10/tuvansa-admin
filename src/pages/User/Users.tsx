@@ -46,6 +46,11 @@ const columns: ColumnsType<User> = [
     title: 'Permisos',
     dataIndex: 'pagePermission',
     render: (_, { pagePermission }) => pagePermission
+  },
+  {
+    title: 'Auth Doc',
+    dataIndex: 'documentsAuthorization',
+    render: (_, { documentsAuthorization }) => documentsAuthorization
   }
 
 ]
@@ -53,6 +58,8 @@ const columns: ColumnsType<User> = [
 export const Users: React.FC = () => {
   const [users, setUsers] = useState<User[]>([])
   const [isLoading, setIsLoading] = useState<boolean>(false)
+
+  console.log(users)
   useEffect(() => {
     getUsers()
       .then(([error, data]) => {

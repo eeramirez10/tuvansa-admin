@@ -1,5 +1,6 @@
 import { useState, useCallback } from 'react'
 import { save, signedPdf } from '../utils/pdf'
+import { Attachments, Dimensions } from '../types'
 
 export interface Pdf {
   name: string
@@ -62,6 +63,7 @@ export const usePdf = () => {
 
   const saveSignedPdf = async (attachments: Attachments[]): Promise<File | undefined> => {
     if (file === undefined) return
+    console.log(attachments)
     try {
       const signedFile = await signedPdf(file, attachments)
 

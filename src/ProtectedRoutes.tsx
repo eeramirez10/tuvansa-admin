@@ -20,7 +20,7 @@ export const ProtectedRoutes: React.FC = () => {
           {!PROD && <Title level={2} style={{ color: 'rgba(255, 255, 255, 0.85)' }} >Pruebas</Title>}
           <SwitchTheme />
         </Header>
-        <Content style={{ margin: '0 16px' }}>
+        <Content style={{ margin: '0 16px', marginTop:50 }}>
           {/* <Breadcrumb style={{ margin: '16px 0' }}>
             <Breadcrumb.Item>User</Breadcrumb.Item>
             <Breadcrumb.Item>Bill</Breadcrumb.Item>
