@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Button, Card, Flex, type DescriptionsProps } from 'antd'
+import { Button, Card, type DescriptionsProps } from 'antd'
 import { useAuth } from 'src/hooks/useAuth'
 import { getUserbyId } from 'src/services/user'
 import { UserDescription } from './components/UserDescription'
@@ -11,10 +11,9 @@ export const UserInfo: React.FC = () => {
   const [userInfo, setUserInfo] = useState<DescriptionsProps['items']>()
   const [openModal, setOpenModal] = useState<boolean>(false)
 
-  const handldeModal = () => {
+  const hasSignature = user.signature !== null
 
-    console.log(openModal)
-
+  const handldeModal = (): void => {
     setOpenModal(!openModal)
   }
 
@@ -25,7 +24,6 @@ export const UserInfo: React.FC = () => {
         let userDescription: any[] = []
         Object.entries(user)
           .forEach(([key, value], index) => {
-            console.log({ value })
             userDescription = [
               ...userDescription,
               {
@@ -47,26 +45,26 @@ export const UserInfo: React.FC = () => {
 
       <Card style={{ marginTop: 20, display: 'flex' }}>
 
-        <div style={{ display: 'flex', gap:'20px', }}>
+        <div style={{ display: 'flex', gap: '20px' }}>
 
+          <p>Agregar firma: </p>
 
-          <p>Agregar firma</p>
+          <Button type="primary" onClick={() => { handldeModal() }}>
+            {
+              hasSignature ? 'Actualizar firma' : 'Agregar firma'
+            }
 
-          <Button type="primary" onClick={() => handldeModal()}>Agregar firma</Button>
+          </Button>
         </div>
-
 
       </Card>
 
       <DrawingModal
         open={openModal}
-        dismiss={() => handldeModal()}
-
-
+        dismiss={() => { handldeModal() }}
       />
 
     </>
-
 
   )
 }

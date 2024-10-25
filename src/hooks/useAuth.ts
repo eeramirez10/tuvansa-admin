@@ -6,6 +6,9 @@ import { toast } from 'sonner'
 import { useLocation } from 'react-router-dom'
 import { useEffect } from 'react'
 import { Form, type FormInstance } from 'antd'
+import { getUserbyId } from '../services/user'
+import { onSelectUser } from '../store/auth/slice'
+import { updateUser } from '../services/auth'
 
 interface Props {
   status: StatusValue
@@ -17,11 +20,14 @@ interface Props {
   checkAuthToken: () => Promise<void>
   startLogout: () => void
   userRegister: (user: User) => Promise<[Error | null, User | null]>
+  getUser: (id: string) => Promise<{ user: User }>
+  editUser: ({ id, user }: { id: string, user: User }) => Promise<{ user: User }>
+  selectedUser?: User
   form: FormInstance<any>
 }
 
 export const useAuth = (): Props => {
-  const { status, user, errorMessage } = useAppSelector(state => state.auth)
+  const { status, user, errorMessage, selectedUser } = useAppSelector(state => state.auth)
   const dispatch = useAppDispatch()
   const location = useLocation()
   const urlRedirect = localStorage.getItem('urlRedirect')
@@ -80,8 +86,6 @@ export const useAuth = (): Props => {
 
     try {
       const { token, user, error } = await renewToken()
-      console.log(token)
-      console.log(error)
 
       if (error !== undefined) {
         dispatch(onLogout())
@@ -117,15 +121,29 @@ export const useAuth = (): Props => {
     return [new Error(' Error desconocido'), null]
   }
 
+  const getUser = async (id: string): Promise<{ user: User }> => {
+    const user = await getUserbyId(id)
+    return user
+  }
+
+  const editUser = async ({ id, user }: { id: string, user: User }): Promise<{ user: User }> => {
+    const updatedUser = await updateUser({ id, user })
+
+    return updatedUser
+  }
+
   return {
     status,
     user,
     errorMessage,
     urlRedirect,
     form,
+    selectedUser,
     startLogin,
     checkAuthToken,
     startLogout,
-    userRegister
+    userRegister,
+    editUser,
+    getUser
   }
 }

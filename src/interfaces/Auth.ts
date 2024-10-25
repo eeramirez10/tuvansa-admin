@@ -17,4 +17,5 @@ export interface User {
   token: string
   pagePermission: string[]
   documentsAuthorization: string[]
+  signature?: string | null
 }

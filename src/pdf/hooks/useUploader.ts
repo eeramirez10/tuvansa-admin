@@ -4,6 +4,7 @@ import { readAsPDF, readAsDataURL, readAsImage } from '../utils/asyncReader'
 import { ggID } from '../utils/helpers'
 import { type Pdf } from './usePdf'
 import { AttachmentTypes } from '../entities'
+import { type Attachment, type ImageAttachment } from '../types'
 
 type ActionEvent<T> = React.TouchEvent<T> | React.MouseEvent<T>
 
@@ -20,12 +21,14 @@ interface ReturnFunction {
   handleClick: () => void
   downloadFromServer: (file: File) => Promise<null | boolean>
   getCurrentPdf: () => File | undefined
+  uploadSignatureImage: (image: File) => Promise<void>
 }
 
 interface Props {
   use: UploadTypes
   afterUploadPdf?: (upload: Pdf) => void
   afterUploadAttachment?: (upload: Attachment) => void
+
 }
 
 const handlers = {
@@ -108,12 +111,39 @@ export const useUploader = ({ use, afterUploadPdf, afterUploadAttachment }: Prop
     return true
   }
 
+  const uploadSignatureImage = async (image: File): Promise<void> => {
+    if (image === undefined || image === null) {
+      setIsUploading(false)
+      return
+    }
+
+    const file = image
+
+    setInputFile(file)
+
+    const result = await handlers[use](file)
+
+    console.log(result)
+
+    // if (use === UploadTypes.PDF && (afterUploadPdf != null)) {
+    //   afterUploadPdf(result as Pdf)
+    // }
+
+    if (use === UploadTypes.IMAGE && (afterUploadAttachment != null)) {
+      console.log('===> was this also called')
+      afterUploadAttachment({ ...result, x: 400, y: 600 } as ImageAttachment)
+    }
+    setIsUploading(false)
+  }
+
   const upload = async (
     event: React.ChangeEvent<HTMLInputElement> & { dataTransfer?: DataTransfer }
   ): Promise<void> => {
-    if (!isUploading) {
-      return
-    }
+    // if (!isUploading) {
+    //   return
+    // }
+
+    console.log('png')
 
     // const filesss = event.dataTransfer?.files
 
@@ -149,6 +179,7 @@ export const useUploader = ({ use, afterUploadPdf, afterUploadAttachment }: Prop
     onClick,
     inputRef,
     isUploading,
+    uploadSignatureImage,
     handleClick,
     downloadFromServer,
     getCurrentPdf

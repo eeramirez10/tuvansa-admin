@@ -4,6 +4,7 @@ import { type StatusValue, type User } from 'src/interfaces/Auth'
 interface InitialState {
   status: StatusValue
   users: User[]
+  selectedUser?: User,
   // eslint-disable-next-line @typescript-eslint/ban-types
   user: User,
   selected: User | null
@@ -23,6 +24,7 @@ const DEFAULT_STATE: InitialState = {
     pagePermission: [],
     documentsAuthorization: []
   },
+  selectedUser: undefined,
   errorMessage: undefined,
   users: [],
   selected: null
@@ -50,6 +52,10 @@ export const authSlice = createSlice({
       //   pagePermission: []
       // }
       // state.errorMessage = undefined
+    },
+    onSelectUser: (state, action: PayloadAction<User>) => {
+      state.selectedUser = action.payload
+
     },
     onLogin: (state, action: PayloadAction<User>) => {
       state.status = 'authenticated'
@@ -99,6 +105,6 @@ export const authSlice = createSlice({
   }
 })
 
-export const { onChecking, onError, onLogin, onLogout } = authSlice.actions
+export const { onChecking, onError, onLogin, onLogout, onSelectUser } = authSlice.actions
 
 export default authSlice.reducer

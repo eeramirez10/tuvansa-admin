@@ -27,14 +27,13 @@ export const CreditorAutoComplete: React.FC<Props> = ({ required, form }) => {
     if (text === '' || text === null) return
 
     filterTimeout = setTimeout(async () => {
-      console.log('====>', text)
+      // console.log('====>', text)
 
       setIsloading(true)
       setOpen(false)
       try {
         const { creditors } = await getCreditorsProscai({ search: text })
         const optionsDB = creditors.map(item => {
-          console.log(item)
           return { label: item.name, value: item.name, id: item.uid }
         })
         setOptions(optionsDB)

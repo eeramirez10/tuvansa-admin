@@ -54,3 +54,18 @@ export const createUser = async (user: User): Promise<[Error | null, User | null
 
   return resp
 }
+
+export const updateUser = async ({ user, id }: { user: User, id: string }): Promise<User> => {
+  const [error, resp] = await fetchAPIWithToken({
+    endpoint: `users/${id}`,
+    method: METHOD_VALUES.PUT,
+    body: user
+  })
+
+  if (error != null) {
+    // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+    throw new Error(`${error}`)
+  }
+
+  return resp
+}

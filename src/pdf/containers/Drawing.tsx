@@ -46,6 +46,7 @@ export const Drawing = ({
 
   const handleMouseMove = (event: React.MouseEvent<HTMLDivElement>) => {
     event.preventDefault()
+    console.log('handleMouseMove')
 
     if (mouseDown) {
       const { top, left } = getMovePosition(

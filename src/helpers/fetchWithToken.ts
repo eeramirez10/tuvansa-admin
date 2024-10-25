@@ -14,6 +14,8 @@ interface Props {
   method?: typeof METHOD_VALUES[keyof typeof METHOD_VALUES]
   body?: any
   abortController?: AbortController
+  signature?: string
+  isFile?: boolean
 }
 
 // type Data = Array<Record<string, string>> | Record<string, string>
@@ -74,7 +76,7 @@ export const fetchWithToken = async (props: Props): Promise<any> => {
 }
 
 export const fetchAPIWithToken = async (props: Props): Promise<[Error | null, any | null]> => {
-  const { endpoint, method, body, abortController } = props
+  const { endpoint, method, body, abortController, isFile = false } = props
 
   const options = {
     signal: abortController?.signal,
@@ -94,10 +96,12 @@ export const fetchAPIWithToken = async (props: Props): Promise<[Error | null, an
     }
   }
 
-  try {
-    const resp = await fetch(`${API_URL}/${endpoint}`, method === 'GET' ? options : postOptions)
+  const FILES_URL = API_URL.replace('/api', '/')
 
-    const data = await resp.json()
+  try {
+    const resp = await fetch(`${!isFile ? API_URL : FILES_URL}/${endpoint}`, method === 'GET' ? options : postOptions)
+
+    const data = !isFile ? await resp.json() : await resp.blob()
 
     if (!resp.ok) {
       toast.error(data.msg)
@@ -112,4 +116,25 @@ export const fetchAPIWithToken = async (props: Props): Promise<[Error | null, an
   }
 
   return [new Error('Error desconocido'), null]
+}
+
+export const fetchSignatureWithToken = async (svgContent: string) => {
+  const svgBlob = new Blob([svgContent], { type: 'image/svg+xml' })
+  const formData = new FormData()
+  formData.append('image', svgBlob, 'imagen.svg')
+
+  const headers = {
+
+    Authorization: `bearer ${localStorage.getItem('token')}`
+  }
+  const resp = await fetch(`${API_URL}/users/signature/upload`, {
+    method: 'POST',
+    body: formData,
+    headers
+
+  })
+
+  const data = await resp.json()
+
+  return data
 }

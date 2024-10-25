@@ -50,7 +50,6 @@ export const getPaymentById = async ({ id }: { id: string }): Promise<ResponsePa
 
 // eslint-disable-next-line @typescript-eslint/no-invalid-void-type
 export const createPayment = async ({ payment }: { payment: PaymentBody }): Promise<ResponsePayment> => {
-  console.log(payment)
   const newPayment = {
     ...payment
   }

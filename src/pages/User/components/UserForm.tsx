@@ -74,10 +74,11 @@ const permissionsOptions = Object.entries(PAGE_PERMISSION).map(([row, value]) =>
 
 interface Props {
   hadleSubmit: (values: User) => Promise<void>
+  isUpdate: boolean
   form: FormInstance<any>
 }
 
-export const UserForm: React.FC<Props> = ({ hadleSubmit, form }) => {
+export const UserForm: React.FC<Props> = ({ hadleSubmit, form, isUpdate = false }) => {
   return (
     <Form
       name='user'
@@ -158,15 +159,16 @@ export const UserForm: React.FC<Props> = ({ hadleSubmit, form }) => {
               placeholder="Selecciona los permisos"
               options={permissionsOptions}
               optionRender={(option) => {
-                
+
                 return (
-                <Space>
-                  <span role="img" aria-label={option.data.label}>
-                    {option.data.emoji}
-                  </span>
-                  {option.data.desc}
-                </Space>
-              )}}
+                  <Space>
+                    <span role="img" aria-label={option.data.label}>
+                      {option.data.emoji}
+                    </span>
+                    {option.data.desc}
+                  </Space>
+                )
+              }}
             />
           </Form.Item>
 
@@ -182,25 +184,34 @@ export const UserForm: React.FC<Props> = ({ hadleSubmit, form }) => {
               options={documentsAuthorizationOptions}
               optionRender={(option) => {
                 console.log(option)
-                
+
                 return (
-                <Space>
-                  <span role="img" aria-label={option.data.label}>
-                    {option.data.emoji}
-                  </span>
-                  {option.data.desc}
-                </Space>
-              )}}
+                  <Space>
+                    <span role="img" aria-label={option.data.label}>
+                      {option.data.emoji}
+                    </span>
+                    {option.data.desc}
+                  </Space>
+                )
+              }}
             />
           </Form.Item>
 
-          <Form.Item<FieldType>
-            label="Password"
-            name="password"
-            rules={[{ required: true, message: 'El password es reuqerido' }]}
-          >
-            <Input.Password />
-          </Form.Item>
+          {
+            !isUpdate &&
+
+            <Form.Item<FieldType>
+              label="Password"
+              name="password"
+              rules={[{ required: !isUpdate, message: 'El password es reuqerido' }]}
+            >
+              <Input.Password />
+            </Form.Item>
+
+
+          }
+
+
 
         </Col>
 

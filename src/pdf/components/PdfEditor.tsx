@@ -12,8 +12,10 @@ import { MenuBar } from './MenuBar'
 import { Page } from './Page'
 import { Attachments } from './Attachments'
 import { toast } from 'sonner'
-import { DrawingAttachment, TextAttachment } from '../types'
+import { type TextAttachment } from '../types'
 import { ggID } from '../utils/helpers'
+import { getUserSignature } from 'src/services/user'
+import { useAuth } from 'src/hooks/useAuth'
 
 interface Props {
   fileServer?: File
@@ -27,10 +29,9 @@ interface Props {
 
 const Index: React.FC<Props> = ({ fileServer, getPdf, getSignedPdf, canAuthorize = false, canUpload = false, isSign = false, isLoading }) => {
   const [drawingModalOpen, setDrawingModalOpen] = useState(false)
+  const { user, getUser } = useAuth()
   const { file, initialize, pageIndex, isMultiPage, isFirstPage, isLastPage, currentPage, isSaving, previousPage, nextPage, setDimensions, name, dimensions, saveSignedPdf } = usePdf()
   const { add: addAttachment, allPageAttachments, pageAttachments, reset: resetAttachments, update, remove, setPageIndex } = useAttachments()
-
-
 
   const refPage: MutableRefObject<HTMLDivElement | null> = useRef(null)
   const initializePageAndAttachments = (pdfDetails: Pdf): void => {
@@ -43,7 +44,12 @@ const Index: React.FC<Props> = ({ fileServer, getPdf, getSignedPdf, canAuthorize
     use: UploadTypes.PDF,
     afterUploadPdf: initializePageAndAttachments
   })
-  const addText = () => {
+
+  const { inputRef: imageInput, handleClick: handleImageClick, onClick: onImageClick, upload: uploadImage, uploadSignatureImage } = useUploader({
+    use: UploadTypes.IMAGE,
+    afterUploadAttachment: addAttachment
+  })
+  const addText = (): void => {
     if (refPage.current !== null) {
       const { offsetHeight, offsetWidth } = refPage.current
 
@@ -51,43 +57,39 @@ const Index: React.FC<Props> = ({ fileServer, getPdf, getSignedPdf, canAuthorize
         id: ggID(),
         type: AttachmentTypes.TEXT,
         x: offsetWidth - 250,
-        y: offsetHeight ,
+        y: offsetHeight,
         width: 120,
         height: 25,
         size: 16,
         lineHeight: 1.4,
         fontFamily: 'Times-Roman',
-        text: 'Enter Text Here',
-      };
-      addAttachment(newTextAttachment);
-
-
-    }
-
-  };
-
-  const addDrawing = (drawing?: { width: number, height: number, path: string, svgContent?: string }): void => {
-    if (drawing == null) return
-
-    if (refPage.current !== null) {
-      const { offsetHeight, offsetWidth } = refPage.current
-
-      const x = offsetWidth - 150
-      const y = offsetHeight - 100
-
-      const newDrawingAttachment: DrawingAttachment = {
-        id: ggID(),
-        type: AttachmentTypes.DRAWING,
-        ...drawing,
-        x,
-        y,
-        scale: 1
+        text: 'Enter Text Here'
       }
-
-      addAttachment(newDrawingAttachment)
-
+      addAttachment(newTextAttachment)
     }
   }
+
+  // const addDrawing = (drawing?: { width: number, height: number, path: string, svgContent?: string }): void => {
+  //   if (drawing == null) return
+
+  //   if (refPage.current !== null) {
+  //     const { offsetHeight, offsetWidth } = refPage.current
+
+  //     const x = offsetWidth - 150
+  //     const y = offsetHeight - 100
+
+  //     const newDrawingAttachment: DrawingAttachment = {
+  //       id: ggID(),
+  //       type: AttachmentTypes.DRAWING,
+  //       ...drawing,
+  //       x,
+  //       y,
+  //       scale: 1
+  //     }
+
+  //     addAttachment(newDrawingAttachment)
+  //   }
+  // }
 
   const handleUploadPdf = async (): Promise<void> => {
     if (fileServer != null) {
@@ -101,11 +103,11 @@ const Index: React.FC<Props> = ({ fileServer, getPdf, getSignedPdf, canAuthorize
   }
 
   const handleUploadSignedPdf = async (): Promise<void> => {
-
     if (!isSign) {
       toast.warning('Debe de firmar primero el documento')
       return
     }
+
     const signedFile = await saveSignedPdf(allPageAttachments)
 
     if (signedFile !== undefined && getSignedPdf !== undefined) {
@@ -115,22 +117,32 @@ const Index: React.FC<Props> = ({ fileServer, getPdf, getSignedPdf, canAuthorize
 
   useLayoutEffect(() => { setPageIndex(pageIndex) }, [pageIndex, setPageIndex])
 
-  // const handleSavePdf = async (): Promise<void> => {
-  //   // savePdf(allPageAttachments)
-  //   const signedFile = await saveSignedPdf(allPageAttachments)
+  const agregarImagenDesdeServidor = async (): Promise<void> => {
+    try {
+      if (user.id === undefined) {
+        toast.success('No hay id')
+        return
+      }
+      const userDB = await getUser(user?.id)
 
-  //   if (signedFile === undefined || id === undefined || remissionId === undefined) return
+      const signature = userDB.user.signature
 
-  //   const [error, uploadedFile] = await uploadFile(signedFile)
+      if (signature == null) {
+        toast.error('El usuario no tiene firma')
+        return
+      }
 
-  //   if (error !== undefined) { console.log(error); return }
+      const imagenBlob = await getUserSignature(signature)
 
-  //   const [err, updatedRemission] = await updateRemission(remissionId, { signedFile: uploadedFile?.id, authorized: true })
+      const archivoImagen = new File([imagenBlob], 'firma.png', { type: imagenBlob.type })
 
-  //   if (err !== undefined) { console.log(error) }
-  //   console.log(updatedRemission)
-  //   toast.success('Guardado correctamente')
-  // }
+      await uploadSignatureImage(archivoImagen)
+
+      console.log('Imagen descargada y procesada exitosamente')
+    } catch (error) {
+      console.error('Error al descargar o procesar la imagen:', error)
+    }
+  }
 
   const hiddenInputs = (
     <>
@@ -144,6 +156,17 @@ const Index: React.FC<Props> = ({ fileServer, getPdf, getSignedPdf, canAuthorize
         onChange={uploadPdf}
         onClick={onClick}
         style={{ display: 'none' }}
+      />
+
+      <input
+        ref={imageInput}
+        type="file"
+        id="image"
+        name="image"
+        accept="image/*"
+        onClick={onImageClick}
+        style={{ display: 'none' }}
+        onChange={uploadImage}
       />
     </>
   )
@@ -165,9 +188,11 @@ const Index: React.FC<Props> = ({ fileServer, getPdf, getSignedPdf, canAuthorize
         savingPdfStatus={isSaving}
         uploadNewPdf={handlePdfClick}
         addText={addText}
+        addImage={handleImageClick}
+        addSignImage={agregarImagenDesdeServidor}
         isPdfLoaded={!(file == null)}
         upload={handleUploadPdf}
-        canAuthorize={canAuthorize}
+        canAuthorize={true}
         canUpload={canUpload}
 
       />
@@ -178,7 +203,7 @@ const Index: React.FC<Props> = ({ fileServer, getPdf, getSignedPdf, canAuthorize
             loading={isUploading}
             uploadPdf={handlePdfClick}
           />
-        )
+          )
         : (
           <Grid>
             <Grid.Row>
@@ -224,7 +249,7 @@ const Index: React.FC<Props> = ({ fileServer, getPdf, getSignedPdf, canAuthorize
               </Grid.Column>
             </Grid.Row>
           </Grid>
-        )}
+          )}
       <DrawingModal
         open={drawingModalOpen}
         dismiss={() => { setDrawingModalOpen(false) }}

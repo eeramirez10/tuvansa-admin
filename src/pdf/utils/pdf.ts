@@ -2,12 +2,10 @@ import { readAsArrayBuffer } from './asyncReader'
 import { getAsset } from './prepareAssets'
 import { normalize } from './helpers'
 
-import { Attachment, Attachments, DrawingAttachment, ImageAttachment, TextAttachment } from '../types'
-import { uploadRemission } from '../../services/sales';
+import { type Attachment, type Attachments, type DrawingAttachment, type ImageAttachment, type TextAttachment } from '../types'
+import { uploadRemission } from '../../services/sales'
 
-
-
-export async function save(pdfFile: File, objects: Attachments[], name: string) {
+export async function save (pdfFile: File, objects: Attachments[], name: string) {
   const PDFLib = await getAsset('PDFLib')
   const download = await getAsset('download')
   let pdfDoc: {
@@ -159,8 +157,27 @@ export const signedPdf = async (pdfFile: File, objects: Attachments[]): Promise<
     // 'y' starts from bottom in PDFLib, use this to calculate y
     const pageHeight = page.getHeight()
     const embedProcesses = pageObjects.map(async (object: Attachment) => {
-
-      if (object.type === 'text') {
+      if (object.type === 'image') {
+        const { file, x, y, width, height } = object as ImageAttachment
+        let img: any
+        try {
+          if (file.type === 'image/jpeg') {
+            img = await pdfDoc.embedJpg(await readAsArrayBuffer(file))
+          } else {
+            img = await pdfDoc.embedPng(await readAsArrayBuffer(file))
+          }
+          return () =>
+            page.drawImage(img, {
+              x,
+              y: pageHeight - y - height,
+              width,
+              height
+            })
+        } catch (e) {
+          console.log('Failed to embed image.', e)
+          throw e
+        }
+      } else if (object.type === 'text') {
         const {
           x,
           y,
@@ -180,8 +197,7 @@ export const signedPdf = async (pdfFile: File, objects: Attachments[]): Promise<
             x,
             y: pageHeight - size! - y
           })
-      } else {
-
+      } else if (object.type === 'drawing') {
         const {
           x,
           y,
@@ -226,10 +242,8 @@ export const signedPdf = async (pdfFile: File, objects: Attachments[]): Promise<
     // embed objects in order
     const drawProcesses: any[] = await Promise.all(embedProcesses)
     drawProcesses.forEach((p) => p())
-
-
-
   })
+
   await Promise.all(pagesProcesses)
   try {
     const pdfBytes = await pdfDoc.save()

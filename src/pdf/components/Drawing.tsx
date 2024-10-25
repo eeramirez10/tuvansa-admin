@@ -2,6 +2,7 @@ import React, { type RefObject } from 'react'
 import { Dimmer } from 'semantic-ui-react'
 import { Div } from '../ui/components/Div'
 import { ConfirmContent } from './ConfirmContent'
+import { type DragEventListener } from '../types'
 
 interface Props {
   path?: string

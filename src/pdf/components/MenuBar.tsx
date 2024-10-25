@@ -8,7 +8,9 @@ interface Props {
   savingPdfStatus: boolean
   savePdf: () => void
   upload: () => Promise<void>
-  addText: () => void;
+  addText: () => void
+  addImage: () => void
+  addSignImage: () => void
   canAuthorize: boolean
   canUpload: boolean
 
@@ -19,7 +21,9 @@ export const MenuBar: React.FC<Props> = ({
   addDrawing,
   upload,
   addText,
+  addImage,
   savingPdfStatus,
+  addSignImage,
   savePdf,
   canAuthorize,
   canUpload
@@ -42,7 +46,9 @@ export const MenuBar: React.FC<Props> = ({
 
               >
                 <Dropdown.Item onClick={addText}>Add Text</Dropdown.Item>
-              {/* <Dropdown.Item onClick={addImage}>Add Image</Dropdown.Item> */}
+              <Dropdown.Item onClick={addImage}>Add Image</Dropdown.Item>
+              <Dropdown.Item onClick={addSignImage}>Agregar Firma imagen</Dropdown.Item>
+
                 <Dropdown.Item onClick={addDrawing} disabled={!canAuthorize}>Agregar firma</Dropdown.Item>
               </Dropdown.Menu>
             </Dropdown>

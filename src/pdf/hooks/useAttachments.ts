@@ -1,6 +1,7 @@
 import { useReducer, useCallback } from 'react'
 import { useDispatch } from 'react-redux'
 import { signDocument, unsignDocument } from 'src/store/signature/slice'
+import { type Attachment, type Attachments } from '../types'
 
 enum ActionType {
   RESET = 'RESET',
@@ -115,10 +116,9 @@ export const useAttachments = () => {
   const { allPageAttachments, pageAttachments } = state
   const dispatc = useDispatch()
 
-  const add = (newAttachment: Attachment) => { 
-
+  const add = (newAttachment: Attachment) => {
     dispatc(signDocument())
-    dispatch({ type: ActionType.ADD_ATTACHMENT, attachment: newAttachment }) 
+    dispatch({ type: ActionType.ADD_ATTACHMENT, attachment: newAttachment })
   }
 
   const remove = (attachmentIndex: number) => {

@@ -14,7 +14,6 @@ export const UploadFiles: React.FC = () => {
     if (payment === null || payment === undefined) return
     const formData = new FormData()
 
-    console.log(fileList)
     fileList.forEach((file) => {
       formData.append('payments', file as RcFile)
     })
@@ -22,7 +21,6 @@ export const UploadFiles: React.FC = () => {
 
     uploadFiles({ id: payment?.id, files: formData })
       .then((resp) => {
-        console.log(resp)
         setFileList([])
         message.success('upload successfully.')
       })
@@ -59,7 +57,6 @@ export const UploadFiles: React.FC = () => {
       setFileList(newFileList)
     },
     beforeUpload: (file) => {
-      console.log(file)
       setFileList(prevState => [...prevState, file])
 
       return false
