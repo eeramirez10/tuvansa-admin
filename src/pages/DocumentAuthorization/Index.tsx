@@ -56,7 +56,9 @@ const Index: React.FC = () => {
     setIsLoading(true)
     getRemissions()
       .then((data) => {
-        setRemissions(data.remissions)
+        const { remissions } = data
+
+        setRemissions(remissions)
       }).finally(() => {
         setIsLoading(false)
       })

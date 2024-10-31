@@ -5,9 +5,10 @@ interface Props {
   // onSubmit: ({ value, from, almacen }: { value: { search: string }, from: string, almacen: string }) => Promise<void>
   form: FormInstance<any>
   handleSearch: ({ search }: { search: string }) => void
+  placeholder?: string
 }
 
-export const InputSearch: React.FC<Props> = ({ form, handleSearch }) => {
+export const InputSearch: React.FC<Props> = ({ form, handleSearch, placeholder = 'Escribe algo' }) => {
   return (
     <Form
       form={form}
@@ -23,7 +24,7 @@ export const InputSearch: React.FC<Props> = ({ form, handleSearch }) => {
         rules={[{ required: true }]}
         style={{ minWidth: '50%' }}
       >
-        <Input placeholder="Introduce EAN o Codigo" />
+        <Input placeholder={placeholder} />
       </Form.Item>
       <Form.Item>
 

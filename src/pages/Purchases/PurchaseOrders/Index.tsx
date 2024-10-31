@@ -10,7 +10,8 @@ import { useAppSelector } from 'src/hooks/useStore'
 import { getProscaiPurchaseOrders, getPurchaseOrders } from 'src/services/purchases/api'
 import { type PurchaseOrder } from 'src/services/purchases/transform'
 import { cleanPurchaseOrder, loadPurchaseOrders, onStartPurchaseOrders, selectPurchaseOrder } from 'src/store/purchase-orders/slice'
-import { Typography } from 'antd'
+import { Form, Typography } from 'antd'
+import { InputSearch } from 'src/components/InputSearch'
 
 const { Title } = Typography
 
@@ -18,27 +19,40 @@ const Index: React.FC = () => {
   const orders = useAppSelector(state => state.purchaseOrders.data)
   const fetching = useAppSelector(state => state.purchaseOrders.isLoading)
 
+  console.log(fetching)
+
+  const [form] = Form.useForm()
+
   const dispatch = useDispatch()
   useEffect(() => {
     dispatch(cleanPurchaseOrder())
     dispatch(onStartPurchaseOrders())
 
-    fecthOrders()
+    fecthOrders({})
       .then(resp => {
         dispatch(loadPurchaseOrders(resp))
       })
   }, [])
 
-  const fecthOrders = async (): Promise<PurchaseOrder[]> => {
+  const fecthOrders = async ({ search }: { search?: string }): Promise<PurchaseOrder[]> => {
     const orders = await getPurchaseOrders()
 
-    const ordersProscai = await getProscaiPurchaseOrders()
+    const ordersProscai = await getProscaiPurchaseOrders({ search })
 
     return ordersProscai.filter(orderProscai => !orders.some(order => order.purchaseOrder === orderProscai.purchaseOrder))
   }
 
   const handleSelectPurchaseOrder = (order: PurchaseOrder): void => {
     dispatch(selectPurchaseOrder(order))
+  }
+
+  const handleSearch = ({ search }: { search: string }): void => {
+    if (search === '') return
+    dispatch(onStartPurchaseOrders())
+    fecthOrders({ search })
+      .then(resp => {
+        dispatch(loadPurchaseOrders(resp))
+      })
   }
 
   const columns: ColumnsType<PurchaseOrder> = [
@@ -104,6 +118,8 @@ const Index: React.FC = () => {
       <Container>
 
         <Title level={3}>Ordenes de compra</Title>
+
+        <InputSearch form={form} handleSearch={handleSearch} placeholder='Escribe la OC' />
 
         <DataTable loading={fetching} columns={columns} data={orders} rowKey={(value) => value.purchaseOrder} />
       </Container>

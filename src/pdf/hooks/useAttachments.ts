@@ -118,6 +118,7 @@ export const useAttachments = () => {
 
   const add = (newAttachment: Attachment) => {
     dispatc(signDocument())
+    console.log({ newAttachment })
     dispatch({ type: ActionType.ADD_ATTACHMENT, attachment: newAttachment })
   }
 

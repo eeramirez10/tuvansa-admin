@@ -24,6 +24,7 @@ export const DataTable: React.FC<Props> = ({ columns, data, loading = false, exp
       loading={loading}
       expandable={{ expandedRowRender, rowExpandable }}
       title={title}
+      size='small'
     />
   )
 }

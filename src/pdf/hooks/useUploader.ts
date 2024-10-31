@@ -123,8 +123,6 @@ export const useUploader = ({ use, afterUploadPdf, afterUploadAttachment }: Prop
 
     const result = await handlers[use](file)
 
-    console.log(result)
-
     // if (use === UploadTypes.PDF && (afterUploadPdf != null)) {
     //   afterUploadPdf(result as Pdf)
     // }
@@ -142,8 +140,6 @@ export const useUploader = ({ use, afterUploadPdf, afterUploadAttachment }: Prop
     // if (!isUploading) {
     //   return
     // }
-
-    console.log('png')
 
     // const filesss = event.dataTransfer?.files
 

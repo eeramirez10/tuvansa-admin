@@ -23,7 +23,7 @@ export const Orders: React.FC = () => {
     dispatch(onStartPurchaseOrders())
     getPurchaseOrders()
       .then(resp => {
-        dispatch(loadPurchaseOrders(resp))
+        dispatch(loadPurchaseOrders(resp.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))))
       })
   }, [])
 

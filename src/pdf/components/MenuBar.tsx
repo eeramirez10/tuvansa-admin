@@ -19,12 +19,12 @@ interface Props {
 export const MenuBar: React.FC<Props> = ({
   uploadNewPdf,
   addDrawing,
-  upload,
   addText,
   addImage,
-  savingPdfStatus,
+  upload,
   addSignImage,
   savePdf,
+  savingPdfStatus,
   canAuthorize,
   canUpload
 }) => (
@@ -36,28 +36,19 @@ export const MenuBar: React.FC<Props> = ({
         {
           canAuthorize &&
           <>
-            <Dropdown
-              data-testid='edit-menu-dropdown'
-              item
-              closeOnBlur
-              icon="edit outline" simple
-            >
-              <Dropdown.Menu
+            <Menu.Item
+              name="Firmar"
+              disabled={savingPdfStatus || !canAuthorize}
+              onClick={addSignImage}
+            />
 
-              >
-                <Dropdown.Item onClick={addText}>Add Text</Dropdown.Item>
-              <Dropdown.Item onClick={addImage}>Add Image</Dropdown.Item>
-              <Dropdown.Item onClick={addSignImage}>Agregar Firma imagen</Dropdown.Item>
-
-                <Dropdown.Item onClick={addDrawing} disabled={!canAuthorize}>Agregar firma</Dropdown.Item>
-              </Dropdown.Menu>
-            </Dropdown>
             <Menu.Item
               data-testid='save-menu-item'
               name={savingPdfStatus ? 'Guardando...' : 'Guardar firmado'}
               disabled={savingPdfStatus || !canAuthorize}
               onClick={savePdf}
             />
+
           </>
 
         }
@@ -90,3 +81,33 @@ export const MenuBar: React.FC<Props> = ({
     </Menu.Menu>
   </Menu>
 )
+
+interface SignatureProps {
+  addText: () => void
+  addDrawing: () => void
+  addImage: () => void
+  addSignImage: () => void
+}
+
+export const SignatureOptionsDropMenu: React.FC<SignatureProps> = ({
+  addText,
+  addImage,
+  addSignImage,
+  addDrawing
+}) => {
+  return <Dropdown
+    data-testid='edit-menu-dropdown'
+    item
+    closeOnBlur
+    icon="edit outline" simple
+  >
+    <Dropdown.Menu
+
+    >
+      <Dropdown.Item onClick={addText}>Add Text</Dropdown.Item>
+      <Dropdown.Item onClick={addImage}>Add Image</Dropdown.Item>
+      <Dropdown.Item onClick={addSignImage}>Agregar Firma imagen</Dropdown.Item>
+      <Dropdown.Item onClick={addDrawing} >Agregar firma</Dropdown.Item>
+    </Dropdown.Menu>
+  </Dropdown>
+}

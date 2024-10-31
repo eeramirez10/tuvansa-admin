@@ -72,25 +72,25 @@ export const Menu: React.FC = () => {
     },
     {
       label: !getPermission({ user, permission: 'competitions' }) ? '' : (<Link to='/competitions'> Competencia </Link>),
-      key: '3',
+      key: '33',
       icon: (<PieChartOutlined />),
       disabled: !getPermission({ user, permission: 'competitions' })
     },
     {
       label: !getPermission({ user, permission: 'sales' }) ? '' : (<Link to='/sales'> Ventas </Link>),
-      key: '4',
+      key: '44',
       icon: (<BarChartOutlined />),
       disabled: !getPermission({ user, permission: 'sales' })
     },
     {
       label: !getPermission({ user, permission: 'receptions' }) ? '' : (<Link to='/receptions'> RECEPCIONES </Link>),
-      key: '5',
+      key: '55',
       icon: (<BorderOutlined />),
       disabled: !getPermission({ user, permission: 'receptions' })
     },
     {
       label: !getPermission({ user, permission: 'shipments' }) ? '' : (<Link to='/shipments'> Embarques </Link>),
-      key: '6',
+      key: '66',
       icon: (<TruckOutlined />),
       disabled: !getPermission({ user, permission: 'shipments' })
     },
@@ -102,11 +102,11 @@ export const Menu: React.FC = () => {
       children: [
         {
           label: (<Link to='/purchase-orders'> Ordenes </Link>),
-          key: '7'
+          key: '8'
         },
         {
           label: (<Link to='/doc-auth/orders'> Autorizaciones </Link>),
-          key: '8'
+          key: '9'
         }
       ]
     },
@@ -142,6 +142,9 @@ export const Menu: React.FC = () => {
   ]
 
   return (
+
+    // <>
+    // </>
     <Me
       defaultSelectedKeys={['1']}
       mode="inline"

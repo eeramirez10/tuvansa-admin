@@ -24,15 +24,18 @@ export const Attachments: React.FC<Props> = ({
     attachment: Partial<Attachment>
   ) => { updateAttachment(index, attachment) }
 
+  // console.log({ attachments })
+
+  // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
   return attachments
     ? (
-    <>
-      {(attachments.length > 0)
-        ? attachments.map((attachment, index) => {
-          const key = `${pdfName}-${index}`
+      <>
+        {(attachments.length > 0)
+          ? attachments.map((attachment, index) => {
+            const key = `${pdfName}-${index}`
 
-          if (attachment.type === AttachmentTypes.IMAGE) {
-            return (
+            if (attachment.type === AttachmentTypes.IMAGE) {
+              return (
                 <Image
                   key={key}
                   pageWidth={pageDimensions.width}
@@ -41,11 +44,11 @@ export const Attachments: React.FC<Props> = ({
                   updateImageAttachment={handleAttachmentUpdate(index)}
                   {...(attachment as ImageAttachment)}
                 />
-            )
-          }
+              )
+            }
 
-          if (attachment.type === AttachmentTypes.DRAWING) {
-            return (
+            if (attachment.type === AttachmentTypes.DRAWING) {
+              return (
                 <Drawing
                   key={key}
                   pageWidth={pageDimensions.width}
@@ -54,11 +57,11 @@ export const Attachments: React.FC<Props> = ({
                   updateDrawingAttachment={handleAttachmentUpdate(index)}
                   {...(attachment as DrawingAttachment)}
                 />
-            )
-          }
+              )
+            }
 
-          if (attachment.type === AttachmentTypes.TEXT) {
-            return (
+            if (attachment.type === AttachmentTypes.TEXT) {
+              return (
                 <Text
                   key={key}
                   pageWidth={pageDimensions.width}
@@ -66,12 +69,12 @@ export const Attachments: React.FC<Props> = ({
                   updateTextAttachment={handleAttachmentUpdate(index)}
                   {...(attachment as TextAttachment)}
                 />
-            )
-          }
-          return null
-        })
-        : null}
-    </>
+              )
+            }
+            return null
+          })
+          : null}
+      </>
       )
     : null
 }

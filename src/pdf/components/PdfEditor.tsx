@@ -18,16 +18,24 @@ import { getUserSignature } from 'src/services/user'
 import { useAuth } from 'src/hooks/useAuth'
 
 interface Props {
-  fileServer?: File
   getPdf?: (pdf: File) => void
   getSignedPdf?: (pdf: File) => Promise<void>
+  fileServer?: File
   canAuthorize: boolean
   isLoading: boolean
   canUpload: boolean
   isSign?: boolean
 }
 
-const Index: React.FC<Props> = ({ fileServer, getPdf, getSignedPdf, canAuthorize = false, canUpload = false, isSign = false, isLoading }) => {
+const Index: React.FC<Props> = ({
+  fileServer,
+  getPdf,
+  getSignedPdf,
+  canAuthorize,
+  canUpload,
+  isSign,
+  isLoading
+}) => {
   const [drawingModalOpen, setDrawingModalOpen] = useState(false)
   const { user, getUser } = useAuth()
   const { file, initialize, pageIndex, isMultiPage, isFirstPage, isLastPage, currentPage, isSaving, previousPage, nextPage, setDimensions, name, dimensions, saveSignedPdf } = usePdf()
@@ -92,6 +100,10 @@ const Index: React.FC<Props> = ({ fileServer, getPdf, getSignedPdf, canAuthorize
   // }
 
   const handleUploadPdf = async (): Promise<void> => {
+    if (file === undefined) {
+      toast.warning('Primero escoge el pdf ')
+      return
+    }
     if (fileServer != null) {
       console.log('edit')
       return
@@ -103,7 +115,7 @@ const Index: React.FC<Props> = ({ fileServer, getPdf, getSignedPdf, canAuthorize
   }
 
   const handleUploadSignedPdf = async (): Promise<void> => {
-    if (!isSign) {
+    if (isSign === false) {
       toast.warning('Debe de firmar primero el documento')
       return
     }
@@ -123,7 +135,7 @@ const Index: React.FC<Props> = ({ fileServer, getPdf, getSignedPdf, canAuthorize
         toast.success('No hay id')
         return
       }
-      const userDB = await getUser(user?.id)
+      const userDB = await getUser(user.id)
 
       const signature = userDB.user.signature
 
@@ -192,7 +204,7 @@ const Index: React.FC<Props> = ({ fileServer, getPdf, getSignedPdf, canAuthorize
         addSignImage={agregarImagenDesdeServidor}
         isPdfLoaded={!(file == null)}
         upload={handleUploadPdf}
-        canAuthorize={true}
+        canAuthorize={canAuthorize}
         canUpload={canUpload}
 
       />

@@ -29,6 +29,7 @@ export interface PurchaseOrderUpdate {
   id?: string
   proscai?: string
   provider?: string
+  createdAt?: string
   purchaseOrder?: string
   pedPrv?: string
   from?: string
@@ -52,6 +53,7 @@ export const dtoToPurchaseOrder = (purchaseOrder: purchaseOrderDTO): PurchaseOrd
   id: purchaseOrder.ID,
   proscai: purchaseOrder.ID,
   provider: purchaseOrder.PROVEEDOR,
+  createdAt: purchaseOrder.createdAt,
   purchaseOrder: purchaseOrder.OC,
   pedPrv: purchaseOrder.PED_PRV,
   from: purchaseOrder.DESDE,

@@ -5,9 +5,10 @@ import { fetchWithoutToken } from 'src/helpers/fetchWhithoutToken'
 import { type Archivo, type ArchivoResponse } from '../sales'
 import { type PurchasesProscaiResponse } from './dto'
 
-export const getProscaiPurchaseOrders = async (): Promise<PurchaseOrder[]> => {
+export const getProscaiPurchaseOrders = async ({ search }: { search?: string }): Promise<PurchaseOrder[]> => {
+  const searchParam = search !== undefined ? `?search=${search}` : ''
   const purchaseOrders = await fetchWithToken({
-    endpoint: 'proscai/purchases/orders'
+    endpoint: `proscai/purchases/orders${searchParam}`
   }) as PurchasesProscaiResponse
 
   const dtoToPurchaseOrde = purchaseOrders.results.map(po => dtoToPurchaseOrder(po))

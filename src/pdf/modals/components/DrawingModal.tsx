@@ -12,11 +12,11 @@ interface Props {
   drawing?: DrawingAttachment
 }
 
-export const DrawingModal = ({ open, dismiss, drawing }: Props) => {
+export const DrawingModal: React.FC<Props> = ({ open, dismiss, drawing }) => {
   const { user } = useAuth()
   const svgRef = createRef<SVGSVGElement>()
   const [paths, setPaths] = useState<Array<[string, number, number]>>([])
-  const [path, setPath] = useState(((drawing?.path) != null) || '')
+  const [path, setPath] = useState(drawing?.path ?? '')
   const [svgX, setSvgX] = useState(0)
   const [svgY, setSvgY] = useState(0)
   const [minX, setMinX] = useState(Infinity)
@@ -46,7 +46,7 @@ export const DrawingModal = ({ open, dismiss, drawing }: Props) => {
     startDrawing(touch.clientX, touch.clientY)
   }
 
-  const startDrawing = (clientX: number, clientY: number) => {
+  const startDrawing = (clientX: number, clientY: number): void => {
     setMouseDown(true)
     const x = clientX - svgX
     const y = clientY - svgY
@@ -66,11 +66,10 @@ export const DrawingModal = ({ open, dismiss, drawing }: Props) => {
   const handleTouchMove = (event: React.TouchEvent<HTMLDivElement>): void => {
     if (!mouseDown) return
     const touch = event.touches[0]
-    console.log(touch)
     draw(touch.clientX, touch.clientY)
   }
 
-  const draw = (clientX: number, clientY: number) => {
+  const draw = (clientX: number, clientY: number): void => {
     const x = clientX - svgX
     const y = clientY - svgY
     setMinX(Math.min(minX, x))
@@ -89,7 +88,7 @@ export const DrawingModal = ({ open, dismiss, drawing }: Props) => {
     stopDrawing()
   }
 
-  const stopDrawing = () => {
+  const stopDrawing = (): void => {
     setMouseDown(false)
   }
 
@@ -244,7 +243,7 @@ export const DrawingModal = ({ open, dismiss, drawing }: Props) => {
             />
           </svg>
         </div>
-        {savedSvgContent && (
+        {(savedSvgContent != null) && (
           <SignPreview savedSvgContent={savedSvgContent} />
         )}
       </Modal.Content>

@@ -37,6 +37,7 @@ const Index: React.FC = () => {
   const isSign = useAppSelector(state => state.sign.isSign)
   const { user } = useAuth()
   const navigate = useNavigate()
+  const [isLoadingPdf, setIsLoadingPdf] = useState(false)
 
   const canAuthorize = (): boolean => {
     if (order === null) return false
@@ -47,6 +48,7 @@ const Index: React.FC = () => {
 
   useEffect(() => {
     if (id != null) {
+      setIsLoadingPdf(true)
       downloadFile(id)
         .then(([error, blobFile]) => {
           if (error != null) {
@@ -64,6 +66,7 @@ const Index: React.FC = () => {
         .catch((error) => {
           console.log(error)
         })
+        .finally(() => { setIsLoadingPdf(false) })
     }
   }, [])
 
@@ -106,6 +109,8 @@ const Index: React.FC = () => {
     })
   }
 
+  console.log({ isLoadingPdf })
+
   return (
     <Container>
       <Title level={3}>Firmar documento</Title>
@@ -117,7 +122,7 @@ const Index: React.FC = () => {
             getSignedPdf={uploadAuthorizedPdf}
             canAuthorize={canAuthorize()}
             canUpload={false}
-            isLoading={false}
+            isLoading={isLoadingPdf}
             isSign={isSign}
           />
           : <></>

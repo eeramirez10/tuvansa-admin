@@ -5,7 +5,7 @@ import { normalize } from './helpers'
 import { type Attachment, type Attachments, type DrawingAttachment, type ImageAttachment, type TextAttachment } from '../types'
 import { uploadRemission } from '../../services/sales'
 
-export async function save (pdfFile: File, objects: Attachments[], name: string) {
+export async function save (pdfFile: File, objects: Attachments[], name: string): Promise<void> {
   const PDFLib = await getAsset('PDFLib')
   const download = await getAsset('download')
   let pdfDoc: {
@@ -119,13 +119,13 @@ export async function save (pdfFile: File, objects: Attachments[], name: string)
   try {
     const pdfBytes = await pdfDoc.save()
 
-    const pdfBLob = new Blob([pdfBytes], { type: 'application/pdf' })
+    // const pdfBLob = new Blob([pdfBytes], { type: 'application/pdf' })
 
-    const pdfFile = new File([pdfBLob], 'ejemplo.pdf', { type: 'application/pdf', lastModified: Date.now() })
+    // const pdfFile = new File([pdfBLob], 'ejemplo.pdf', { type: 'application/pdf', lastModified: Date.now() })
 
-    const uploadFile = await uploadRemission(pdfFile)
+    // const uploadFile = await uploadRemission(pdfFile)
 
-    console.log(uploadFile)
+    // console.log(uploadFile)
 
     download(pdfBytes, name, 'application/pdf')
   } catch (e) {

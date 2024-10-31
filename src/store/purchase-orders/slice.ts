@@ -32,8 +32,8 @@ export const purchaseOrdersSlices = createSlice({
     },
     cleanPurchaseOrder: (state) => {
       state.selected = null
-    },
-    
+    }
+
   }
 })
 

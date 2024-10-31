@@ -10,25 +10,48 @@ interface Script {
   src: string
 }
 
+// const scripts: Script[] = [
+//   {
+//     name: 'pdfjsLib',
+//     src: 'https://unpkg.com/pdfjs-dist@2.3.200/build/pdf.min.js'
+//   },
+//   {
+//     name: 'PDFLib',
+//     src: 'https://unpkg.com/pdf-lib@1.4.0/dist/pdf-lib.min.js'
+//   },
+//   {
+//     name: 'download',
+//     src: 'https://unpkg.com/downloadjs@1.4.7'
+//   },
+//   {
+//     name: 'makeTextPDF',
+//     src:
+//       'https://cdn.jsdelivr.net/gh/snamoah/react-pdf-editor/public/makeTextPDF.js'
+//   },
+//   { name: 'w3Color', src: 'https://www.w3schools.com/lib/w3color.js' }
+// ]
+
 const scripts: Script[] = [
   {
     name: 'pdfjsLib',
-    src: 'https://unpkg.com/pdfjs-dist@2.3.200/build/pdf.min.js'
+    src: '/js/pdf.min.js'
   },
   {
     name: 'PDFLib',
-    src: 'https://unpkg.com/pdf-lib@1.4.0/dist/pdf-lib.min.js'
+    src: '/js/pdf-lib.min.js'
   },
   {
     name: 'download',
-    src: 'https://unpkg.com/downloadjs@1.4.7'
+    src: '/js/download.js'
   },
   {
     name: 'makeTextPDF',
-    src:
-      'https://cdn.jsdelivr.net/gh/snamoah/react-pdf-editor/public/makeTextPDF.js'
+    src: '/js/makeTextPDF.js'
   },
-  { name: 'w3Color', src: 'https://www.w3schools.com/lib/w3color.js' }
+  {
+    name: 'w3Color',
+    src: '/js/w3color.js'
+  }
 ]
 
 const assets: Record<string, any> = {}

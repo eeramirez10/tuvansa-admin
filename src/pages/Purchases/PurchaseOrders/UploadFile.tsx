@@ -109,7 +109,12 @@ export const UploadFile: React.FC = () => {
   return (
     <Container>
       <Title level={3}>Subir Orden de compra</Title>
-      <PdfEditor isLoading={isLoading} getPdf={savePdf} canAuthorize={false} canUpload={true}  />
+      <PdfEditor
+        isLoading={isLoading}
+        getPdf={savePdf}
+        canAuthorize={false}
+        canUpload={true}
+      />
     </Container>
   )
 }
