@@ -1,4 +1,5 @@
 import { Table } from 'antd'
+import { type SizeType } from 'antd/es/config-provider/SizeContext'
 import { type ColumnsType } from 'antd/es/table'
 import { type GetRowKey } from 'antd/es/table/interface'
 
@@ -11,10 +12,11 @@ interface Props {
   expandedRowRender?: any | undefined
   rowExpandable?: any | undefined
   rowKey: string | number | symbol | GetRowKey<any> | undefined
+  size?: SizeType
   title?: () => JSX.Element
 }
 
-export const DataTable: React.FC<Props> = ({ columns, data, loading = false, expandedRowRender, rowExpandable, rowKey, title }) => {
+export const DataTable: React.FC<Props> = ({ columns, data, loading = false, expandedRowRender, rowExpandable, rowKey, title, size = 'small' }) => {
   return (
     <Table
       scroll={{ scrollToFirstRowOnChange: true, x: 600 }}
@@ -24,7 +26,7 @@ export const DataTable: React.FC<Props> = ({ columns, data, loading = false, exp
       loading={loading}
       expandable={{ expandedRowRender, rowExpandable }}
       title={title}
-      size='small'
+      size={size}
     />
   )
 }

@@ -98,6 +98,7 @@ export const Orders: React.FC = () => {
           columns={columns}
           data={orders}
           rowKey={(value) => value.id}
+
         />
 
       </Container>
