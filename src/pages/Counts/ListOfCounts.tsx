@@ -1,15 +1,32 @@
 import React, { useEffect, useState } from 'react'
 import type { ColumnsType } from 'antd/es/table'
 import { useInventories } from 'src/hooks/useInventories'
-import { type Inventory } from 'src/interfaces/Inventory'
 import { DataTable } from 'src/components/DataTable/DataTable'
-import { type CountId } from '../../interfaces/Inventory'
+import { type BranchOffice, type CountId } from '../../interfaces/Inventory'
 import { formatDate } from 'src/helpers/formatDate'
-import { Button, Space } from 'antd'
+import { Button, Space, Tag } from 'antd'
 import { useExcel } from 'src/hooks/useExcel'
 import { ReleaseInventories } from 'src/components/ReleaseInventories'
+import { type User } from '../../interfaces/Auth'
+import { currencyMXNFormat } from '../../helpers/formatCurrency'
 
-const columns: ColumnsType<Inventory> = [
+export interface InventoryList {
+  id: string
+  iseq: string
+  cod: string
+  ean: string
+  description: string
+  quantity: string
+  costo?: string
+  paused?: boolean
+  counts: CountId[]
+  createdAt?: Date
+  updatedAt?: Date
+  user?: User
+  branchOffice: BranchOffice
+}
+
+const columns: ColumnsType<InventoryList> = [
   {
     title: 'Iseq',
     dataIndex: 'iseq'
@@ -26,6 +43,35 @@ const columns: ColumnsType<Inventory> = [
   {
     title: 'Descripcion',
     dataIndex: 'description',
+
+    responsive: ['lg']
+
+  },
+  {
+    title: 'Existencia',
+    dataIndex: 'quantity'
+
+  },
+  {
+    title: 'Costo',
+    dataIndex: 'costo',
+    render: (_, { costo }) => currencyMXNFormat({ value: Number(costo) })
+  },
+
+  {
+    title: 'Conteos',
+    key: 'counts',
+    dataIndex: 'counts',
+    render: (_, { counts }) => {
+      return <>
+        {
+          counts.slice(0, 5).map((count, i) => (
+
+            <Tag key={i}>conteo {i + 1}: {count.count} </Tag>
+          ))
+        }
+      </>
+    },
 
     responsive: ['lg']
 
@@ -103,7 +149,11 @@ export const ListOfCounts: React.FC = () => {
     ).finally(() => { setIsloading(false) })
   }
 
-  const header = ['Iseq', 'ICOD', 'EAN', 'Descripcion', 'costo', 'conteo1', 'cantidad1', 'conteo2', 'cantidad2']
+  // inventories[0].counts.map( c =>{
+  //   console.log(c)
+  // })
+
+  const header = ['Iseq', 'ICOD', 'EAN', 'Descripcion', 'existencia', 'costo', 'cantidad1', 'conteo2', 'cantidad2']
 
   return (
     <Space

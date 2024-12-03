@@ -21,6 +21,7 @@ interface InventoriesProps {
   almacen?: string
   size?: string
   abortController?: AbortController
+  queryParams?: Record<string, string >
 }
 
 export const getInventories = async (props: InventoriesProps): Promise<InventoriesResponse> => {
@@ -29,15 +30,22 @@ export const getInventories = async (props: InventoriesProps): Promise<Inventori
     from = '',
     almacen = '01',
     size = '10',
+    queryParams,
     abortController
   } = props
 
   const params = new URLSearchParams({
     almacen,
     search: search !== null || !search ? search.trim().toUpperCase() : '',
-    size
+    size,
+    ...queryParams
   })
-  const inventories = from === 'proscai' ? await fetchWithToken({ endpoint: `proscai/inventories?${params.toString()}`, abortController }) : await fetchWithToken({ endpoint: `inventories?${params.toString()}` })
+
+  console.log(queryParams)
+
+  const inventories = from === 'proscai'
+    ? await fetchWithToken({ endpoint: `proscai/inventories?${params.toString()}`, abortController })
+    : await fetchWithToken({ endpoint: `inventories?${params.toString()}` })
 
   return inventories
 }

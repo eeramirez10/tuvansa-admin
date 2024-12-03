@@ -38,6 +38,7 @@ import { NewUser } from './pages/User/NewUser'
 import PurchaseOrders from 'src/pages/Purchases/PurchaseOrders/Index'
 import { UploadFile } from './pages/Purchases/PurchaseOrders/UploadFile'
 import { Orders } from './pages/Purchases/DocumentAuthorization/Orders'
+import { InventoryPrint } from './pages/Inventories/InventoryPrint/InventoryPrint'
 
 export const AppRouter: React.FC = () => {
   const { status, checkAuthToken, urlRedirect } = useAuth()
@@ -62,6 +63,8 @@ export const AppRouter: React.FC = () => {
               <Route path='/inventario/detail/:id' element={<InventoryDetail />} />
               <Route path='/counts' element={<Counts />} />
               <Route path="/inventories/shelter/detail/:id" element={<InventoryShelter />} />
+              <Route path='/inventories/print' element={<InventoryPrint />} />
+
 
               <Route path='/payments' element={<Payments />} />
               <Route path='/payment/:id/edit' element={<PaymentEdit />} />
