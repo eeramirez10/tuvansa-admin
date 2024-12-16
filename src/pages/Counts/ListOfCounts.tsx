@@ -8,9 +8,10 @@ import { ReleaseInventories } from 'src/components/ReleaseInventories';
 import { useExcel } from 'src/hooks/useExcel';
 import { CountId } from 'src/interfaces/Inventory';
 import { formatDate } from 'src/helpers/formatDate';
+import { InputSearch } from '../../components/InputSearch';
 
 export const ListOfCounts: React.FC = () => {
-  const { inventories, onLoadInventories, releaseInventories, isLoading: loading } = useInventories();
+  const { inventories, onLoadInventories, releaseInventories, isLoading: loading, form } = useInventories();
   const { handleDownloadExcel } = useExcel();
 
   const [showFiltered, setShowFiltered] = useState(false); // Estado para alternar entre todas o filtradas
@@ -121,12 +122,22 @@ export const ListOfCounts: React.FC = () => {
     }
   ]
 
+  const handleSearch = ({ search }: { search: string }) => {
+
+
+    onLoadInventories({
+      queryParams: { search }
+    });
+  }
+
   return (
     <Space direction="vertical" size="middle" style={{ display: 'flex' }}>
       {/* Botón para alternar entre todas y filtradas */}
       <Button onClick={() => setShowFiltered(!showFiltered)}>
-        {showFiltered ? 'Mostrar Todos' : 'Mostrar Amarillo y Rojo'}
+        {showFiltered ? 'Mostrar Todos' : 'Mostrar Diferencias'}
       </Button>
+
+      <InputSearch form={form} handleSearch={handleSearch} />
 
       {/* Botón para descargar Excel */}
       <Button
