@@ -11,44 +11,28 @@ interface QrToPrintInventarioProps {
 
 export const QrGenerator: React.FC<QrToPrintInventarioProps> = ({ inventario }) => {
   return (
-    <>
-      <Row
-        justify="center"
-        align="middle"
-        style={{
-          minHeight: '100vh',
-          textAlign: 'center',
-          // borderBottom: inventario.length - 1 ? '1px solid #f0f0f0' : 'none',
-          paddingBottom: '20px',
-          marginBottom: '20px'
-        }}
-      >
-        {/* Título */}
-        <Col span={24} style={{ marginBottom: '30px' }}>
-          <Typography.Title style={{ fontSize: 55 }} > <strong>{inventario.description}</strong> </Typography.Title>
+    <div style={{
+      display: 'flex', flexDirection: 'column', justifyContent: 'space-between', alignItems: 'center', height: '100vh', paddingBottom: '25px', marginBottom: '30px'
+    }}>
+      {/* Título */}
+      <div style={{
 
-        </Col>
+        textAlign: 'center'
 
-        {/* Código EAN */}
-        <Col span={24} style={{ marginBottom: '30px' }}>
-          <div style={{ fontSize: 55, marginBottom: 30 }} >  <u> <strong> {inventario.ean} </strong>  </u>  </div>
+      }} >
+        <h1 style={{ fontSize: 55 }}><strong>{(inventario.description !== null) ? inventario.description.replace(/COD\. ART\.\s?R?\d*\s*/, '').trim() : 'Sin descripcion'} </strong></h1>
+      </div>
+      <div style={{ fontSize: 55 }} >  <u> <strong> {inventario.ean} </strong>  </u>  </div>
+      <div style={{ fontSize: 55 }} > <strong> {inventario.cod} </strong>  </div>
 
-        </Col>
-
-        {/* Código ICOD */}
-        <Col span={24} style={{ marginBottom: '50px' }}>
-          <div style={{ fontSize: 55, marginBottom: 50 }} > <strong> {inventario.cod} </strong>  </div>
-        </Col>
-
-        {/* QR Code */}
-        <Col span={24}>
-          <QRCode
-            style={{ display: 'block', margin: '0 auto' }}
-            value={`inventarios.dyndns.org/${inventario.iseq ?? ''}`}
-            size={320}
-          />
-        </Col>
-      </Row>
-    </>
+      {/* QR Code */}
+      <div>
+        <QRCode
+          style={{ display: 'block', margin: '0 auto' }}
+          value={`inventarios.dyndns.org/${inventario.iseq ?? ''}`}
+          size={350} // Ajusta el tamaño del QR si es necesario
+        />
+      </div>
+    </div>
   )
 }

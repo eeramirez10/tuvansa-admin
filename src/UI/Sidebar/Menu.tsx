@@ -67,6 +67,10 @@ export const Menu: React.FC = () => {
         {
           label: (<Link to='/counts'> Conteos </Link>),
           key: '22'
+        },
+        {
+          label: (<Link to='/inventories/print'> QR </Link>),
+          key: '22'
         }
       ]
     },

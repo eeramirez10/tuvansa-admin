@@ -27,7 +27,19 @@ export const InventoryPrint: React.FC = () => {
   const contentRef = useRef<HTMLDivElement>(null)
 
   // Función para manejar la impresión
-  const handlePrint = useReactToPrint({ contentRef })
+  const handlePrint = useReactToPrint({
+    contentRef,
+    pageStyle: `
+     @page {
+      size: landscape;
+    }
+    body {
+      margin: 0;
+      padding: 0;
+    }
+    
+    `
+  })
 
   const options = [
     { value: 'ACCESORIOS', label: 'ACCESORIOS' },
@@ -178,21 +190,21 @@ export const InventoryPrint: React.FC = () => {
 
         <SelectInput
           placeholder='Familia'
-          defaultValue={ DEFAULT_VALUES.family}
+          defaultValue={DEFAULT_VALUES.family}
           handleOnChange={handleOnchangeSelect}
           options={options}
           name='family'
         />
         <SelectInput
           placeholder='Almacen'
-          defaultValue={ DEFAULT_VALUES.almacen}
+          defaultValue={DEFAULT_VALUES.almacen}
           handleOnChange={handleOnchangeSelect}
           options={branchOfficeOptions}
           name='almacen'
         />
         <SelectInput
           placeholder='Stock'
-          defaultValue={ DEFAULT_VALUES.withStock}
+          defaultValue={DEFAULT_VALUES.withStock}
           handleOnChange={handleOnchangeSelect}
           options={stockOptions}
           name='withStock'
@@ -213,7 +225,7 @@ export const InventoryPrint: React.FC = () => {
 
       {
         data.length > 0 &&
-        <div style={{ display: 'none' }}>
+        <div style={{ display: 'none' }} >
           <div ref={contentRef}>
             {data.map((inventario) => (
               <QrGenerator
