@@ -9,9 +9,13 @@ export type StatusValue = typeof AUTH_STATUS[keyof typeof AUTH_STATUS]
 export interface User {
   id?: string
   username: string
+  gender: string
   name: string
   last: string
   branchOffice: string
   rol: string
   token: string
+  pagePermission: string[]
+  documentsAuthorization: string[]
+  signature?: string | null
 }

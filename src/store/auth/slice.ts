@@ -3,14 +3,31 @@ import { type StatusValue, type User } from 'src/interfaces/Auth'
 
 interface InitialState {
   status: StatusValue
-  user: User | Record<string, unknown>
+  users: User[]
+  selectedUser?: User,
+  // eslint-disable-next-line @typescript-eslint/ban-types
+  user: User,
+  selected: User | null
   errorMessage: string | undefined
 }
 
 const DEFAULT_STATE: InitialState = {
   status: 'checking',
-  user: {},
-  errorMessage: undefined
+  user: {
+    gender: '',
+    username: '',
+    name: '',
+    last: '',
+    branchOffice: '',
+    rol: '',
+    token: '',
+    pagePermission: [],
+    documentsAuthorization: []
+  },
+  selectedUser: undefined,
+  errorMessage: undefined,
+  users: [],
+  selected: null
 }
 
 export const authSlice = createSlice({
@@ -18,9 +35,27 @@ export const authSlice = createSlice({
   initialState: DEFAULT_STATE,
   reducers: {
     onChecking: (state) => {
-      state.status = 'checking'
-      state.user = {}
-      state.errorMessage = undefined
+      return {
+        ...state,
+        ...DEFAULT_STATE,
+        status: 'checking'
+      }
+      // state.status = 'checking'
+      // state.user = {
+      //   gender: '',
+      //   username: '',
+      //   name: '',
+      //   last: '',
+      //   branchOffice: '',
+      //   rol: '',
+      //   token: '',
+      //   pagePermission: []
+      // }
+      // state.errorMessage = undefined
+    },
+    onSelectUser: (state, action: PayloadAction<User>) => {
+      state.selectedUser = action.payload
+
     },
     onLogin: (state, action: PayloadAction<User>) => {
       state.status = 'authenticated'
@@ -28,18 +63,48 @@ export const authSlice = createSlice({
       state.errorMessage = undefined
     },
     onLogout: (state) => {
-      state.status = 'notauthenticated'
-      state.user = {}
-      state.errorMessage = undefined
+      return {
+        ...state,
+        ...DEFAULT_STATE,
+        status: 'notauthenticated'
+      }
+      // state.status = 'notauthenticated'
+      // state.user = {
+      //   gender: '',
+      //   username: '',
+      //   name: '',
+      //   last: '',
+      //   branchOffice: '',
+      //   rol: '',
+      //   token: '',
+      //   pagePermission: []
+      // }
+      // state.errorMessage = undefined
     },
     onError: (state, action: PayloadAction<string>) => {
-      state.status = 'notauthenticated'
-      state.user = {}
-      state.errorMessage = action.payload
+      return {
+        ...state,
+        ...DEFAULT_STATE,
+        status: 'notauthenticated',
+        errorMessage: action.payload
+      }
+
+      // state.status = 'notauthenticated'
+      // state.user = {
+      //   gender: '',
+      //   username: '',
+      //   name: '',
+      //   last: '',
+      //   branchOffice: '',
+      //   rol: '',
+      //   token: '',
+      //   pagePermission: []
+      // }
+      // state.errorMessage = action.payload
     }
   }
 })
 
-export const { onChecking, onError, onLogin, onLogout } = authSlice.actions
+export const { onChecking, onError, onLogin, onLogout, onSelectUser } = authSlice.actions
 
 export default authSlice.reducer

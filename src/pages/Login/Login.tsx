@@ -1,6 +1,6 @@
 import React from 'react'
 import { LockOutlined, UserOutlined } from '@ant-design/icons'
-import { Button, Card,Flex, Form, Input, Layout } from 'antd'
+import { Button, Card, Flex, Form, Input, Layout } from 'antd'
 import { useAuth } from 'src/hooks/useAuth'
 import imageTuvansa from 'src/img/tuvansa.jpeg'
 // import { Navigate } from 'react-router-dom'
@@ -11,7 +11,8 @@ export const Login: React.FC = () => {
   const { startLogin } = useAuth()
 
   const onFinish = (values: { username: string, password: string }): void => {
-    const { username, password } = values
+    const username = values.username.trim()
+    const password = values.password.trim()
 
     startLogin({ username, password })
   }
@@ -56,7 +57,7 @@ export const Login: React.FC = () => {
               {/* <Form.Item>
                 <Form.Item name="remember" valuePropName="checked" noStyle>
                   <Checkbox>Remember me</Checkbox>
-                </Form.Item> 
+                </Form.Item>
 
                 <a className="login-form-forgot" href="">
                   Forgot password

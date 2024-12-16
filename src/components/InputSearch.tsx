@@ -2,20 +2,20 @@ import React from 'react'
 import { Button, Form, type FormInstance, Input } from 'antd'
 
 interface Props {
-  onSubmit: ({ value, from, almacen }: { value: { search: string }, from: string, almacen: string }) => Promise<void>
+  // onSubmit: ({ value, from, almacen }: { value: { search: string }, from: string, almacen: string }) => Promise<void>
   form: FormInstance<any>
-  options: {
-    from: string
-    almacen: string
-  }
+  handleSearch: ({ search }: { search: string }) => void
+  placeholder?: string
 }
 
-export const InputSearch: React.FC<Props> = ({ onSubmit, form, options }) => {
+export const InputSearch: React.FC<Props> = ({ form, handleSearch, placeholder = 'Escribe algo' }) => {
   return (
     <Form
       form={form}
       layout="inline"
-      onFinish={(value) => { onSubmit({ value, from: options.from, almacen: options.almacen }) }}
+      onFinish={({ search }) => {
+        handleSearch({ search })
+      }}
       style={{ width: '100%' }}
       autoComplete="off"
     >
@@ -24,7 +24,7 @@ export const InputSearch: React.FC<Props> = ({ onSubmit, form, options }) => {
         rules={[{ required: true }]}
         style={{ minWidth: '50%' }}
       >
-        <Input placeholder="Introduce EAN o Codigo" />
+        <Input placeholder={placeholder} />
       </Form.Item>
       <Form.Item>
 

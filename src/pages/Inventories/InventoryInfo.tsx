@@ -15,6 +15,7 @@ export const InventoryInfo: React.FC<Props> = ({ user, inventory }) => {
       <Title level={4}>{inventory?.description} </Title>
       <Title level={5}>{inventory?.cod} </Title>
       <Title level={5}>{inventory?.ean} </Title>
+      <Title level={5}> costo: {inventory?.costo} </Title>
 
       {
         user.rol === 'admin' && <Title level={5}>Existencia en proscai: {inventory?.quantity} </Title>

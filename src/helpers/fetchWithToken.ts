@@ -12,9 +12,13 @@ export const METHOD_VALUES = {
 interface Props {
   endpoint: string
   method?: typeof METHOD_VALUES[keyof typeof METHOD_VALUES]
-  body?: Record<string, unknown>
+  body?: any
   abortController?: AbortController
+  signature?: string
+  isFile?: boolean
 }
+
+// type Data = Array<Record<string, string>> | Record<string, string>
 
 // interface ReturnFetch {
 //   payments?: Payment[]
@@ -49,7 +53,16 @@ export const fetchWithToken = async (props: Props): Promise<any> => {
   try {
     const resp = await fetch(`${API_URL}/${endpoint}`, method === 'GET' ? options : postOptions)
 
+    if (!resp.ok) {
+      console.log(resp.statusText)
+    }
+
     const data = await resp.json()
+
+    if (!resp.ok) {
+      toast.error(data.error)
+      return [new Error(`${resp.statusText}`), null]
+    }
 
     if (data.error !== undefined) {
       toast.error(data.error)
@@ -60,4 +73,68 @@ export const fetchWithToken = async (props: Props): Promise<any> => {
     console.log(error)
     toast.error('Hubo un error, hable con el administrador')
   }
+}
+
+export const fetchAPIWithToken = async (props: Props): Promise<[Error | null, any | null]> => {
+  const { endpoint, method, body, abortController, isFile = false } = props
+
+  const options = {
+    signal: abortController?.signal,
+    method: METHOD_VALUES.GET,
+    headers: {
+      Authorization: `bearer ${localStorage.getItem('token')}`
+    }
+  }
+
+  const postOptions = {
+    signal: abortController?.signal,
+    method,
+    body: JSON.stringify(body),
+    headers: {
+      'Content-type': 'application/json; charset=UTF-8',
+      Authorization: `bearer ${localStorage.getItem('token')}`
+    }
+  }
+
+  const FILES_URL = API_URL.replace('/api', '/')
+
+  try {
+    const resp = await fetch(`${!isFile ? API_URL : FILES_URL}/${endpoint}`, method === 'GET' ? options : postOptions)
+
+    const data = !isFile ? await resp.json() : await resp.blob()
+
+    if (!resp.ok) {
+      toast.error(data.msg)
+      return [new Error(`${resp.statusText}`), null]
+    }
+
+    return [null, data]
+  } catch (error) {
+    toast.error('Hubo un error, hable con el administrador')
+
+    if (error instanceof Error) return [error, null]
+  }
+
+  return [new Error('Error desconocido'), null]
+}
+
+export const fetchSignatureWithToken = async (svgContent: string) => {
+  const svgBlob = new Blob([svgContent], { type: 'image/svg+xml' })
+  const formData = new FormData()
+  formData.append('image', svgBlob, 'imagen.svg')
+
+  const headers = {
+
+    Authorization: `bearer ${localStorage.getItem('token')}`
+  }
+  const resp = await fetch(`${API_URL}/users/signature/upload`, {
+    method: 'POST',
+    body: formData,
+    headers
+
+  })
+
+  const data = await resp.json()
+
+  return data
 }

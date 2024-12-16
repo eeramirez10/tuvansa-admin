@@ -7,12 +7,13 @@ import { uploadFiles } from 'src/services/payments'
 
 export const UploadFiles: React.FC = () => {
   const payment = useAppSelector(selector => selector.payments.selected)
-  const [fileList, setFileList] = useState<UploadFile[]>([])
+  const [fileList, setFileList] = useState< []>([])
   const [uploading, setUploading] = useState(false)
 
   const handleUpload = (): void => {
     if (payment === null || payment === undefined) return
     const formData = new FormData()
+
     fileList.forEach((file) => {
       formData.append('payments', file as RcFile)
     })
@@ -20,7 +21,6 @@ export const UploadFiles: React.FC = () => {
 
     uploadFiles({ id: payment?.id, files: formData })
       .then((resp) => {
-        console.log(resp)
         setFileList([])
         message.success('upload successfully.')
       })
@@ -57,13 +57,13 @@ export const UploadFiles: React.FC = () => {
       setFileList(newFileList)
     },
     beforeUpload: (file) => {
-      console.log(file)
       setFileList(prevState => [...prevState, file])
 
       return false
     },
     fileList
   }
+
   return (
     <>
 

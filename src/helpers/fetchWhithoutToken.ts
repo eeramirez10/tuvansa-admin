@@ -10,33 +10,31 @@ const METHOD_VALUES = {
 interface Props {
   endpoint: string
   method?: typeof METHOD_VALUES[keyof typeof METHOD_VALUES]
-  body?: Record<string, unknown>
+  body?: any
+  isFile?: boolean
 }
-
-// interface ReturnFetch {
-//   payments?: Payment[]
-//   payment: Payment
-//   error?: string
-//   ok?: boolean
-// }
 
 const { API_URL } = getApiUrl()
 
-export const fetchWithoutToken = async ({ endpoint, method, body }: Props): Promise<any> => {
+export const fetchWithoutToken = async ({ endpoint, method, body, isFile = false }: Props): Promise<any> => {
   const options = {
-    method: METHOD_VALUES.GET
+    method: method ?? METHOD_VALUES.GET,
+    body: !isFile ? JSON.stringify(body) : body
+
   }
 
-  const postOptions = {
-    method,
-    body: JSON.stringify(body),
-    headers: {
-      'Content-type': 'application/json; charset=UTF-8'
-    }
-  }
+  const headers = isFile
+    ? {
+        'Content-type': 'application/json; charset=UTF-8',
+        Authorization: `bearer ${localStorage.getItem('token')}`
+      }
+    : {
+        'Content-type': 'multipart/form-data; boundary=<calculated when request is sent>',
+        Authorization: `bearer ${localStorage.getItem('token')}`
+      }
 
   try {
-    const resp = await fetch(`${API_URL}/${endpoint}`, method === 'GET' ? options : postOptions)
+    const resp = await fetch(`${API_URL}/${endpoint}`, { ...options, ...headers })
 
     const data = await resp.json()
 

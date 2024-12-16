@@ -1,26 +1,38 @@
 import { onChecking, onError, onLogin, onLogout } from 'src/store/auth/slice'
 import { useAppDispatch, useAppSelector } from './useStore'
-import { type LoginProps, login, renewToken } from 'src/services/auth'
+import { type LoginProps, login, renewToken, createUser } from 'src/services/auth'
 import type { StatusValue, User } from 'src/interfaces/Auth'
 import { toast } from 'sonner'
 import { useLocation } from 'react-router-dom'
 import { useEffect } from 'react'
+import { Form, type FormInstance } from 'antd'
+import { getUserbyId } from '../services/user'
+import { onSelectUser } from '../store/auth/slice'
+import { updateUser } from '../services/auth'
 
 interface Props {
   status: StatusValue
-  user: User | Record<string, unknown>
+  // eslint-disable-next-line @typescript-eslint/ban-types
+  user: User
   errorMessage: string | undefined
   urlRedirect: string | null
   startLogin: ({ username, password }: LoginProps) => Promise<void>
   checkAuthToken: () => Promise<void>
   startLogout: () => void
+  userRegister: (user: User) => Promise<[Error | null, User | null]>
+  getUser: (id: string) => Promise<{ user: User }>
+  editUser: ({ id, user }: { id: string, user: User }) => Promise<{ user: User }>
+  selectedUser?: User
+  form: FormInstance<any>
 }
 
 export const useAuth = (): Props => {
-  const { status, user, errorMessage } = useAppSelector(state => state.auth)
+  const { status, user, errorMessage, selectedUser } = useAppSelector(state => state.auth)
   const dispatch = useAppDispatch()
   const location = useLocation()
   const urlRedirect = localStorage.getItem('urlRedirect')
+
+  const [form] = Form.useForm()
 
   useEffect(() => {
     if (location.key === 'default') {
@@ -53,7 +65,7 @@ export const useAuth = (): Props => {
       //       localStorage.removeItem('urlRedirect')
       //     }
 
-    // }
+      // }
     } catch (error) {
       dispatch(onLogout())
       toast.error('hubo un error interno, hable con el administrador')
@@ -67,21 +79,22 @@ export const useAuth = (): Props => {
 
   const checkAuthToken = async (): Promise<void> => {
     const token = localStorage.getItem('token')
-    if (token === undefined || token === null) {
+    if (token === null) {
       dispatch(onLogout())
       return
     }
 
     try {
       const { token, user, error } = await renewToken()
-      localStorage.setItem('token', token)
-      localStorage.setItem('token-init-date', new Date().getTime().toLocaleString())
 
       if (error !== undefined) {
         dispatch(onLogout())
         localStorage.removeItem('token')
         return
       }
+
+      localStorage.setItem('token', token)
+      localStorage.setItem('token-init-date', new Date().getTime().toLocaleString())
 
       dispatch(onLogin(user))
     } catch (error) {
@@ -90,13 +103,47 @@ export const useAuth = (): Props => {
     }
   }
 
+  const userRegister = async (user: User): Promise<[Error | null, User | null]> => {
+    try {
+      const [error, newUser] = await createUser(user)
+
+      if (error !== null) {
+        return [error, null]
+      }
+
+      toast.success('Usuario credo correctamente')
+
+      return [null, newUser]
+    } catch (error) {
+      if (error instanceof Error) return [error, null]
+    }
+
+    return [new Error(' Error desconocido'), null]
+  }
+
+  const getUser = async (id: string): Promise<{ user: User }> => {
+    const user = await getUserbyId(id)
+    return user
+  }
+
+  const editUser = async ({ id, user }: { id: string, user: User }): Promise<{ user: User }> => {
+    const updatedUser = await updateUser({ id, user })
+
+    return updatedUser
+  }
+
   return {
     status,
     user,
     errorMessage,
     urlRedirect,
+    form,
+    selectedUser,
     startLogin,
     checkAuthToken,
-    startLogout
+    startLogout,
+    userRegister,
+    editUser,
+    getUser
   }
 }

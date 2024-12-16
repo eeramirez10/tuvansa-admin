@@ -3,10 +3,11 @@ import React from 'react'
 import { useInventories } from 'src/hooks/useInventories'
 
 interface Props {
-  isPaused?: boolean
+  isLoading: boolean
+  isPaused: boolean
 }
 
-export const FormInventory: React.FC<Props> = ({ isPaused }) => {
+export const FormInventory: React.FC<Props> = ({ isPaused, isLoading }) => {
   const { handleOnSubmit, form } = useInventories()
 
   const onFinishFailed = (errorInfo: any): void => {
@@ -31,7 +32,7 @@ export const FormInventory: React.FC<Props> = ({ isPaused }) => {
         <InputNumber min={0} />
       </Form.Item>
       <Form.Item >
-        <Button type="primary" htmlType="submit" disabled = { isPaused }>
+        <Button type="primary" htmlType="submit" disabled = { isPaused || isLoading }>
           Submit
         </Button>
       </Form.Item>

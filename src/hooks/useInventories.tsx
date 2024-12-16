@@ -1,7 +1,7 @@
 import { useAppDispatch, useAppSelector } from './useStore'
-import { loadInventories, onStartInventories, selectInventory } from 'src/store/inventories/slice'
-import { type Inventory } from 'src/interfaces/Inventory'
-import { deleteInventoryCount, getByIseq, getInventories, getInventoryProscai, liberarInventory, postInventory } from 'src/services/inventories'
+import { loadInventories, onFinishInventories, onStartInventories, selectInventory } from 'src/store/inventories/slice'
+import { type Inventory, type InventoryId } from 'src/interfaces/Inventory'
+import { deleteInventoryCount, getByIseq, getInventories, getInventoryProscai, liberarInventory, postInventory, release } from 'src/services/inventories'
 import { useState } from 'react'
 import { Form, type FormInstance } from 'antd'
 import { toast } from 'sonner'
@@ -14,7 +14,7 @@ interface InventoryReturn {
   form: FormInstance<any>
   options: { from: string, almacen: string }
   getInventory: ({ id }: { id: string }) => Promise<void>
-  onLoadInventories: ({ from, almacen, abortController, size }: { from?: string, almacen?: string, abortController?: AbortController, size?: string }) => Promise<void>
+  onLoadInventories: ({ from, almacen, abortController, size }: { from?: string, almacen?: string, abortController?: AbortController, size?: string, queryParams?: Record<string, string> }) => Promise<void>
   handleOnSubmit: (value: { count: number }) => Promise<void>
   handleliberarInventario: () => Promise<void>
   // handleOnSearch: (value: { search: string }, from?: string, almacen?: string) => Promise<void>
@@ -22,6 +22,9 @@ interface InventoryReturn {
   deleteCountbyId: ({ id }: { id: string }) => Promise<void>
   handleOptions: ({ from, almacen }: { from: string, almacen: string }) => void
   getShelterByAlmseq: ({ id }: { id: string }) => Promise<void>
+  getInventoryProscaiByIseq: ({ id }: { id: string }) => Promise<InventoryId>
+  releaseInventories: ({ paused }: { paused?: boolean }) => Promise<void>
+  getAll: ({ search, from }: { search?: string, from?: string, almacen?: string }) => Promise<void>
 }
 
 export const useInventories = (): InventoryReturn => {
@@ -36,8 +39,15 @@ export const useInventories = (): InventoryReturn => {
   const [form] = Form.useForm()
 
   const getInventory = async ({ id }: { id: string }): Promise<void> => {
-    const [inventory, inventoryProscai] = await Promise.all([getByIseq({ iseq: id }), getInventoryProscai({ id })])
-    dispatch(selectInventory(inventory.inventory ?? inventoryProscai.inventory))
+    dispatch(onStartInventories())
+    const inventory = await getByIseq({ iseq: id })
+    dispatch(selectInventory(inventory.inventory))
+  }
+
+  const getInventoryProscaiByIseq = async ({ id }: { id: string }): Promise<InventoryId> => {
+    const inventory = await getInventoryProscai({ id })
+
+    return inventory.inventory
   }
 
   const getShelterByAlmseq = async ({ id }: { id: string }): Promise<void> => {
@@ -66,10 +76,10 @@ export const useInventories = (): InventoryReturn => {
     }
   }
 
-  const onLoadInventories = async ({ from = '', almacen = '01', abortController, size = '1' }: { from?: string, almacen?: string, abortController?: AbortController, size?: string }): Promise<void> => {
+  const onLoadInventories = async ({ from = '', almacen = '01', abortController, size, queryParams }: { from?: string, almacen?: string, abortController?: AbortController, size?: string, queryParams?: Record<string, string> }): Promise<void> => {
     dispatch(onStartInventories())
 
-    getInventories({ from, almacen, abortController, size })
+    getInventories({ from, almacen, abortController, size, queryParams })
       .then((resp) => {
         const { inventories } = resp
         const { items } = inventories
@@ -89,14 +99,26 @@ export const useInventories = (): InventoryReturn => {
     }
   }
 
-  const handleOnSubmit = async (value: { count: number }): Promise<void> => {
-    const newInventory: any = {
-      ...inventory,
-      count: value.count
+  const getAll = async ({ search, from }: { search?: string, from?: string, almacen?: string }): Promise<void> => {
+    try {
+      dispatch(onStartInventories())
+      const resp = await getInventories({ search, from })
+
+      dispatch(loadInventories(resp.inventories.items))
+    } catch (error) {
+      console.log(error)
+      toast.error('hubo un error')
     }
+  }
+
+  const handleOnSubmit = async (value: { count: number }): Promise<void> => {
+    dispatch(onStartInventories())
+    const { count } = value
 
     try {
-      const resp = await postInventory({ inventory: newInventory })
+      if (inventory?.iseq === undefined) return
+
+      const resp = await postInventory({ count, iseq: inventory?.iseq })
 
       if (resp.error !== undefined) {
         toast.error(resp.error)
@@ -119,7 +141,19 @@ export const useInventories = (): InventoryReturn => {
   }
 
   const handleOptions = ({ from, almacen }: { from: string, almacen: string }): void => {
+    console.log({ from, almacen })
     setOptions({ from, almacen })
+  }
+  const releaseInventories = async ({ paused = false }: { paused?: boolean }): Promise<void> => {
+    dispatch(onStartInventories())
+
+    try {
+      await release({ paused })
+    } catch (error) {
+      console.log(error)
+    } finally {
+      dispatch(onFinishInventories())
+    }
   }
 
   return {
@@ -128,6 +162,7 @@ export const useInventories = (): InventoryReturn => {
     isLoading,
     form,
     options,
+    getAll,
     onLoadInventories,
     handleOnSubmit,
     handleliberarInventario,
@@ -135,6 +170,8 @@ export const useInventories = (): InventoryReturn => {
     deleteCountbyId,
     handleOptions,
     getInventory,
-    getShelterByAlmseq
+    getShelterByAlmseq,
+    getInventoryProscaiByIseq,
+    releaseInventories
   }
 }

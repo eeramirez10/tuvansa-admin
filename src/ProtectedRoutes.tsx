@@ -1,9 +1,8 @@
 import React from 'react'
 import { Outlet } from 'react-router-dom'
-import { Breadcrumb, Layout, Typography } from 'antd'
+import { Layout, Typography } from 'antd'
 import { Sidebar } from './UI/Sidebar/Sidebar'
 import { Content, Header } from 'antd/es/layout/layout'
-import { Navigation } from './UI/Navigation/Navigation'
 import { ButtonProvider } from './context/Button'
 import { getEnvVariables } from './helpers/getEnvVariables'
 import { SwitchTheme } from './components/SwitchTheme'
@@ -21,13 +20,13 @@ export const ProtectedRoutes: React.FC = () => {
           {!PROD && <Title level={2} style={{ color: 'rgba(255, 255, 255, 0.85)' }} >Pruebas</Title>}
           <SwitchTheme />
         </Header>
-        <Content style={{ margin: '0 16px' }}>
-          <Breadcrumb style={{ margin: '16px 0' }}>
+        <Content style={{ margin: '0 16px', marginTop:50 }}>
+          {/* <Breadcrumb style={{ margin: '16px 0' }}>
             <Breadcrumb.Item>User</Breadcrumb.Item>
             <Breadcrumb.Item>Bill</Breadcrumb.Item>
-          </Breadcrumb>
+          </Breadcrumb> */}
           <ButtonProvider>
-            <Navigation />
+            {/* <Navigation /> */}
             <Outlet />
           </ButtonProvider>
         </Content>
